@@ -56,7 +56,7 @@ class Eikon {
 								callback(null, stdout);
 							} else {
 								this._currentToken = null;
-								callback('Error: Got empty SSOToken from the running Eikon Desktop for environment "' + env + '"');
+								callback('Error: Got empty SSOToken from the running Eikon Desktop for environment "' + this._env + '"');
 							}
 						});
 					} else {

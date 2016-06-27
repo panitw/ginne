@@ -20,18 +20,22 @@ class DataProvider {
 			//If the startDate is null or oldest point is greater or equal than the start date, get data from
 			//the source
 			
-			this._cachePlugin.getData(symbol, startDate, endDate).then(
-				(data) => {
-					data.sort(DataUtil.sort('a'));
-					if (data) {
+			// this._cachePlugin.getData(symbol, startDate, endDate).then(
+			// 	(data) => {
+			// 		data.sort(DataUtil.sort('a'));
+			// 		if (data) {
 
-					}
-					resolve(data);
-				},
-				(err) => {
+			// 		}
+			// 		resolve(data);
+			// 	},
+			// 	(err) => {
 
-				}
-			);
+			// 	}
+			// );
+
+			this._srcPlugin.getData(symbol, startDate, endDate).then((data) => {
+				resolve(data)
+			});
 		});
 	}
 

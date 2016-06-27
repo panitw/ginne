@@ -1,7 +1,9 @@
+const MongoClient = require('mongodb').MongoClient;
+
 class MongoDBPlugin {
 
 	constructor(config) {
-		
+			
 	}
 
 	getFirstDate() {

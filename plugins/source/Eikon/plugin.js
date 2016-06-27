@@ -4,7 +4,7 @@ const moment = require('moment');
 class UDFSource {
 
 	constructor(config) {
-		this._eikon = new Eikon(config.env);
+		this._eikon = new Eikon(config.environment);
 	}
 
 	getData(symbol, start, end) {
@@ -12,12 +12,16 @@ class UDFSource {
 		var actualEnd = null;
 		if (!start) {
 			actualStart = moment().add(-1, 'years').toDate();
+		} else {
+			actualStart = start;
 		}
 		if (!end) {
 			actualEnd = moment().toDate();
+		} else {
+			actualEnd = end;
 		}
 		return new Promise((resolve, reject) => {
-			this._eikon.postData('/Apps/UDF', {
+			this._eikon.postData('/Apps/UDF/MSF', {
 				"Entity": {
 					"ID": "TATimeSeries",
 					"E": "TATimeSeries",
@@ -36,7 +40,17 @@ class UDFSource {
 					}
 				}
 			}).then((data) => {
-				console.log(data);
+				var output = data.TATimeSeries.R[0].Data.map((item) => {
+					return {
+						d: new Date(item.Date),
+						o: item.Open,
+						h: item.High,
+						l: item.Low,
+						c: item.Close,
+						v: item.Volume
+					}
+				});
+				resolve(output);
 			});
 		});
 	}
