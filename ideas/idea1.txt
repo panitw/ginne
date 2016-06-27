@@ -1,0 +1,19 @@
+Version 1
+---------
+
+Daily Input
+- Initial Money
+- Broker Fee
+- How many stocks to hold
+- Positions
+- Trade Strategy + Initial Parameter 
+
+Output
+- Daily Trade Signal
+  - Buy
+  - Sell
+  - Hold
+- Profit/Lost Report
+
+Expectation
+- 20% Profit

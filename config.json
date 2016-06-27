@@ -1,0 +1,10 @@
+{
+	"source" : {
+		"plugin" : "Eikon",
+		"environment" : "prod"
+	},
+	"cache" : {
+		"plugin" : "MongoDB",
+		"connectionString" : "mongodb://localhost/ginne"
+	}
+}

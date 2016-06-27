@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "moment": "^2.13.0",
+    "mongodb": "^2.1.18",
+    "psnode": "0.0.1",
+    "request": "^2.72.0",
+    "restler": "^3.4.0",
+    "winston": "^2.2.0"
+  }
+}
