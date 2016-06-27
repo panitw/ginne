@@ -23,7 +23,7 @@ class UDFSource {
 					"E": "TATimeSeries",
 					"W": {
 						"Tickers": [
-							"AIV.N"
+							symbol
 						],
 						"NoInfo": true,
 						"Interval": "Daily",
@@ -32,10 +32,11 @@ class UDFSource {
 						"Analysis": [
 							"OHLCV"
 						],
-						"AnalysisParams": {
-						}
+						"AnalysisParams": {}
 					}
 				}
+			}).then((data) => {
+				console.log(data);
 			});
 		});
 	}
