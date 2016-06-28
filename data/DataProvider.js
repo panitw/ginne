@@ -1,4 +1,6 @@
 const moment = require('moment');
+const async = require('async');
+const logger = require('winston');
 const PluginManager = require('../plugins/PluginManager');
 const DataUtil = require('./DataUtil');
 
@@ -10,33 +12,54 @@ class DataProvider {
 		this._cachePlugin = PluginManager.getPlugin('cache', this._config.cache.plugin, this._config.cache);
 	}
 
-	getData(symbol, startDate, endDate) {
-		return new Promise((resolve, reject) => {
-			
-			//Check the oldest point in the cache. 
-
-			//Compare oldest point with the start date
-
-			//If the startDate is null or oldest point is greater or equal than the start date, get data from
-			//the source
-			
-			// this._cachePlugin.getData(symbol, startDate, endDate).then(
-			// 	(data) => {
-			// 		data.sort(DataUtil.sort('a'));
-			// 		if (data) {
-
-			// 		}
-			// 		resolve(data);
-			// 	},
-			// 	(err) => {
-
-			// 	}
-			// );
-
-			this._srcPlugin.getData(symbol, startDate, endDate).then((data) => {
-				resolve(data)
-			});
+	init() {
+		return this._srcPlugin.init().then(() => {
+			return this._cachePlugin.init();
 		});
+	}
+
+	getData(symbol, startDate, endDate) {
+		let firstDate = null;
+		let lastDate = null;
+		let catchUp = false;
+
+		logger.debug('Getting data for ' + symbol);
+
+		let promise = this._cachePlugin.getFirstData(symbol)
+			.then((data) => {
+				firstDate = (data) ? data.d : null;
+				return this._cachePlugin.getLastData(symbol);
+			})
+			.then((data) => {
+				lastDate = (data) ? data.d : null;
+				if (!firstDate) {
+					return this._srcPlugin.getData(symbol, startDate).then((data) => {
+						catchUp = true;
+						return this._cachePlugin.addData(symbol, data);
+					});
+				} else
+				if (startDate.getTime() < firstDate.getTime()) {
+					return this._srcPlugin.getData(symbol, startDate, firstDate).then((data) => {
+						return this._cachePlugin.addData(symbol, data);
+					});
+				}
+			})
+			.then(() => {
+				let today = moment().utc().startOf('day').toDate();
+				if (!catchUp) {
+					if (lastDate.getTime() < today.getTime()) {
+						let afterLast = moment(lastDate).add('day', 1);
+						return this._srcPlugin.getData(symbol, afterLast).then((data) => {
+							return this._cachePlugin.addData(symbol, data);
+						});
+					}
+				}
+			})
+			.then(() => {
+				return this._cachePlugin.getData(symbol, startDate, endDate);
+			});
+
+		return promise;
 	}
 
 }

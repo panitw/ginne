@@ -1,5 +1,6 @@
 const Eikon = require('./Eikon');
 const moment = require('moment');
+const logger = require('winston');
 
 class UDFSource {
 
@@ -8,10 +9,11 @@ class UDFSource {
 	}
 
 	init() {
-		
+		return new Promise((resolve) => { resolve(); });
 	}
 
 	getData(symbol, start, end) {
+		logger.debug('Getting data from Eikon UDF source of ' + symbol + ' from ' + moment(start).format("YYYY-MM-DD") + ' to ' + moment(end).format("YYYY-MM-DD"));
 		var actualStart = null;
 		var actualEnd = null;
 		if (!start) {

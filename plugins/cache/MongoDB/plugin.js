@@ -1,4 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
+const logger = require('winston');
+const moment = require('moment');
 
 class MongoDBPlugin {
 
@@ -7,28 +9,42 @@ class MongoDBPlugin {
 	}
 
 	init() {
-		MongoClient.connect(this._config.connectionString, (err, db) => {
-			if (err) {
-				throw err;
-			} else {
-				this._db = db;
-			}
+		logger.debug('Initialize MongoDB database connection');
+		return new Promise((resolve, reject) => {
+			MongoClient.connect(this._config.connectionString, (err, db) => {
+				if (err) {
+					reject(err);
+				} else {
+					logger.debug('MongoDB database connection established');
+					this._db = db;
+					resolve();
+				}
+			});			
 		});
 	}
 
-	getFirstDate(symbol) {
-		var symbolCol = this._getSymbolCollection(symbol);
-		
+	getFirstData(symbol) {
+		logger.debug('Getting first data point from MongoDB cache of ' + symbol);
+		let symbolCol = this._getSymbolCollection(symbol);
+		return symbolCol.find({}).sort({d: 1}).limit(1).next();
 	}
+
+	getLastData(symbol) {
+		logger.debug('Getting last data point from MongoDB cache of ' + symbol);
+		let symbolCol = this._getSymbolCollection(symbol);
+		return symbolCol.find({}).sort({d: -1}).limit(1).next();
+	}	
 
 	getData(symbol, start, end) {
-		return new Promise((resolve, reject) => {
-			resolve([]);
-		});
+		logger.debug('Getting data from MongoDB cache of ' + symbol + ' from ' + moment(start).format("YYYY-MM-DD") + ' to ' + moment(end).format("YYYY-MM-DD"));
+		let symbolCol = this._getSymbolCollection(symbol);
+		return symbolCol.find({d: {$gte: start, $lt: end}}, {_id: 0}).sort({d: -1}).toArray();
 	}
 
 	addData(symbol, data) {
-		
+		logger.debug('Adding ' + data.length + ' data points of ' + symbol + ' to MongoDB cache');
+		let symbolCol = this._getSymbolCollection(symbol);
+		return symbolCol.insertMany(data);
 	}
 
 	_getSymbolCollection(symbol) {
