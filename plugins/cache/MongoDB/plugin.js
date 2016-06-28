@@ -44,6 +44,7 @@ class MongoDBPlugin {
 	addData(symbol, data) {
 		logger.debug('Adding ' + data.length + ' data points of ' + symbol + ' to MongoDB cache');
 		let symbolCol = this._getSymbolCollection(symbol);
+		symbolCol.createIndex({d:1});
 		return symbolCol.insertMany(data);
 	}
 
