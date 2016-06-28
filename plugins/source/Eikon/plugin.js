@@ -7,6 +7,10 @@ class UDFSource {
 		this._eikon = new Eikon(config.environment);
 	}
 
+	init() {
+		
+	}
+
 	getData(symbol, start, end) {
 		var actualStart = null;
 		var actualEnd = null;
