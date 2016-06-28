@@ -7,7 +7,7 @@ logger.level = 'debug';
 let provider = new DataProvider(config);
 provider.init().then(
 	() => {
-		provider.getData('GOOG.O', new Date('2015-12-01'), new Date('2016-02-01')).then(
+		provider.getData('TVO.BK', new Date('2016-05-01')).then(
 			(data) => {
 				for (var i=0;i<data.length;i++) {
 					logger.info(JSON.stringify(data[i]));

@@ -56,6 +56,9 @@ class DataProvider {
 				}
 			})
 			.then(() => {
+				if (!endDate) {
+					endDate = moment().utc().startOf('day').toDate();
+				}
 				return this._cachePlugin.getData(symbol, startDate, endDate);
 			});
 
