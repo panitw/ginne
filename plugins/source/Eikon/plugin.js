@@ -1,3 +1,5 @@
+'use strict';
+
 const Eikon = require('./Eikon');
 const moment = require('moment');
 const logger = require('winston');

@@ -1,3 +1,5 @@
+'use strict';
+
 class DataUtil {
 
     static sort(mode) {

@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "async": "^2.0.0-rc.6",
+    "fin-data": "git+https://github.com/panitw/fin-data.git",
     "moment": "^2.13.0",
     "mongodb": "^2.1.18",
     "psnode": "0.0.1",
