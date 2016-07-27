@@ -1,6 +1,10 @@
+const Screener = require('../../pipeline/Screener');
+const TradingActions = require('../../pipeline/TradingActions');
+
 // -------------------
-// Phase 1 - Screening
+//     Screening
 // -------------------
+
 var scr1 = new Screener();
 scr1.universe('.SETI')
     .addAnalysis('slope', {
@@ -26,7 +30,7 @@ scr1.universe('.SETI')
     });
 
 // --------------------------
-// Phase 2 - Trading Actions
+//      Trading Actions
 // --------------------------
 
 var actions1 = new TradeActions();
@@ -87,38 +91,7 @@ actions1
         }
     });
 
-// --------------------------
-// Phase 3 - Back Testing
-// --------------------------
-
-var tester = new BackTester();
-var testResult = tester.run({
-   initialAsset: 30000,
-   targetPositions: 2,
-   start: '2015-01-01',
-   end: '2016-07-26',
-   bar: 'daily',
-   tradeCommission: {
-       minimum: 50,
-       percent: 0.1578
-   },
-   slippagePercent: 0.2,
-   strategy: {
-     screener: scr1,
-     tradeActions: actions1
-   }
-});
-
-// --------------------------
-// Phase 4 - Result Analysis
-// --------------------------
-
-var result = {
-    finalAsset: 50000, 
-    totalReturn: 20000,
-    totalReturnPercent: 66.67,
-    sharpe: 1.35,
-    maxDrawndownPercent: 10,
-    transactionDetails: [],
-    assetHistory: []
+module.exports = {
+    screener: scr1,
+    tradingActions: actions1
 };
