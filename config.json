@@ -1,4 +1,7 @@
 {
+	"universe" : {
+		"plugin" : "Static"
+	},
 	"source" : {
 		"plugin" : "Eikon",
 		"environment" : "prod"

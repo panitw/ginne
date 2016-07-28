@@ -8,10 +8,9 @@ const PluginManager = require('../plugins/PluginManager');
 
 class DataProvider {
 
-	constructor(config) {
-		this._config = config;
-		this._srcPlugin = PluginManager.getPlugin('source', this._config.source.plugin, this._config.source);
-		this._cachePlugin = PluginManager.getPlugin('cache', this._config.cache.plugin, this._config.cache);
+	constructor() {
+		this._srcPlugin = PluginManager.getPlugin('source');
+		this._cachePlugin = PluginManager.getPlugin('cache');
 	}
 
 	init() {

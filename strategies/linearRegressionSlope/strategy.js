@@ -5,9 +5,8 @@ const TradingActions = require('../../pipeline/TradingActions');
 //     Screening
 // -------------------
 
-var scr1 = new Screener();
-scr1.universe('.SETI')
-    .addAnalysis('slope', {
+var scr1 = new Screener('SET');
+src1.addAnalysis('slope', {
         type: 'LINEARREG_SLOPE',
         period: 5,
         field: 'last'

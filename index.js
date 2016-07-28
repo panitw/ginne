@@ -1,13 +1,11 @@
 'use strict';
 const logger = require('winston');
-const config = require('./config');
 const BackTester = require('./backtesting/BackTester');
-
 const DataProvider = require('./data/DataProvider');
 
 logger.level = 'debug';
 
-let provider = new DataProvider(config);
+let provider = new DataProvider();
 provider
 	.init()
 	.then(() => {

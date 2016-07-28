@@ -7,9 +7,9 @@ console.log('TALib Version: ' + talib.version);
 let taFunction = process.argv[2];
 let function_desc = talib.explain(taFunction);
 
-console.dir(function_desc);
+console.log(JSON.stringify(function_desc, null, 2));
 
-let data = [0,300,25000,372928,49102939];
+let data = [0,1,2,3,4];
 talib.execute({
     name: "LINEARREG_SLOPE",
     startIdx: 0,

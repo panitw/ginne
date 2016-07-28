@@ -2,20 +2,13 @@
 
 class Screener {
 
-    constructor() {
-        this.commandList = [];
-    }
-
-    universe (universeSymbol) {
-        this.commandList.push({
-            cmd: 'UNIVERSE',
-            symbol: universeSymbol
-        });
-        return this;
+    constructor(universe) {
+        this._universe = universe;
+        this._commandList = [];
     }
 
     addAnalysis (columnName, analysisOptions) {
-        this.commandList.push({
+        this._commandList.push({
             cmd: 'ANALYSIS',
             column: columnName,
             options: analysisOptions
@@ -24,11 +17,19 @@ class Screener {
     }
 
     mask (maskingFunction) {
-        this.commandList.push({
+        this._commandList.push({
             cmd: 'MASK',
             func: maskingFunction
         });
         return this;
+    }
+
+    universe () {
+        return this._universe;
+    }
+
+    commands () {
+        return this._commandList;
     }
 
 }
