@@ -10,11 +10,11 @@ let provider = new DataProvider();
 provider
 	.init()
 	.then(() => {
-		let strategy = require('./strategies/test/strategy');
+		let strategy = require('./strategies/emaCrossOver/strategy');
 		let options = {
 			initialAsset: 30000,
-			targetPositions: 2,
-			start: new Date('2016-05-01'),
+			targetPositions: 1,
+			start: new Date('2016-01-01'),
 			end: new Date('2016-06-30'),
 			tradeCommission: {
 				minimum: 50,

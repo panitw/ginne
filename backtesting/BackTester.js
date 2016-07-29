@@ -53,7 +53,8 @@ class BackTester {
                         this._addAnalysis(ctx, symbol, cmdObj.column, cmdObj.options, callback);
                     } else
                     if (cmdObj.cmd === 'MASK') {
-                        this._mask(ctx, symbol, cmdObj.column, cmdObj.options, callback);
+                        this._mask(ctx, symbol, cmdObj.column, cmdObj.func);
+                        callback();
                     }
                 }, callback);
             });
@@ -62,7 +63,7 @@ class BackTester {
         });
     }
 
-    _addAnalysis(ctx, symbol, toColumn, options, callback) {
+    _addAnalysis (ctx, symbol, toColumn, options, callback) {
         let dataFrame = ctx.analyzedData(symbol);
         let startIdx = 0;
         let endIdx = dataFrame.count() - 1;
@@ -110,12 +111,45 @@ class BackTester {
         });
     }
 
-    _mask(ctx, symbol, toColumn, options, callback) {
-        callback();
+    _mask (ctx, symbol, toColumn, func) {
+        let dataFrame = ctx.analyzedData(symbol);
+        let indices = dataFrame.index();
+        if (indices.length > 0) {
+            let prevRow = null;
+            for (var i=0; i<indices.length; i++) {
+                let row = dataFrame.row(indices[i]);
+                let maskValue = func(row, prevRow);
+                dataFrame.setValue(toColumn, indices[i], maskValue);
+                prevRow = row;
+            }
+        }
     }
 
     _processTradingActions (ctx, tradingActions, callback) {
         callback();
+    }
+
+    _printCSV (dataFrame) {
+        let output = [];
+        let columns = dataFrame.column();
+        console.log('"date",' + this._arrayToCSV(columns));
+
+        let indices = dataFrame.index();
+        for (let i=0; i<indices.length; i++) {
+            let dataRow = dataFrame.row(indices[i]);
+            let dataArray = [moment(indices[i]).format('YYYY-MM-DD')];
+            for (let j=0; j<columns.length; j++) {
+                dataArray.push(dataRow[columns[j]]);
+            }
+            console.log(this._arrayToCSV(dataArray));
+        }
+    }
+
+    _arrayToCSV (array) {
+        let output = JSON.stringify(array);
+        output = output.substring(1);
+        output = output.substring(0, output.length - 1);
+        return output;
     }
 
 }

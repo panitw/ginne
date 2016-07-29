@@ -5,31 +5,26 @@ const TradingActions = require('../../pipeline/TradingActions');
 //     Screening
 // -------------------
 
-var scr1 = new Screener(['A']);
-scr1.addAnalysis('slope', {
-        type: 'LINEARREG_SLOPE',
+var scr1 = new Screener(['ADVANC.BK']);
+scr1.addAnalysis('ema10', {
+        type: 'EMA',
         field: 'close',
         input: {
-            timePeriod: 5
+            timePeriod: 10
         }
     })
-    .addAnalysis('macd', {
-        type: 'MACD',
-        field: 'close',
-        input: {
-            fastPeriod: 12,
-            slowPeriod: 26,
-            signalPeriod: 9
-        }
-    })
-    .mask('trend_signal', function (row) {
-        if (row.slope_prev <= 0 && row.slope > 0) {
-            return true;
-        } else 
-        if (row.slope_prev > 0 && row.slope > 0) {
-            return true;
+    .mask('trend_signal', function (row, prevRow) {
+        if (prevRow) {
+            if (prevRow.close <= prevRow.ema10 && row.close > row.ema10) {
+                return 'B';
+            } else
+            if (prevRow.close > prevRow.ema10 && row.close <= row.ema10) {
+                return 'S';
+            } else {
+                return '-';
+            }
         } else {
-            return false;
+            return '-';
         }
     });
 

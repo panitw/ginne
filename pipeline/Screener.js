@@ -16,9 +16,10 @@ class Screener {
         return this;
     }
 
-    mask (maskingFunction) {
+    mask (columnName, maskingFunction) {
         this._commandList.push({
             cmd: 'MASK',
+            column: columnName,
             func: maskingFunction
         });
         return this;

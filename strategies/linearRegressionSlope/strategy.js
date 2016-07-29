@@ -5,20 +5,27 @@ const TradingActions = require('../../pipeline/TradingActions');
 //     Screening
 // -------------------
 
-var scr1 = new Screener('SET50');
+var scr1 = new Screener(['ADVANC.BK']);
 scr1.addAnalysis('slope', {
         type: 'LINEARREG_SLOPE',
         field: 'close',
         input: {
-            timePeriod: 5
+            timePeriod: 10
         }
     })
     .mask('trend_signal', function (row, prevRow) {
-        if (prevRow && prevRow.slope <= 0 && row.slope > 0) {
-            return true;
-        } else 
-        if (prevRow && prevRow.slope > 0 && row.slope > 0) {
-            return true;
+        if (prevRow) {
+            if (isNaN(prevRow.slope) || isNaN(row.slope)) {
+                return false;
+            } else
+            if (prevRow.slope <= 0 && row.slope > 0) {
+                return true;
+            } else 
+            if (prevRow.slope > 0 && row.slope > 0) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
