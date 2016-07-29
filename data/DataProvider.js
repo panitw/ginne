@@ -84,7 +84,9 @@ class DataProvider {
 					if (lastDate.getTime() < today.getTime()) {
 						let afterLast = moment(lastDate).add(1, 'day');
 						return this._srcPlugin.getData(symbol, afterLast).then((data) => {
-							return this._cachePlugin.addData(symbol, data);
+							if (data.length > 0) {
+								return this._cachePlugin.addData(symbol, data);
+							}
 						});
 					}
 				}
