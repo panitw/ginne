@@ -7,10 +7,10 @@ class TradingActions {
     }
 
     on (eventName, handler) {
-        if (!this.handler[eventName]) {
-            this.handler[eventName] = [];
+        if (!this.handlers[eventName]) {
+            this.handlers[eventName] = [];
         }
-        this.handler[eventName].push(handler);
+        this.handlers[eventName].push(handler);
     }
 
 }

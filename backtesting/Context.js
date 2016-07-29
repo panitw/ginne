@@ -1,3 +1,5 @@
+'use strict';
+
 class Context {
 
     constructor (options) {
@@ -9,3 +11,5 @@ class Context {
     }
 
 }
+
+module.exports = Context;

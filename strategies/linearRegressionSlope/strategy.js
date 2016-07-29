@@ -6,7 +6,7 @@ const TradingActions = require('../../pipeline/TradingActions');
 // -------------------
 
 var scr1 = new Screener('SET');
-src1.addAnalysis('slope', {
+scr1.addAnalysis('slope', {
         type: 'LINEARREG_SLOPE',
         period: 5,
         field: 'last'
@@ -32,7 +32,7 @@ src1.addAnalysis('slope', {
 //      Trading Actions
 // --------------------------
 
-var actions1 = new TradeActions();
+var actions1 = new TradingActions();
 actions1
     .on('dailyOpenAndClose', function (ctx) {
         // Validate all entries if we need to exit any position and exit if need to
