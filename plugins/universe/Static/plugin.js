@@ -12,6 +12,9 @@ class StaticUniverse {
     }
 
     getUniverse (universeName) {
+        if (Array.isArray(universeName)) {
+            return universeName;
+        } else
         if (universeName === 'SET') {
             return set;
         } else 

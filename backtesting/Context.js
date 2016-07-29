@@ -30,7 +30,7 @@ class Context {
     }
 
     screened() {
-        this._screened;
+        return this._screened;
     }
 
     equityGraph() {

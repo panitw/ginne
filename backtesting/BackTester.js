@@ -105,7 +105,14 @@ class BackTester {
 
                 talib.execute(taParam, (result) => {
                     //Save data to data frame
-                    
+                    if (result && result.result) {
+                        let resultLoc = 0;
+                        if (options.period) {
+                            resultLoc = (options.period - 1) - result.begIndex;
+                        }
+                        let resultValue = result.result.outReal[resultLoc];
+                        ctx.screened().setValue(toColumn, symbol, resultValue);
+                    }
 
                     //Go to the next symbol
                     callback();
