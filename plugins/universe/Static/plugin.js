@@ -1,6 +1,7 @@
 'use strict';
 
-const seti = require('./SETIndex');
+const set = require('./SET');
+const set50 = require('./SET50');
 
 class StaticUniverse {
 
@@ -12,8 +13,11 @@ class StaticUniverse {
 
     getUniverse (universeName) {
         if (universeName === 'SET') {
-            return seti;
-        } else {
+            return set;
+        } else 
+        if (universeName === 'SET50') {
+            return set50;
+        } else{
             return [];
         }
     }

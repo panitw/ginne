@@ -5,7 +5,7 @@ const TradingActions = require('../../pipeline/TradingActions');
 //     Screening
 // -------------------
 
-var scr1 = new Screener('SET');
+var scr1 = new Screener('SET50');
 scr1.addAnalysis('slope', {
         type: 'LINEARREG_SLOPE',
         period: 5,
@@ -45,7 +45,7 @@ actions1
         var symbol, position, row;
         for (symbol in ctx.positions) {
             //Exit signal
-            row = ctx.screener.row(symbol);
+            row = ctx.screened().row(symbol);
             if (row['trade_signal'] === false) {
                 exitList.push(symbol);
                 continue;
@@ -67,7 +67,7 @@ actions1
 
         // Adjust the stop loss price using trailing stop
         for (symbol in ctx.positions) {
-            row = ctx.screener.row(symbol);
+            row = ctx.screened().row(symbol);
             position = ctx.positions[symbol];
             var gapPercent = (row.last - position.cutLossTarget) / row.last;
             if (gapPercent > cutLossPercent) {
@@ -79,7 +79,7 @@ actions1
         // buy some more using the screening result (if there's some in the screening result)
         var morePosition = ctx.targetPositions - ctx.positionCount();
         if (morePosition > 0) {
-            var buySignal = ctx.screener.filter(function (row) {
+            var buySignal = ctx.screened().filter(function (row) {
                 return (row.trade_signal === true);
             });
             buySignal.sortBy('slope');

@@ -38,9 +38,15 @@ class MongoDBPlugin {
 	}	
 
 	getData(symbol, start, end) {
-		logger.debug('Getting data from MongoDB cache of ' + symbol + ' from ' + moment(start).format("YYYY-MM-DD") + ' to ' + moment(end).format("YYYY-MM-DD"));
-		let symbolCol = this._getSymbolCollection(symbol);
-		return symbolCol.find({d: {$gte: start, $lt: end}}, {_id: 0}).sort({d: -1}).toArray();
+		if (typeof end === 'number') {
+			logger.debug('Getting data from MongoDB cache of ' + symbol + ' from ' + moment(start).format("YYYY-MM-DD") + ' going back ' + end + ' days');
+			let symbolCol = this._getSymbolCollection(symbol);
+			return symbolCol.find({d: {$lte: start}}, {_id: 0}).sort({d: -1}).limit(end).toArray();
+		} else {
+			logger.debug('Getting data from MongoDB cache of ' + symbol + ' from ' + moment(start).format("YYYY-MM-DD") + ' to ' + moment(end).format("YYYY-MM-DD"));
+			let symbolCol = this._getSymbolCollection(symbol);
+			return symbolCol.find({d: {$gte: start, $lt: end}}, {_id: 0}).sort({d: -1}).toArray();
+		}
 	}
 
 	addData(symbol, data) {

@@ -21,29 +21,13 @@ class DataProvider {
 
 	getData(symbol, startDate, endDate, cacheOnly) {
 		return this._getData(symbol, startDate, endDate, cacheOnly).then((data) => {
-			var index = [];
-			var open = [];
-			var high = [];
-			var low = [];
-			var close = [];
-			var volume = [];
-			var output = data.forEach((item) => {
-				index.push(new Date(item.d));
-				open.push(item.o);
-				high.push(item.h);
-				low.push(item.l);
-				close.push(item.c);
-				volume.push(item.v);
-			});
-			var dataFrame = new fin.DataFrame({
-				open: new fin.Series(open, index),
-				high: new fin.Series(high, index),
-				low: new fin.Series(low, index),
-				close: new fin.Series(close, index),
-				volume: new fin.Series(volume, index)
-			});
+			return this._dataToDataFrame(data);
+		});
+	}
 
-			return dataFrame;
+	getCachedData(symbol, startDate, numberOfDaysBack) {
+		return this._getCachedData(symbol, startDate, numberOfDaysBack).then((data) => {
+			return this._dataToDataFrame(data);
 		});
 	}
 
@@ -106,6 +90,34 @@ class DataProvider {
 		return promise;
 	}
 
+	_getCachedData(symbol, startDate, numberOfDaysBack) {
+		return this._cachePlugin.getData(symbol, startDate, numberOfDaysBack);
+	}
+
+	_dataToDataFrame(data) {
+		var index = [];
+		var open = [];
+		var high = [];
+		var low = [];
+		var close = [];
+		var volume = [];
+		var output = data.forEach((item) => {
+			index.push(new Date(item.d));
+			open.push(item.o);
+			high.push(item.h);
+			low.push(item.l);
+			close.push(item.c);
+			volume.push(item.v);
+		});
+		var dataFrame = new fin.DataFrame({
+			open: new fin.Series(open, index),
+			high: new fin.Series(high, index),
+			low: new fin.Series(low, index),
+			close: new fin.Series(close, index),
+			volume: new fin.Series(volume, index)
+		});
+		return dataFrame;
+	}
 }
 
 module.exports = DataProvider;
