@@ -1,0 +1,12 @@
+{
+	"universe" : {
+		"plugin" : "Static"
+	},
+	"source" : {
+		"plugin" : "Eikon",
+		"environment" : "prod"
+	},
+	"cache" : {
+		"plugin" : "Static"
+	}
+}

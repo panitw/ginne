@@ -105,6 +105,7 @@ class BackTester {
 
                 talib.execute(taParam, (result) => {
                     //Save data to data frame
+                    let internalTaParam = taParam;
                     if (result && result.result) {
                         let resultLoc = 0;
                         if (options.period) {

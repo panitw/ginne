@@ -1,7 +1,14 @@
 'use strict';
 
+const argv = require('yargs').argv;
 const path = require('path');
-const config = require('../config');
+
+let configFile = 'config';
+if (argv.config) {
+	configFile = argv.config;
+}
+
+const config = require('../' + configFile);
 
 const _instances = {};
 
