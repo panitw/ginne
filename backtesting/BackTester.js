@@ -5,6 +5,7 @@ const Context = require('./Context');
 const logger = require('winston');
 const async = require('async');
 const moment = require('moment');
+const fin = require('fin-data');
 const talib = require('talib');
 
 class BackTester {
@@ -24,109 +25,78 @@ class BackTester {
         let dateIndex = options.start;
 
         ctx.setUniverse(universe);
-        ctx.setCurrentDate(dateIndex);
 
         return new Promise((resolve, reject) => {
-            
-            //Process each day
-            async.whilst(
-                () => {
-                    return dateIndex.getTime() <= options.end.getTime();
+            async.series([
+                (callback) => {
+                    this._processScreener(ctx, screener, callback);
                 },
                 (callback) => {
-                    logger.debug('Processing ' + moment(dateIndex).format('DD-MM-YYYY'));
-
-                    async.series([
-                        (callback) => {
-                            this._processScreener(ctx, screener, callback);
-                        },
-                        (callback) => {
-                            this._processTradingActions(ctx, tradingActions, callback);
-                        }
-                    ], (err) => {
-                        //Go to the next date if there's no error
-                        if (!err) {
-                            dateIndex = moment(dateIndex).add(1, 'day').toDate();
-                            ctx.setCurrentDate(dateIndex);
-                        }
-                        callback(err);
-                    });
-                },
-                (err) => {
-                    if (!err) resolve(); else reject(err);
+                    this._processTradingActions(ctx, tradingActions, callback);
                 }
-            );
-
+            ], (err) => {
+                if (!err) resolve(); else reject(err);
+            });
         });
-
     }
 
     _processScreener (ctx, screener, callback) {
-        async.eachSeries(screener.commands(), (cmdObj, callback) => {
-            if (cmdObj.cmd === 'ANALYSIS') {
-                this._addAnalysis(ctx, ctx.universe(), cmdObj.column, cmdObj.options, callback);
-            } else
-            if (cmdObj.cmd === 'MASK') {
-                this._mask(ctx, ctx.universe(), cmdObj.column, cmdObj.options, callback);                
-            }
-        }, callback);
-    }
-
-    _addAnalysis(ctx, universe, toColumn, options, callback) {
+        let universe = ctx.universe();
         async.eachSeries(universe, (symbol, callback) => {
-            //data query period
-            let start = ctx.currentDate();
-            let end = start;
-            let startIdx = 0;
-            let endIdx = 0;
-            if (options.period) {
-                end = options.period;
-                endIdx = options.period - 1;
-            }
-            if (options.offset < 0) {
-                end -= options.offset;
-            }
-            this._dataProvider.getCachedData(symbol, start, end).then((data) => {
-                //Prepare analysis object
-                let taParam = {
-                    name: options.type,
-                    startIdx: 0,
-                    endIdx: endIdx,
-                    optInTimePeriod: options.period
-                };
-                if (options.field) {
-                    taParam.inReal = data.value(options.field);
-                }
-                taParam.open = data.value('open');
-                taParam.high = data.value('high');
-                taParam.low = data.value('low');
-                taParam.close = data.value('close');
-                taParam.volume = data.value('volume');
+            //Get basic time series data
+            this._dataProvider.getCachedData(symbol, ctx.startDate(), ctx.endDate()).then((data) => {
+                ctx.setAnalyzedData(symbol, data);
 
-                talib.execute(taParam, (result) => {
-                    //Save data to data frame
-                    let internalTaParam = taParam;
-                    if (result && result.result) {
-                        let resultLoc = 0;
-                        if (options.period) {
-                            resultLoc = (options.period - 1) - result.begIndex;
-                        }
-                        let resultValue = result.result.outReal[resultLoc];
-                        ctx.screened().setValue(toColumn, symbol, resultValue);
+                //Add analysis as in the commands
+                async.eachSeries(screener.commands(), (cmdObj, callback) => {
+                    if (cmdObj.cmd === 'ANALYSIS') {
+                        this._addAnalysis(ctx, symbol, cmdObj.column, cmdObj.options, callback);
+                    } else
+                    if (cmdObj.cmd === 'MASK') {
+                        this._mask(ctx, symbol, cmdObj.column, cmdObj.options, callback);
                     }
-
-                    //Go to the next symbol
-                    callback();
-                });
-            }).catch((err) => {
-                callback(err);
+                }, callback);
             });
         }, (err) => {
             callback(err);
         });
     }
 
-    _mask(ctx, universe, toColumn, options, callback) {
+    _addAnalysis(ctx, symbol, toColumn, options, callback) {
+        let dataFrame = ctx.analyzedData(symbol);
+        let startIdx = 0;
+        let endIdx = dataFrame.count() - 1;
+
+        //Prepare analysis object
+        let taParam = {
+            name: options.type,
+            startIdx: startIdx,
+            endIdx: endIdx
+        };
+        if (options.period) {
+            taParam.optInTimePeriod = options.period;
+        }
+        if (options.field) {
+            taParam.inReal = dataFrame.value(options.field);
+        }
+        taParam.open = dataFrame.value('open');
+        taParam.high = dataFrame.value('high');
+        taParam.low = dataFrame.value('low');
+        taParam.close = dataFrame.value('close');
+        taParam.volume = dataFrame.value('volume');
+
+        talib.execute(taParam, (result) => {
+            //Save data to data frame
+            if (result && result.result) {
+                let indices = dataFrame.index().slice(result.begIndex, result.begIndex + result.nbElement);
+                let newSeries = new fin.Series(result.result.outReal, indices);
+                dataFrame.addColumn(newSeries, toColumn);
+            }
+            callback();
+        });
+    }
+
+    _mask(ctx, symbol, toColumn, options, callback) {
         callback();
     }
 

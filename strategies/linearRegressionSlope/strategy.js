@@ -11,17 +11,11 @@ scr1.addAnalysis('slope', {
         period: 5,
         field: 'close'
     })
-    .addAnalysis('slope_prev', {
-        type: 'LINEARREG_SLOPE',
-        period: 5,
-        field: 'close',
-        offset: -1
-    })
-    .mask('trend_signal', function (row) {
-        if (row.slope_prev <= 0 && row.slope > 0) {
+    .mask('trend_signal', function (row, prevRow) {
+        if (prevRow && prevRow.slope <= 0 && row.slope > 0) {
             return true;
         } else 
-        if (row.slope_prev > 0 && row.slope > 0) {
+        if (prevRow && prevRow.slope > 0 && row.slope > 0) {
             return true;
         } else {
             return false;

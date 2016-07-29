@@ -6,19 +6,20 @@ class Context {
 
     constructor (options) {
         this._initialAsset = options.initialAsset;
-        this._currentDate = null;
+        this._startDate = options.start;
+        this._endDate = options.end;
         this._universe = null;
-        this._screened = new fin.DataFrame();
+        this._analyzedData = {};
         this._equityGraph = new fin.DataFrame();
         this._transactions = [];
     }
 
-    currentDate() {
-        return this._currentDate;
+    startDate() {
+        return this._startDate;
     }
 
-    setCurrentDate (date) {
-        this._currentDate = date;
+    endDate() {
+        return this._endDate;
     }
 
     universe () {
@@ -29,8 +30,20 @@ class Context {
         this._universe = universe;
     }
 
-    screened() {
-        return this._screened;
+    analyzedData (symbol, opt_date) {
+        if (!opt_date) {
+            return this._analyzedData[symbol];
+        } else {
+            if (this._analyzedData[symbol]) {
+                return this._analyzedData[symbol].row(opt_date);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    setAnalyzedData (symbol, dataFrame) {
+        this._analyzedData[symbol] = dataFrame;
     }
 
     equityGraph() {

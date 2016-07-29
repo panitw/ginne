@@ -14,8 +14,8 @@ provider
 		let options = {
 			initialAsset: 30000,
 			targetPositions: 2,
-			start: new Date('2016-07-01'),
-			end: new Date('2016-07-05'),
+			start: new Date('2016-06-01'),
+			end: new Date('2016-06-30'),
 			tradeCommission: {
 				minimum: 50,
 				percent: 0.1578
