@@ -16,18 +16,21 @@ scr1.addAnalysis('slope', {
     .mask('trend_signal', function (row, prevRow) {
         if (prevRow) {
             if (isNaN(prevRow.slope) || isNaN(row.slope)) {
-                return false;
+                return '-';
             } else
-            if (prevRow.slope <= 0 && row.slope > 0) {
-                return true;
+            if (prevRow.slope <= 0.3 && row.slope >= 0.3) {
+                return 'B';
             } else 
-            if (prevRow.slope > 0 && row.slope > 0) {
-                return true;
+            if (prevRow.slope >= 0.3 && row.slope >= 0.3) {
+                return 'H';
+            } else 
+            if (prevRow.slope > 0 && row.slope <= 0) {
+                return 'S';
             } else {
-                return false;
+                return '-';
             }
         } else {
-            return false;
+            return '-';
         }
     });
 

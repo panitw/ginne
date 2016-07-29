@@ -10,7 +10,7 @@ let provider = new DataProvider();
 provider
 	.init()
 	.then(() => {
-		let strategy = require('./strategies/emaCrossOver/strategy');
+		let strategy = require('./strategies/linearRegressionSlope/strategy');
 		let options = {
 			initialAsset: 30000,
 			targetPositions: 1,
