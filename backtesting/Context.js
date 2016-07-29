@@ -7,6 +7,7 @@ class Context {
     constructor (options) {
         this._initialAsset = options.initialAsset;
         this._currentDate = null;
+        this._universe = null;
         this._screened = new fin.DataFrame();
         this._equityGraph = new fin.DataFrame();
         this._transactions = [];
@@ -18,6 +19,14 @@ class Context {
 
     setCurrentDate (date) {
         this._currentDate = date;
+    }
+
+    universe () {
+        return this._universe;
+    }
+
+    setUniverse (universe) {
+        this._universe = universe;
     }
 
     screened() {

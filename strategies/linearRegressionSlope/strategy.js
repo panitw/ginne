@@ -9,12 +9,12 @@ var scr1 = new Screener('SET50');
 scr1.addAnalysis('slope', {
         type: 'LINEARREG_SLOPE',
         period: 5,
-        field: 'last'
+        field: 'close'
     })
     .addAnalysis('slope_prev', {
         type: 'LINEARREG_SLOPE',
         period: 5,
-        field: 'last',
+        field: 'close',
         offset: -1
     })
     .mask('trend_signal', function (row) {
