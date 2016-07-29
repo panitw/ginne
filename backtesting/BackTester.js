@@ -73,8 +73,11 @@ class BackTester {
             startIdx: startIdx,
             endIdx: endIdx
         };
-        if (options.period) {
-            taParam.optInTimePeriod = options.period;
+        if (options.input) {
+            for (let inputName in options.input) {
+                var upperFirst = inputName[0].toUpperCase() + inputName.substring(1);
+                taParam['optIn' + upperFirst] = options.input[inputName];
+            }
         }
         if (options.field) {
             taParam.inReal = dataFrame.value(options.field);
@@ -86,11 +89,22 @@ class BackTester {
         taParam.volume = dataFrame.value('volume');
 
         talib.execute(taParam, (result) => {
-            //Save data to data frame
+            if (result.error) {
+                callback(result.error);
+                return;
+            } else
             if (result && result.result) {
-                let indices = dataFrame.index().slice(result.begIndex, result.begIndex + result.nbElement);
-                let newSeries = new fin.Series(result.result.outReal, indices);
-                dataFrame.addColumn(newSeries, toColumn);
+                for (let resultName in result.result) {
+                    let indices = dataFrame.index().slice(result.begIndex, result.begIndex + result.nbElement);
+                    let newSeries = new fin.Series(result.result[resultName], indices);
+                    let column = null;
+                    if (resultName === 'outReal') {
+                        column = toColumn;
+                    } else {
+                        column = toColumn + '_' + resultName.substring(3);
+                    }
+                    dataFrame.addColumn(newSeries, column);
+                }
             }
             callback();
         });

@@ -8,14 +8,19 @@ const TradingActions = require('../../pipeline/TradingActions');
 var scr1 = new Screener(['A']);
 scr1.addAnalysis('slope', {
         type: 'LINEARREG_SLOPE',
-        period: 5,
-        field: 'close'
-    })
-    .addAnalysis('slope_prev', {
-        type: 'LINEARREG_SLOPE',
-        period: 5,
         field: 'close',
-        offset: -1
+        input: {
+            timePeriod: 5
+        }
+    })
+    .addAnalysis('macd', {
+        type: 'MACD',
+        field: 'close',
+        input: {
+            fastPeriod: 12,
+            slowPeriod: 26,
+            signalPeriod: 9
+        }
     })
     .mask('trend_signal', function (row) {
         if (row.slope_prev <= 0 && row.slope > 0) {

@@ -8,8 +8,10 @@ const TradingActions = require('../../pipeline/TradingActions');
 var scr1 = new Screener('SET50');
 scr1.addAnalysis('slope', {
         type: 'LINEARREG_SLOPE',
-        period: 5,
-        field: 'close'
+        field: 'close',
+        input: {
+            timePeriod: 5
+        }
     })
     .mask('trend_signal', function (row, prevRow) {
         if (prevRow && prevRow.slope <= 0 && row.slope > 0) {

@@ -14,7 +14,7 @@ provider
 		let options = {
 			initialAsset: 30000,
 			targetPositions: 2,
-			start: new Date('2016-06-01'),
+			start: new Date('2016-05-01'),
 			end: new Date('2016-06-30'),
 			tradeCommission: {
 				minimum: 50,
@@ -30,7 +30,7 @@ provider
 				
 			})
 			.catch((err) => {
-
+				logger.error(err);
 			});
 	})
 	.catch((err) => {
