@@ -126,6 +126,36 @@ class BackTester {
     }
 
     _processTradingActions (ctx, tradingActions, callback) {
+        //Loop through each day of the specified period
+        let runner = ctx.startDate();
+        let end = ctx.endDate();
+
+        async.whilst(
+            () => {
+                return runner.getTime() <= end.getTime()
+            },
+            (callback) => {
+                //Create a new data frame that contains the row of all the instrument in the universe
+                let universe = ctx.getUniverse();
+                let dayData = new fin.DataFrame();
+                let foundAnyData = false;
+                for (let i=0; i<universe.length; i++) {
+                    let symbol = universe[i];
+                    let data = ctx.analyzedData(symbol);
+                    if (data) {
+                        foundAnyData = true;
+                        
+                    }
+                }
+
+                //Consider the day as a valid day if there are some data
+                
+                //Process each stage of event if there's any valid data for that day
+
+
+                runner = moment(runner).add(1, 'day').toDate();                
+            }
+        );
         callback();
     }
 
