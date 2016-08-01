@@ -6,6 +6,10 @@ class TradingActions {
         this.handlers = {};
     }
 
+    handlers (eventName) {
+        return this.handles[eventName];
+    }
+
     on (eventName, handler) {
         if (!this.handlers[eventName]) {
             this.handlers[eventName] = [];

@@ -40,7 +40,7 @@ scr1.addAnalysis('slope', {
 
 var actions1 = new TradingActions();
 actions1
-    .on('dailyOpenAndClose', function (ctx) {
+    .on('marketOpen', function (ctx) {
         // Validate all entries if we need to exit any position and exit if need to
         // Exit Criteria:
         //  - exit signal        

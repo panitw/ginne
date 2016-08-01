@@ -129,33 +129,43 @@ class BackTester {
         //Loop through each day of the specified period
         let runner = ctx.startDate();
         let end = ctx.endDate();
+        let prevData = null;
 
-        async.whilst(
-            () => {
-                return runner.getTime() <= end.getTime()
-            },
-            (callback) => {
-                //Create a new data frame that contains the row of all the instrument in the universe
-                let universe = ctx.getUniverse();
-                let dayData = new fin.DataFrame();
-                let foundAnyData = false;
-                for (let i=0; i<universe.length; i++) {
-                    let symbol = universe[i];
-                    let data = ctx.analyzedData(symbol);
-                    if (data) {
-                        foundAnyData = true;
-                        
+        while (runner.getTime() <= end.getTime()) {
+            //Create a new data frame that contains the row of all the instrument in the universe
+            let universe = ctx.getUniverse();
+            let dayData = new fin.DataFrame();
+            let foundAnyData = false;
+            for (let i=0; i<universe.length; i++) {
+                let symbol = universe[i];
+                let symbolData = ctx.analyzedData(symbol);
+                let data = symbolData.value(runner);
+                if (data) {
+                    foundAnyData = true;
+                    dayData.setRow(runner, data);
+                }
+            }
+
+            //Consider the day as a valid day if there are some data, then
+            //process each stage of event if there's any valid data for that day
+            if (foundAnyData) {                
+                //Before Market Opened
+                if (prevData) {
+                    ctx.setLatestData(prevData);
+                    let handlers = tradingActions.handlers('marketOpen');
+                    if (handlers && handlers.length > 0) {
+                        for (let i=0; i<handlers.length; i++) {
+                            handlers[i](ctx);
+                        }
                     }
                 }
 
-                //Consider the day as a valid day if there are some data
-                
-                //Process each stage of event if there's any valid data for that day
-
-
-                runner = moment(runner).add(1, 'day').toDate();                
+                //Store Prev Data for later round
+                prevData = data;
             }
-        );
+            
+            runner = moment(runner).add(1, 'day').toDate();
+        }
         callback();
     }
 

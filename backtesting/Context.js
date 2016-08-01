@@ -8,18 +8,29 @@ class Context {
         this._initialAsset = options.initialAsset;
         this._startDate = options.start;
         this._endDate = options.end;
+        this._targetPositions = options.targetPositions;
         this._universe = null;
+        this._latestData = null;
         this._analyzedData = {};
         this._equityGraph = new fin.DataFrame();
         this._transactions = [];
+        this._positions = [];
     }
 
-    startDate() {
+    startDate () {
         return this._startDate;
     }
 
-    endDate() {
+    endDate () {
         return this._endDate;
+    }
+
+    positions () {
+        return this._positions;
+    }
+
+    targetPositions () {
+        return this._targetPositions;
     }
 
     universe () {
@@ -46,7 +57,15 @@ class Context {
         this._analyzedData[symbol] = dataFrame;
     }
 
-    equityGraph() {
+    latestData () {
+        return this._latestData;
+    }
+
+    setLatestData (data) {
+        this._latestData = data;
+    }
+
+    equityGraph () {
         return this._equityGraph;
     }
 
