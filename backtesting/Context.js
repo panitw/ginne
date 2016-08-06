@@ -134,13 +134,23 @@ class Context {
         if (!this._positions[symbol]) {
             throw new Error('No position to sell for ' + symbol);
         }
+        let position = this._positions[symbol];
+
+        //Throw error if there's no position to sell
+        if (position.number() < number) {
+            throw new Error('There \'s no position to be sold for ' + symbol);
+        }
 
         //Set position number
-        let position = this._positions[symbol];
         position.setNumber(position.number() - number);
 
         //Adjust asset in hand
         this._asset += number * atPrice;
+
+        //If there's no more position, remove it from the position list
+        if (position.number() === 0) {
+            delete this._positions[symbol];
+        }
 
         //Log transaction
         this.addTransaction('S', this._currentDate, symbol, number, atPrice);

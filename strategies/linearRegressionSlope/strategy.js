@@ -51,6 +51,7 @@ actions1
         for (symbol in ctx.positions()) {
             //Exit signal
             row = ctx.latestData().row(symbol);
+            console.log(ctx.currentDate(), row.trend_signal, row.close);
             if (row.trend_signal === 'S') {
                 exitList.push(symbol);
                 continue;
