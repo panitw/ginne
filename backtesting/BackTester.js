@@ -133,7 +133,7 @@ class BackTester {
 
         while (runner.getTime() <= end.getTime()) {
             //Create a new data frame that contains the row of all the instrument in the universe
-            let universe = ctx.getUniverse();
+            let universe = ctx.universe();
             let dayData = new fin.DataFrame();
             let foundAnyData = false;
             for (let i=0; i<universe.length; i++) {

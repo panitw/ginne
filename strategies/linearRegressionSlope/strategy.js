@@ -46,10 +46,10 @@ actions1
         //  - exit signal        
         //  - cut loss
         var cutLossPercent = 0.1;
-        var percentPositionSize = 1 / ctx.targetPositions;
+        var percentPositionSize = 1 / ctx.targetPositions();
         var exitList = [];
         var symbol, position, row;
-        for (symbol in ctx.positions) {
+        for (symbol in ctx.positions()) {
             //Exit signal
             row = ctx.screened().row(symbol);
             if (row['trade_signal'] === false) {
@@ -58,7 +58,7 @@ actions1
             }
 
             //Cut-loss
-            position = ctx.positions[symbol];
+            position = ctx.positions()[symbol];
             if (row.last <= position.cutLossTarget) {
                 exitList.push(symbol);
                 continue;
