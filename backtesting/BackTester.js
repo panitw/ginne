@@ -139,7 +139,7 @@ class BackTester {
             for (let i=0; i<universe.length; i++) {
                 let symbol = universe[i];
                 let symbolData = ctx.analyzedData(symbol);
-                let data = symbolData.value(runner);
+                let data = symbolData.row(runner);
                 if (data) {
                     foundAnyData = true;
                     dayData.setRow(runner, data);
@@ -161,7 +161,7 @@ class BackTester {
                 }
 
                 //Store Prev Data for later round
-                prevData = data;
+                prevData = dayData;
             }
             
             runner = moment(runner).add(1, 'day').toDate();

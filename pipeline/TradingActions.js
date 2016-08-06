@@ -3,18 +3,18 @@
 class TradingActions {
 
     constructor () {
-        this.handlers = {};
+        this._handlers = {};
     }
 
     handlers (eventName) {
-        return this.handles[eventName];
+        return this._handlers[eventName];
     }
 
     on (eventName, handler) {
-        if (!this.handlers[eventName]) {
-            this.handlers[eventName] = [];
+        if (!this._handlers[eventName]) {
+            this._handlers[eventName] = [];
         }
-        this.handlers[eventName].push(handler);
+        this._handlers[eventName].push(handler);
     }
 
 }
