@@ -50,8 +50,8 @@ actions1
         let symbol, position, row;
         for (symbol in ctx.positions()) {
             //Exit signal
-            row = ctx.screened().row(symbol);
-            if (row['trade_signal'] === false) {
+            row = ctx.latestData().row(symbol);
+            if (row.trend_signal === 'S') {
                 exitList.push(symbol);
                 continue;
             }
@@ -72,7 +72,7 @@ actions1
 
         // Adjust the stop loss price using trailing stop
         for (symbol in ctx.positions) {
-            row = ctx.screened().row(symbol);
+            row = ctx.latestData().row(symbol);
             position = ctx.positions[symbol];
             let gapPercent = (row.last - position.cutLossTarget) / row.last;
             if (gapPercent > cutLossPercent) {

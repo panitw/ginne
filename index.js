@@ -20,7 +20,7 @@ provider
 				minimum: 50,
 				percent: 0.1578
 			},
-			slippagePercent: 0.2
+			slippagePercent: 0.02
 		};
 
 		let tester = new BackTester(provider);

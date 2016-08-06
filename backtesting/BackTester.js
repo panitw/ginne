@@ -33,6 +33,10 @@ class BackTester {
                 },
                 (callback) => {
                     this._processTradingActions(ctx, tradingActions, callback);
+                },
+                (callback) => {
+                    ctx.closeAllPositions();
+                    console.log('Final Assets: ' + ctx.asset());
                 }
             ], (err) => {
                 if (!err) resolve(); else reject(err);
@@ -130,6 +134,7 @@ class BackTester {
         let runner = ctx.startDate();
         let end = ctx.endDate();
         let prevData = null;
+        let lastValidRow = {};
 
         while (runner.getTime() <= end.getTime()) {
             //Create a new data frame that contains the row of all the instrument in the universe
@@ -143,14 +148,28 @@ class BackTester {
                 if (data) {
                     foundAnyData = true;
                     dayData.setRow(symbol, data);
+                    lastValidRow[symbol] = data;
                 }
             }
 
             //Consider the day as a valid day if there are some data, then
             //process each stage of event if there's any valid data for that day
             if (foundAnyData) {                
+                //Make sure that there's a row for each symbol in the universe, if not, use data from
+                //last valid row
+                let availableSymbols = dayData.index();
+                for (let i=0; i<universe.length; i++) {
+                    if (availableSymbols.indexOf(universe[i]) === -1) {
+                        let lastValid = lastValidRow[universe[i]];
+                        if (lastValid) {
+                            dayData.setRow(universe[i], lastValid);
+                        }
+                    }
+                }
+
                 //Before Market Opened
                 if (prevData) {
+                    ctx.setCurrentDate(runner);
                     ctx.setLatestData(prevData);
                     let handlers = tradingActions.handlers('marketOpen');
                     if (handlers && handlers.length > 0) {
