@@ -14,7 +14,7 @@ class Context {
         this._analyzedData = {};
         this._equityGraph = new fin.DataFrame();
         this._transactions = [];
-        this._positions = [];
+        this._positions = {};
     }
 
     startDate () {
@@ -31,6 +31,10 @@ class Context {
 
     targetPositions () {
         return this._targetPositions;
+    }
+
+    positionCount () {
+        return Object.keys(this._positions).length;
     }
 
     universe () {

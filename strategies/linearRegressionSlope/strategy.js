@@ -1,3 +1,5 @@
+'use strict';
+
 const Screener = require('../../pipeline/Screener');
 const TradingActions = require('../../pipeline/TradingActions');
 
@@ -18,13 +20,10 @@ scr1.addAnalysis('slope', {
             if (isNaN(prevRow.slope) || isNaN(row.slope)) {
                 return '-';
             } else
-            if (prevRow.slope <= 0.3 && row.slope >= 0.3) {
+            if (row.slope >= 0.3) {
                 return 'B';
-            } else 
-            if (prevRow.slope >= 0.3 && row.slope >= 0.3) {
-                return 'H';
-            } else 
-            if (prevRow.slope > 0 && row.slope <= 0) {
+            } else
+            if (prevRow.slope >= 0.1 && row.slope < 0.1) {
                 return 'S';
             } else {
                 return '-';
@@ -38,17 +37,17 @@ scr1.addAnalysis('slope', {
 //      Trading Actions
 // --------------------------
 
-var actions1 = new TradingActions();
+let actions1 = new TradingActions();
 actions1
     .on('marketOpen', function (ctx) {
         // Validate all entries if we need to exit any position and exit if need to
         // Exit Criteria:
         //  - exit signal        
         //  - cut loss
-        var cutLossPercent = 0.1;
-        var percentPositionSize = 1 / ctx.targetPositions();
-        var exitList = [];
-        var symbol, position, row;
+        let cutLossPercent = 0.1;
+        let percentPositionSize = 1 / ctx.targetPositions();
+        let exitList = [];
+        let symbol, position, row;
         for (symbol in ctx.positions()) {
             //Exit signal
             row = ctx.screened().row(symbol);
@@ -66,7 +65,7 @@ actions1
         }
 
         // Close the position for existing symbol
-        for (var i=0;i< exitList.length; i++) {
+        for (let i=0;i< exitList.length; i++) {
             symbol = exitList[i];
             ctx.setPositionPercent(symbol, 0);
         }
@@ -75,7 +74,7 @@ actions1
         for (symbol in ctx.positions) {
             row = ctx.screened().row(symbol);
             position = ctx.positions[symbol];
-            var gapPercent = (row.last - position.cutLossTarget) / row.last;
+            let gapPercent = (row.last - position.cutLossTarget) / row.last;
             if (gapPercent > cutLossPercent) {
                 position.cutLossTarget = row.last - (row.last * cutLossPercent);
             }
@@ -83,14 +82,15 @@ actions1
 
         // if the portfolio is empty, or less than the expected number of stocks
         // buy some more using the screening result (if there's some in the screening result)
-        var morePosition = ctx.targetPositions - ctx.positionCount();
+        let morePosition = ctx.targetPositions() - ctx.positionCount();
         if (morePosition > 0) {
-            var buySignal = ctx.screened().filter(function (row) {
-                return (row.trade_signal === true);
+            let latestData = ctx.latestData();
+            let buySignal = latestData.filter(function (row) {
+                return (row.trend_signal === 'B');
             });
-            buySignal.sortBy('slope');
-            var topSymbols = buySignal.top(morePosition).index();
-            for (var i=0; i<topSymbols.length; i++) {
+            buySignal.sort('slope', 'd');
+            let topSymbols = buySignal.index().slice(0, morePosition);
+            for (let i=0; i<topSymbols.length; i++) {
                 ctx.setPositionPercent(topSymbols[i], percentPositionSize);
             }
         }

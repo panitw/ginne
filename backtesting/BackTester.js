@@ -142,7 +142,7 @@ class BackTester {
                 let data = symbolData.row(runner);
                 if (data) {
                     foundAnyData = true;
-                    dayData.setRow(runner, data);
+                    dayData.setRow(symbol, data);
                 }
             }
 
