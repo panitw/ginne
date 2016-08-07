@@ -139,7 +139,7 @@ class Context {
             this._positions[symbol] = new Position(0);
         }
         let portSize = this.portfolioSize();
-        let symbolPrice = parseFloat(this._latestData.value('open', symbol));
+        let symbolPrice = this._latestData.value('open', symbol);
         if (!isNaN(symbolPrice)) {
             let position = this._positions[symbol];
             let currentPositionSize = symbolPrice * position.number();
