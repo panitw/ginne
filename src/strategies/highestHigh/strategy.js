@@ -12,14 +12,14 @@ scr1.addAnalysis('max', {
         type: 'MAX',
         field: 'close',
         input: {
-            timePeriod: 50
+            timePeriod: 80
         }
     })
     .addAnalysis('min', {
         type: 'MIN',
         field: 'close',
         input: {
-            timePeriod: 20
+            timePeriod: 40
         }
     })
     .mask('enough_volume', function (row) {
@@ -29,12 +29,12 @@ scr1.addAnalysis('max', {
             return 'N';
         }
     })
-    .mask('trade_signal', function (row) {
-        if (row) {
-            if (!isNaN(row.max) && row.close >= row.max) {
+    .mask('trade_signal', function (row, prevRow) {
+        if (row && prevRow) {
+            if (!isNaN(prevRow.max) && row.close > prevRow.max) {
                 return 'B';
             } else
-            if (!isNaN(row.min) && row.close <= row.min) {
+            if (!isNaN(prevRow.min) && row.close < prevRow.min) {
                 return 'S';
             } else {
                 return '-';
@@ -64,7 +64,7 @@ actions1
         let symbol, position, row;
         for (symbol in ctx.positions()) {
             //Exit signal
-            row = ctx.latestData().row(symbol);
+            row = ctx.previousData().row(symbol);
             if (row.trade_signal === 'S') {
                 exitList.push(symbol);
                 continue;
@@ -86,7 +86,7 @@ actions1
 
         // Adjust the stop loss price using trailing stop
         for (symbol in ctx.positions) {
-            row = ctx.latestData().row(symbol);
+            row = ctx.previousData().row(symbol);
             position = ctx.positions[symbol];
             let gapPercent = (row.last - position.cutLossTarget) / row.last;
             if (gapPercent > cutLossPercent) {
@@ -98,13 +98,14 @@ actions1
         // buy some more using the screening result (if there's some in the screening result)
         let morePosition = ctx.targetPositions() - ctx.positionCount();
         if (morePosition > 0) {
-            let latestData = ctx.latestData();
-            let buySignal = latestData.filter(function (row) {
+            let prevData = ctx.previousData();
+            let buySignal = prevData.filter(function (row) {
                 return row.trade_signal === 'B' && row.enough_volume === 'Y';
             });
             buySignal.sort('higher_ratio', 'd');
             let topSymbols = buySignal.index().slice(0, morePosition);
             for (let i=0; i<topSymbols.length; i++) {
+                //console.log(ctx.previousData().row(topSymbols[i]));
                 ctx.setPositionPercent(topSymbols[i], percentPositionSize);
             }
         }

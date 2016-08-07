@@ -16,6 +16,7 @@ class Context {
         this._vat = options.vat;
         this._universe = null;
         this._latestData = null;
+        this._previousData = null;
         this._analyzedData = {};
         this._equityGraph = new fin.DataFrame();
         this._transactions = [];
@@ -88,6 +89,14 @@ class Context {
         this._latestData = data;
     }
 
+    previousData () {
+        return this._previousData;
+    }
+
+    setPreviousData (data) {
+        this._previousData = data;
+    }
+
     equityGraph () {
         return this._equityGraph;
     }
@@ -118,7 +127,8 @@ class Context {
         let sum = 0;
         for (let symbol in this._positions) {
             let position = this._positions[symbol];
-            let lastPrice = this._latestData.value('close', symbol);
+            //Use end of day price to calculate the portfolio size of the day
+            let lastPrice = this._previousData.value('close', symbol);
             if (!isNaN(lastPrice)) {
                 sum += (lastPrice * position.number());
             } else {
@@ -139,7 +149,10 @@ class Context {
             this._positions[symbol] = new Position(0);
         }
         let portSize = this.portfolioSize();
+
+        //Buy at the open price of the day
         let symbolPrice = this._latestData.value('open', symbol);
+
         if (!isNaN(symbolPrice)) {
             let position = this._positions[symbol];
             let currentPositionSize = symbolPrice * position.number();

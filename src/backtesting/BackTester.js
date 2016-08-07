@@ -116,6 +116,7 @@ class BackTester {
                         column = toColumn + '_' + resultName.substring(3);
                     }
                     dataFrame.addColumn(newSeries, column);
+                    //this._printCSV(dataFrame);
                 }
             }
             callback();
@@ -141,6 +142,7 @@ class BackTester {
         let runner = ctx.startDate();
         let end = ctx.endDate();
         let lastValidRow = {};
+        let prevData = null;
 
         while (runner.getTime() <= end.getTime()) {
             //Create a new data frame that contains the row of all the instrument in the universe
@@ -174,8 +176,9 @@ class BackTester {
                 }
 
                 //Before Market Opened
-                if (dayData) {
+                if (prevData && dayData) {
                     ctx.setCurrentDate(runner);
+                    ctx.setPreviousData(prevData);
                     ctx.setLatestData(dayData);
                     let handlers = tradingActions.handlers('marketOpen');
                     if (handlers && handlers.length > 0) {
@@ -188,6 +191,7 @@ class BackTester {
                 //Process EOD commission
                 ctx.endOfDayProcessing();
 
+                prevData = dayData;
             }
             
             runner = moment(runner).add(1, 'day').toDate();
