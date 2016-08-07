@@ -139,14 +139,14 @@ class Context {
             this._positions[symbol] = new Position(0);
         }
         let portSize = this.portfolioSize();
-        let symbolLast = parseFloat(this._latestData.value('close', symbol));
-        if (!isNaN(symbolLast)) {
+        let symbolPrice = parseFloat(this._latestData.value('open', symbol));
+        if (!isNaN(symbolPrice)) {
             let position = this._positions[symbol];
-            let currentPositionSize = symbolLast * position.number();
+            let currentPositionSize = symbolPrice * position.number();
             let targetSymbolPositionSize = portSize * percent;
             let gapToFill = targetSymbolPositionSize - currentPositionSize;
             if (gapToFill > 0) {
-                let buyPrice = symbolLast + (symbolLast * this._slippagePercent);
+                let buyPrice = symbolPrice + (symbolPrice * this._slippagePercent);
                 let commissionPerShare = (buyPrice * this._comissionPercent);
                 let commissionVat = commissionPerShare * this._vat;
                 let totalComissionPerShare = commissionPerShare + commissionVat;
@@ -159,7 +159,7 @@ class Context {
                 this._buy(symbol, buyPosition, buyPrice);
             } else
             if (gapToFill < 0) {
-                let sellPrice = symbolLast - (symbolLast * this._slippagePercent);
+                let sellPrice = symbolPrice - (symbolPrice * this._slippagePercent);
                 let sellPosition = Math.floor((-1 * gapToFill) / sellPrice);
                 if (sellPosition > position.number()) {
                     sellPosition = position.number();

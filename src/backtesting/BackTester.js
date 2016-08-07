@@ -140,7 +140,6 @@ class BackTester {
         //Loop through each day of the specified period
         let runner = ctx.startDate();
         let end = ctx.endDate();
-        let prevData = null;
         let lastValidRow = {};
 
         while (runner.getTime() <= end.getTime()) {
@@ -175,9 +174,9 @@ class BackTester {
                 }
 
                 //Before Market Opened
-                if (prevData) {
+                if (dayData) {
                     ctx.setCurrentDate(runner);
-                    ctx.setLatestData(prevData);
+                    ctx.setLatestData(dayData);
                     let handlers = tradingActions.handlers('marketOpen');
                     if (handlers && handlers.length > 0) {
                         for (let i=0; i<handlers.length; i++) {
@@ -189,8 +188,6 @@ class BackTester {
                 //Process EOD commission
                 ctx.endOfDayProcessing();
 
-                //Store Prev Data for later round
-                prevData = dayData;
             }
             
             runner = moment(runner).add(1, 'day').toDate();
