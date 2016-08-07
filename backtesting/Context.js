@@ -102,10 +102,11 @@ class Context {
 
     endOfDayProcessing () {
         if (this._currentDateTradeSize > 0) {
-            if (this._currentDateComission < this._minDailyComission) {
-                let gap = this._minDailyComission - this._currentDateComission;
+            let minComission = this._minDailyComission + (this._minDailyComission * this._vat);
+            if (this._currentDateComission < minComission) {
+                let gap = minComission- this._currentDateComission;
                 this._asset -= gap;
-                this._currentDateComission = this._minDailyComission;
+                this._currentDateComission = minComission;
             }
             this._addComissionTransection(this.currentDate(), this._currentDateComission);
         }
