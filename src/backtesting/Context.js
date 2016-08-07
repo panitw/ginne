@@ -2,6 +2,7 @@
 
 const fin = require('fin-data');
 const Position = require('./Position');
+const moment = require('moment');
 
 class Context {
 
@@ -132,7 +133,22 @@ class Context {
             if (!isNaN(lastPrice)) {
                 sum += (lastPrice * position.number());
             } else {
-                throw new Error('No last price to calculate portfolio size for symbol ' + symbol);
+                //Loop back in time to find data
+                let analyzedData = this.analyzedData(symbol);
+                let runner = moment(this.currentDate()).add(-1, 'day').toDate();
+                while (runner >= this.startDate()) {
+                    let row = analyzedData.row(runner);
+                    if (row && !isNaN(row.close)) {
+                        lastPrice = row.close;
+                        break;
+                    }
+                    runner = moment(runner).add(-1, 'day').toDate();
+                }
+                if (!isNaN(lastPrice)) {
+                    sum += (lastPrice * position.number());
+                } else {
+                    throw new Error('No last price to calculate portfolio size for symbol ' + symbol);
+                }
             }
         }
         return this._asset + sum;
@@ -142,6 +158,11 @@ class Context {
         for (let symbol in this._positions) {
             this.setPositionPercent(symbol, 0);
         }
+    }
+
+    canTrade (symbol) {
+        let symbolPrice = this._latestData.value('open', symbol);
+        return !isNaN(symbolPrice);      
     }
 
     setPositionPercent (symbol, percent) {

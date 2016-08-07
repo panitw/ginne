@@ -23,10 +23,14 @@ scr1.addAnalysis('max', {
         }
     })
     .mask('enough_volume', function (row) {
-        if (row.volume > 10000000) {
-            return 'Y';
+        if (row) {
+            if (row.volume > 10000000) {
+                return 'Y';
+            } else {
+                return 'N';
+            }
         } else {
-            return 'N';
+            return '-';
         }
     })
     .mask('trade_signal', function (row, prevRow) {
@@ -44,7 +48,11 @@ scr1.addAnalysis('max', {
         }
     })
     .mask('higher_ratio', function (row) {
-        return (row.close - row.max) / row.close;
+        if (row) {
+            return (row.close - row.max) / row.close;
+        } else {
+            return 0;
+        }
     });
 
 // --------------------------
@@ -81,7 +89,11 @@ actions1
         // Close the position for existing symbol
         for (let i=0;i< exitList.length; i++) {
             symbol = exitList[i];
-            ctx.setPositionPercent(symbol, 0);
+            if (ctx.canTrade(symbol)) {
+                ctx.setPositionPercent(symbol, 0);
+            } else {
+                console.log('Can\'t sell ' + symbol + ' on ' + ctx.currentDate());                
+            }
         }
 
         // Adjust the stop loss price using trailing stop
@@ -105,8 +117,11 @@ actions1
             buySignal.sort('higher_ratio', 'd');
             let topSymbols = buySignal.index().slice(0, morePosition);
             for (let i=0; i<topSymbols.length; i++) {
-                //console.log(ctx.previousData().row(topSymbols[i]));
-                ctx.setPositionPercent(topSymbols[i], percentPositionSize);
+                if (ctx.canTrade(topSymbols[i])) {
+                    ctx.setPositionPercent(topSymbols[i], percentPositionSize);
+                } else {
+                    console.log('Can\'t buy ' + symbol + ' on ' + ctx.currentDate());                
+                }
             }
         }
     });

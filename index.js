@@ -15,7 +15,7 @@ provider
 			initialAsset: 100000,
 			targetPositions: 5,
 			start: new Date('2005-01-01'),
-			end: new Date('2015-12-31'),
+			end: new Date('2006-12-31'),
 			tradeCommission: 0.001578,
 			minDailyCommission: 50,
 			vat: 0.07,
