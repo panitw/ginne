@@ -99,6 +99,7 @@ class Context {
             number: number,
             price: price
         });
+        console.log(date, type, number, price);
     }
 
     portfolioSize () {
@@ -169,15 +170,22 @@ class Context {
         let portSize = this.portfolioSize();
         let symbolLast = parseFloat(this._latestData.value('close', symbol));
         if (!isNaN(symbolLast)) {
-            let targetSymbolPositionSize = portSize * percent;
-            let targetSymbolPosition = Math.floor(targetSymbolPositionSize / symbolLast);
             let position = this._positions[symbol];
-            let gapToFill = targetSymbolPosition - position.number();
+            let currentPositionSize = symbolLast * position.number();
+            let targetSymbolPositionSize = portSize * percent;
+            let gapToFill = targetSymbolPositionSize - currentPositionSize;
             if (gapToFill > 0) {
-                this.buy(symbol, gapToFill, symbolLast + (symbolLast * this._slippagePercent));
+                let buyPrice = symbolLast + (symbolLast * this._slippagePercent);
+                let buyPosition = Math.floor(gapToFill / buyPrice);
+                this.buy(symbol, buyPosition, buyPrice);
             } else
             if (gapToFill < 0) {
-                this.sell(symbol, Math.abs(gapToFill), symbolLast - (symbolLast * this._slippagePercent));
+                let sellPrice = symbolLast - (symbolLast * this._slippagePercent);
+                let sellPosition = Math.floor((-1 * gapToFill) / sellPrice);
+                if (sellPosition > position.number()) {
+                    sellPosition = position.number();
+                }
+                this.sell(symbol, sellPosition, sellPrice);
             }
         } else {
             throw new Error('No last price to calculate portfolio size for symbol ' + symbol);

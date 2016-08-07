@@ -40,6 +40,11 @@ scr1.addAnalysis('slope', {
 let actions1 = new TradingActions();
 actions1
     .on('marketOpen', function (ctx) {
+
+        // Log
+        //let testRow = ctx.latestData().row('ADVANC.BK');
+        //console.log(ctx.currentDate(), testRow.trend_signal, testRow.close);
+        
         // Validate all entries if we need to exit any position and exit if need to
         // Exit Criteria:
         //  - exit signal        
@@ -51,7 +56,6 @@ actions1
         for (symbol in ctx.positions()) {
             //Exit signal
             row = ctx.latestData().row(symbol);
-            console.log(ctx.currentDate(), row.trend_signal, row.close);
             if (row.trend_signal === 'S') {
                 exitList.push(symbol);
                 continue;
