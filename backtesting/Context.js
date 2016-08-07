@@ -11,12 +11,17 @@ class Context {
         this._endDate = options.end;
         this._targetPositions = options.targetPositions;
         this._slippagePercent = options.slippagePercent;
+        this._comissionPercent = options.tradeCommission;
+        this._minDailyComission = options.minDailyCommission;
+        this._vat = options.vat;
         this._universe = null;
         this._latestData = null;
         this._analyzedData = {};
         this._equityGraph = new fin.DataFrame();
         this._transactions = [];
         this._positions = {};
+        this._currentDateTradeSize = 0;
+        this._currentDateComission = 0;
     }
 
     asset () {
@@ -91,15 +96,21 @@ class Context {
         return this._transactions;
     }
 
-    addTransaction (type, date, symbol, number, price) {
-        this._transactions.push({
-            type: type,
-            date: date,
-            symbol: symbol,
-            number: number,
-            price: price
-        });
-        console.log(date, type, number, price);
+    currentDateTradeSize () {
+        return this._currentDateTradeSize 
+    }
+
+    endOfDayProcessing () {
+        if (this._currentDateTradeSize > 0) {
+            if (this._currentDateComission < this._minDailyComission) {
+                let gap = this._minDailyComission - this._currentDateComission;
+                this._asset -= gap;
+                this._currentDateComission = this._minDailyComission;
+            }
+            this._addComissionTransection(this.currentDate(), this._currentDateComission);
+        }
+        this._currentDateTradeSize = 0;
+        this._currentDateComission = 0;
     }
 
     portfolioSize () {
@@ -114,47 +125,6 @@ class Context {
             }
         }
         return this._asset + sum;
-    }
-
-    buy (symbol, number, atPrice) {
-        if (!this._positions[symbol]) {
-            this._positions[symbol] = new Position(0);
-        }
-        //Set position number
-        let position = this._positions[symbol];
-        position.setNumber(position.number() + number);
-
-        //Adjust asset in hand
-        this._asset -= number * atPrice;
-
-        //Log transaction
-        this.addTransaction('B', this._currentDate, symbol, number, atPrice);
-    }
-
-    sell (symbol, number, atPrice) {
-        if (!this._positions[symbol]) {
-            throw new Error('No position to sell for ' + symbol);
-        }
-        let position = this._positions[symbol];
-
-        //Throw error if there's no position to sell
-        if (position.number() < number) {
-            throw new Error('There \'s no position to be sold for ' + symbol);
-        }
-
-        //Set position number
-        position.setNumber(position.number() - number);
-
-        //Adjust asset in hand
-        this._asset += number * atPrice;
-
-        //If there's no more position, remove it from the position list
-        if (position.number() === 0) {
-            delete this._positions[symbol];
-        }
-
-        //Log transaction
-        this.addTransaction('S', this._currentDate, symbol, number, atPrice);
     }
 
     closeAllPositions () {
@@ -176,8 +146,16 @@ class Context {
             let gapToFill = targetSymbolPositionSize - currentPositionSize;
             if (gapToFill > 0) {
                 let buyPrice = symbolLast + (symbolLast * this._slippagePercent);
-                let buyPosition = Math.floor(gapToFill / buyPrice);
-                this.buy(symbol, buyPosition, buyPrice);
+                let commissionPerShare = (buyPrice * this._comissionPercent);
+                let commissionVat = commissionPerShare * this._vat;
+                let totalComissionPerShare = commissionPerShare + commissionVat;
+                let buyPriceWithComission = buyPrice + totalComissionPerShare;
+                let buyPosition = Math.floor(gapToFill / buyPriceWithComission);
+                let totalComission = buyPosition * totalComissionPerShare;
+                this._asset -= totalComission;
+                this._currentDateComission += totalComission;
+
+                this._buy(symbol, buyPosition, buyPrice);
             } else
             if (gapToFill < 0) {
                 let sellPrice = symbolLast - (symbolLast * this._slippagePercent);
@@ -185,12 +163,89 @@ class Context {
                 if (sellPosition > position.number()) {
                     sellPosition = position.number();
                 }
-                this.sell(symbol, sellPosition, sellPrice);
+                let commission = (sellPrice * sellPosition) * this._comissionPercent;
+                let commissionVat = commission * this._vat;
+                let totalComission = commission + commissionVat;
+                this._asset -= totalComission;
+                this._currentDateComission += totalComission;
+
+                this._sell(symbol, sellPosition, sellPrice);
             }
         } else {
             throw new Error('No last price to calculate portfolio size for symbol ' + symbol);
         }
     }
+
+    _addTransaction (type, date, symbol, number, price) {
+        this._transactions.push({
+            type: type,
+            date: date,
+            symbol: symbol,
+            number: number,
+            price: price
+        });
+        console.log(date, type, number, price);
+    }
+
+    _addComissionTransection (date, cost) {
+        this._transactions.push({
+            type: 'C',
+            date: date,
+            cost: cost
+        });
+        console.log(date, 'C', cost);
+    }
+
+    _buy (symbol, number, atPrice) {
+        if (!this._positions[symbol]) {
+            this._positions[symbol] = new Position(0);
+        }
+        let position = this._positions[symbol];
+        let tradeSize = number * atPrice;
+
+        //Set position number
+        position.setNumber(position.number() + number);
+
+        //Adjust asset in hand
+        this._asset -= tradeSize;
+
+        //Record trade size for commission calculation
+        this._currentDateTradeSize += tradeSize;
+
+        //Log transaction
+        this._addTransaction('B', this._currentDate, symbol, number, atPrice);
+    }
+
+    _sell (symbol, number, atPrice) {
+        if (!this._positions[symbol]) {
+            throw new Error('No position to sell for ' + symbol);
+        }
+        let position = this._positions[symbol];
+        let tradeSize = number * atPrice;
+
+        //Throw error if there's no position to sell
+        if (position.number() < number) {
+            throw new Error('There \'s no position to be sold for ' + symbol);
+        }
+
+        //Set position number
+        position.setNumber(position.number() - number);
+
+        //Adjust asset in hand
+        this._asset += tradeSize;
+
+        //Record trade size for commission calculation
+        this._currentDateTradeSize += tradeSize;
+
+        //If there's no more position, remove it from the position list
+        if (position.number() === 0) {
+            delete this._positions[symbol];
+        }
+
+        //Log transaction
+        this._addTransaction('S', this._currentDate, symbol, number, atPrice);
+    }
+
 }
 
 module.exports = Context;

@@ -179,6 +179,9 @@ class BackTester {
                     }
                 }
 
+                //Process EOD commission
+                ctx.endOfDayProcessing();
+
                 //Store Prev Data for later round
                 prevData = dayData;
             }

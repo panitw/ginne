@@ -16,11 +16,10 @@ provider
 			targetPositions: 1,
 			start: new Date('2016-01-01'),
 			end: new Date('2016-06-30'),
-			tradeCommission: {
-				minimum: 50,
-				percent: 0.1578
-			},
-			slippagePercent: 0.02
+			tradeCommission: 0.001578,
+			minDailyCommission: 50,
+			vat: 0.07,
+			slippagePercent: 0.01
 		};
 
 		let tester = new BackTester(provider);
