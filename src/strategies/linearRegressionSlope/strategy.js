@@ -16,7 +16,7 @@ scr1.addAnalysis('slope', {
         }
     })
     .mask('trend_signal', function (row, prevRow) {
-        if (prevRow) {
+        if (prevRow && row) {
             if (isNaN(prevRow.slope) || isNaN(row.slope)) {
                 return '-';
             } else

@@ -1,3 +1,5 @@
+'use strict';
+
 const Screener = require('../../pipeline/Screener');
 const TradingActions = require('../../pipeline/TradingActions');
 
@@ -5,7 +7,7 @@ const TradingActions = require('../../pipeline/TradingActions');
 //     Screening
 // -------------------
 
-var scr1 = new Screener(['ADVANC.BK']);
+var scr1 = new Screener('SET');
 scr1.addAnalysis('ema10', {
         type: 'EMA',
         field: 'close',
@@ -13,7 +15,7 @@ scr1.addAnalysis('ema10', {
             timePeriod: 10
         }
     })
-    .mask('trend_signal', function (row, prevRow) {
+    .mask('trade_signal', function (row, prevRow) {
         if (prevRow) {
             if (prevRow.close <= prevRow.ema10 && row.close > row.ema10) {
                 return 'B';
@@ -32,27 +34,28 @@ scr1.addAnalysis('ema10', {
 //      Trading Actions
 // --------------------------
 
-var actions1 = new TradingActions();
-actions1
+let action1 = new TradingActions();
+action1
     .on('marketOpen', function (ctx) {
+
         // Validate all entries if we need to exit any position and exit if need to
         // Exit Criteria:
         //  - exit signal        
         //  - cut loss
-        var cutLossPercent = 0.1;
-        var percentPositionSize = 1 / ctx.targetPositions;
-        var exitList = [];
-        var symbol, position, row;
-        for (symbol in ctx.positions) {
+        let cutLossPercent = 0.1;
+        let percentPositionSize = 1 / ctx.targetPositions();
+        let exitList = [];
+        let symbol, position, row;
+        for (symbol in ctx.positions()) {
             //Exit signal
-            row = ctx.screened().row(symbol);
-            if (row['trade_signal'] === false) {
+            row = ctx.latestData().row(symbol);
+            if (row.trade_signal === 'S') {
                 exitList.push(symbol);
                 continue;
             }
 
             //Cut-loss
-            position = ctx.positions[symbol];
+            position = ctx.positions()[symbol];
             if (row.last <= position.cutLossTarget) {
                 exitList.push(symbol);
                 continue;
@@ -60,16 +63,16 @@ actions1
         }
 
         // Close the position for existing symbol
-        for (var i=0;i< exitList.length; i++) {
+        for (let i=0;i< exitList.length; i++) {
             symbol = exitList[i];
             ctx.setPositionPercent(symbol, 0);
         }
 
         // Adjust the stop loss price using trailing stop
         for (symbol in ctx.positions) {
-            row = ctx.screened().row(symbol);
+            row = ctx.latestData().row(symbol);
             position = ctx.positions[symbol];
-            var gapPercent = (row.last - position.cutLossTarget) / row.last;
+            let gapPercent = (row.last - position.cutLossTarget) / row.last;
             if (gapPercent > cutLossPercent) {
                 position.cutLossTarget = row.last - (row.last * cutLossPercent);
             }
@@ -77,14 +80,15 @@ actions1
 
         // if the portfolio is empty, or less than the expected number of stocks
         // buy some more using the screening result (if there's some in the screening result)
-        var morePosition = ctx.targetPositions - ctx.positionCount();
+        let morePosition = ctx.targetPositions() - ctx.positionCount();
         if (morePosition > 0) {
-            var buySignal = ctx.screened().filter(function (row) {
-                return (row.trade_signal === true);
+            let latestData = ctx.latestData();
+            let buySignal = latestData.filter(function (row) {
+                return row.trade_signal === 'B' && row.close >= 10 && row.close <= 50;
             });
-            buySignal.sortBy('slope');
-            var topSymbols = buySignal.top(morePosition).index();
-            for (var i=0; i<topSymbols.length; i++) {
+            buySignal.sort('volume', 'd');
+            let topSymbols = buySignal.index().slice(0, morePosition);
+            for (let i=0; i<topSymbols.length; i++) {
                 ctx.setPositionPercent(topSymbols[i], percentPositionSize);
             }
         }
@@ -92,5 +96,5 @@ actions1
 
 module.exports = {
     screener: scr1,
-    tradingActions: actions1
+    tradingActions: action1
 };

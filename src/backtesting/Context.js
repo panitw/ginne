@@ -185,7 +185,7 @@ class Context {
             number: number,
             price: price
         });
-        console.log(date, type, symbol, number, price);
+        console.log(date, type, symbol, number, price, '[' + this.portfolioSize() + ']');
     }
 
     _addComissionTransection (date, cost) {
