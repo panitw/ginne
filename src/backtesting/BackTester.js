@@ -69,6 +69,13 @@ class BackTester {
 
     _addAnalysis (ctx, symbol, toColumn, options, callback) {
         let dataFrame = ctx.analyzedData(symbol);
+        
+        //Skip processing if there's no data
+        if (dataFrame.count() <= 0) {
+            callback();
+            return;
+        }
+
         let startIdx = 0;
         let endIdx = dataFrame.count() - 1;
 

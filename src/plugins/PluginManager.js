@@ -8,7 +8,7 @@ if (argv.config) {
 	configFile = argv.config;
 }
 
-const config = require('../' + configFile);
+const config = require('../../' + configFile);
 
 const _instances = {};
 

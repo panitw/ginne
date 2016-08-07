@@ -185,7 +185,7 @@ class Context {
             number: number,
             price: price
         });
-        console.log(date, type, number, price);
+        console.log(date, type, symbol, number, price);
     }
 
     _addComissionTransection (date, cost) {

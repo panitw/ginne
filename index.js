@@ -1,8 +1,8 @@
 'use strict';
 
 const logger = require('winston');
-const BackTester = require('./backtesting/BackTester');
-const DataProvider = require('./data/DataProvider');
+const BackTester = require('./src/backtesting/BackTester');
+const DataProvider = require('./src/data/DataProvider');
 
 logger.level = 'debug';
 
@@ -10,7 +10,7 @@ let provider = new DataProvider();
 provider
 	.init()
 	.then(() => {
-		let strategy = require('./strategies/linearRegressionSlope/strategy');
+		let strategy = require('./src/strategies/linearRegressionSlope/strategy');
 		let options = {
 			initialAsset: 30000,
 			targetPositions: 1,

@@ -7,7 +7,7 @@ const TradingActions = require('../../pipeline/TradingActions');
 //     Screening
 // -------------------
 
-var scr1 = new Screener(['ADVANC.BK']);
+var scr1 = new Screener('SET');
 scr1.addAnalysis('slope', {
         type: 'LINEARREG_SLOPE',
         field: 'close',
