@@ -80,7 +80,7 @@ actions1
 
             //Cut-loss
             position = ctx.positions()[symbol];
-            if (row.last <= position.cutLossTarget) {
+            if (row.close <= position.cutLossTarget) {
                 exitList.push(symbol);
                 continue;
             }
@@ -99,10 +99,10 @@ actions1
         // Adjust the stop loss price using trailing stop
         for (symbol in ctx.positions) {
             row = ctx.previousData().row(symbol);
-            position = ctx.positions[symbol];
-            let gapPercent = (row.last - position.cutLossTarget) / row.last;
+            position = ctx.positions()[symbol];
+            let gapPercent = (row.close - position.cutLossTarget) / row.close;
             if (gapPercent > cutLossPercent) {
-                position.cutLossTarget = row.last - (row.last * cutLossPercent);
+                position.cutLossTarget = row.close - (row.close * cutLossPercent);
             }
         }
 
@@ -111,8 +111,8 @@ actions1
         let morePosition = ctx.targetPositions() - ctx.positionCount();
         if (morePosition > 0) {
             let prevData = ctx.previousData();
-            let buySignal = prevData.filter(function (row) {
-                return row.trade_signal === 'B' && row.enough_volume === 'Y';
+            let buySignal = prevData.filter(function (row, symbol) {
+                return row.trade_signal === 'B' && row.enough_volume === 'Y' && !ctx.positions()[symbol];
             });
             buySignal.sort('higher_ratio', 'd');
             let topSymbols = buySignal.index().slice(0, morePosition);
