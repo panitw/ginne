@@ -37,6 +37,7 @@ class BackTester {
                 (callback) => {
                     ctx.closeAllPositions();
                     console.log('Final Assets: ' + ctx.asset());
+                    console.log('Maximum Drawdown: ' + (ctx.equityCurve().maximumDrawdown('equity') * 100) + '%');
                 }
             ], (err) => {
                 if (!err) resolve(); else reject(err);
@@ -176,8 +177,8 @@ class BackTester {
                 }
 
                 //Before Market Opened
+                ctx.setCurrentDate(runner);
                 if (prevData && dayData) {
-                    ctx.setCurrentDate(runner);
                     ctx.setPreviousData(prevData);
                     ctx.setLatestData(dayData);
                     let handlers = tradingActions.handlers('marketOpen');
