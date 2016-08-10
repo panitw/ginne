@@ -14,6 +14,7 @@ class Context {
         this._slippagePercent = options.slippagePercent;
         this._comissionPercent = options.tradeCommission;
         this._minDailyComission = options.minDailyCommission;
+        this._cutLossPercent = options.cutLossPercent;
         this._vat = options.vat;
         this._universe = null;
         this._latestData = null;
@@ -44,6 +45,14 @@ class Context {
 
     setCurrentDate (date) {
         this._currentDate = date;
+    }
+
+    cutLossPercent () {
+    	return this._cutLossPercent;
+    }
+
+    setCutLossPercent (percent) {
+	    this._cutLossPercent = percent;
     }
 
     positions () {
@@ -248,6 +257,7 @@ class Context {
 
         //Set position number
         position.setNumber(position.number() + number);
+	    position.setCutLossTarget(atPrice - (atPrice * this._cutLossPercent));
 
         //Adjust asset in hand
         this._asset -= tradeSize;

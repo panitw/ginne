@@ -10,11 +10,12 @@ let provider = new DataProvider();
 provider
 	.init()
 	.then(() => {
-		let strategy = require('./src/strategies/highestHigh/strategy');
+		let strategy = require('./src/strategies/movingAverageChannel/strategy');
 		let options = {
 			initialAsset: 100000,
 			targetPositions: 5,
-			start: new Date('2005-01-01'),
+			cutLossPercent: 0.2,
+			start: new Date('2015-01-01'),
 			end: new Date('2015-12-31'),
 			tradeCommission: 0.001578,
 			vat: 0.07,

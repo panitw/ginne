@@ -7,6 +7,7 @@ class Position {
             numberOfPositions = 0;
         }
         this._numberOfPositions = numberOfPositions;
+        this._cutLossTarget = null;
     }
 
     number () {
@@ -15,6 +16,14 @@ class Position {
 
     setNumber (numberOfPositions) {
         this._numberOfPositions = numberOfPositions;
+    }
+
+    cutLossTarget () {
+        return this._cutLossTarget;
+    }
+
+    setCutLossTarget (target) {
+        this._cutLossTarget = target;
     }
 
 }
