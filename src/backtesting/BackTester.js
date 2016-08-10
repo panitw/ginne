@@ -27,6 +27,7 @@ class BackTester {
         ctx.setUniverse(universe);
 
         return new Promise((resolve, reject) => {
+            var result = null;
             async.series([
                 (callback) => {
                     this._processScreener(ctx, screener, callback);
@@ -36,11 +37,31 @@ class BackTester {
                 },
                 (callback) => {
                     ctx.closeAllPositions();
-                    console.log('Final Assets: ' + ctx.asset());
-                    console.log('Maximum Drawdown: ' + (ctx.equityCurve().maximumDrawdown('equity') * 100) + '%');
+                    result = {
+                        initialCapital: options.initialAsset,
+                        endCapital: ctx.asset(),
+                        netProfit: ctx.asset() - options.initialAsset,
+                        percentNetProfit: ((ctx.asset() - options.initialAsset) / options.initialAsset) * 100,
+                        //equityCurve: ctx.equityCurve(),
+                        maximumDrawdown: ctx.equityCurve().maximumDrawdown('equity') * 100
+                    };
+
+                    //Compound Average Growth Return
+                    let totalDays = moment(ctx.endDate()).diff(ctx.startDate(), 'days');
+                    let totalYears = Math.round(totalDays / 365);
+                    result.CAGRPercent = (Math.pow((result.endCapital / result.initialCapital), 1 / totalYears) - 1) * 100;
+
+                    //Drawdown Duration
+	                let ddDuration = ctx.equityCurve().drawdownDuration('equity');
+	                let startIndex = ctx.equityCurve().indexAtLoc(ddDuration.startIndex);
+	                let endIndex = ctx.equityCurve().indexAtLoc(ddDuration.endIndex);
+	                let drawdownDays = moment(endIndex).diff(startIndex, 'days');
+	                result.drawdownDuration = drawdownDays;
+
+                    callback(null, result);
                 }
-            ], (err) => {
-                if (!err) resolve(); else reject(err);
+            ], (err, result) => {
+                if (!err) resolve(result[2]); else reject(err);
             });
         });
     }
@@ -50,6 +71,8 @@ class BackTester {
         async.eachSeries(universe, (symbol, callback) => {
             //Get basic time series data
             this._dataProvider.getCachedData(symbol, ctx.startDate(), ctx.endDate()).then((data) => {
+                logger.debug('Received data from MongoDB ' + symbol);
+
                 ctx.setAnalyzedData(symbol, data);
 
                 //Add analysis as in the commands
@@ -88,7 +111,7 @@ class BackTester {
         };
         if (options.input) {
             for (let inputName in options.input) {
-                var upperFirst = inputName[0].toUpperCase() + inputName.substring(1);
+                let upperFirst = inputName[0].toUpperCase() + inputName.substring(1);
                 taParam['optIn' + upperFirst] = options.input[inputName];
             }
         }
@@ -163,7 +186,7 @@ class BackTester {
 
             //Consider the day as a valid day if there are some data, then
             //process each stage of event if there's any valid data for that day
-            if (foundAnyData) {                
+            if (foundAnyData) {
                 //Make sure that there's a row for each symbol in the universe, if not, use data from
                 //last valid row
                 let availableSymbols = dayData.index();

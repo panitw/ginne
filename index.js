@@ -14,11 +14,11 @@ provider
 		let options = {
 			initialAsset: 100000,
 			targetPositions: 5,
-			start: new Date('2014-01-01'),
+			start: new Date('2005-01-01'),
 			end: new Date('2015-12-31'),
 			tradeCommission: 0.001578,
-			minDailyCommission: 50,
 			vat: 0.07,
+			minDailyCommission: 50,
 			slippagePercent: 0.01
 		};
 
@@ -26,7 +26,7 @@ provider
 		tester
 			.run(strategy, options)
 			.then((result) => {
-				
+				console.log(result);
 			})
 			.catch((err) => {
 				logger.error(err);
