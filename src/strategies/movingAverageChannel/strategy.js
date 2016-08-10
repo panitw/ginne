@@ -109,7 +109,7 @@ actions1
 			let buySignal = prevData.filter(function (row, symbol) {
 				return row.trade_signal === 'B' && !ctx.positions()[symbol];
 			});
-			//buySignal.sort('higher_ratio', 'd');
+			buySignal.sort('higher_ratio', 'a');
 			let topSymbols = buySignal.index().slice(0, morePosition);
 			for (let i=0; i<topSymbols.length; i++) {
 				if (ctx.canTrade(topSymbols[i])) {
