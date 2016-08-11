@@ -15,6 +15,13 @@ scr1.addAnalysis('sma', {
 			timePeriod: 20
 		}
 	})
+	.addAnalysis('slope', {
+		type: 'LINEARREG_SLOPE',
+		field: 'close',
+		input: {
+			timePeriod: 10
+		}
+	})
 	.mask('upper_bound', function (row) {
 		if (row && row.sma) {
 			return row.sma + (row.sma * 0.1);
@@ -107,7 +114,7 @@ actions1
 		if (morePosition > 0) {
 			let prevData = ctx.previousData();
 			let buySignal = prevData.filter(function (row, symbol) {
-				return row.trade_signal === 'B' && !ctx.positions()[symbol];
+				return row.trade_signal === 'B' && !ctx.positions()[symbol] && row.slope > 0.2;
 			});
 			buySignal.sort('higher_ratio', 'a');
 			let topSymbols = buySignal.index().slice(0, morePosition);
