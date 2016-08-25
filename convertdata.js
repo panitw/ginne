@@ -54,6 +54,7 @@ class Converter {
                 if (!err) {
                     console.log('Sucessfully update ' + symbol);
                 }
+                callback(err);
             });
 	}
 
