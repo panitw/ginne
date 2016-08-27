@@ -4,7 +4,7 @@ const MongoClient = require('mongodb').MongoClient;
 const config = require('../config');
 const async = require('async');
 const moment = require('moment');
-const set = require('../src/plugins/universe/Static/SET_TR');
+const set = require('../src/plugins/universe/Static/SET');
 
 class Converter {
 
