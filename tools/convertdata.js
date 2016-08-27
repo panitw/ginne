@@ -1,10 +1,10 @@
 'use strict';
 
 const MongoClient = require('mongodb').MongoClient;
-const config = require('./config');
+const config = require('../config');
 const async = require('async');
 const moment = require('moment');
-const set = require('./src/plugins/universe/Static/SET');
+const set = require('../src/plugins/universe/Static/SET_TR');
 
 class Converter {
 
@@ -58,6 +58,11 @@ class Converter {
             });
 	}
 
+    removeSymbol(symbol, callback) {
+        var collection = this._getSymbolCollection(symbol);
+        collection.drop(callback);
+    }    
+
 	_getSymbolCollection(symbol) {
 		symbol = symbol.replace('.','_');
 		return this._db.collection(symbol);
@@ -70,6 +75,7 @@ converter.init().then(() => {
     async.eachSeries(set, (symbol, callback) => {
         converter.getData(symbol, new Date('2000-01-01'), new Date())
                  .then((data) => {
+                     let newSymbol = symbol.replace('u.BK','').replace('.BK','');
                      let converted = data.map((row) => {
                          row.o = parseFloat(row.o);
                          row.h = parseFloat(row.h);
@@ -78,7 +84,22 @@ converter.init().then(() => {
                          row.v = parseFloat(row.v);
                          return row;
                      });
-                     converter.saveData(symbol, converted, callback);
+                     converter.saveData(newSymbol, converted, (err) => {
+                        if (!err) {
+                            console.log('Successfully save data for '+symbol+' as new symbol '+newSymbol);
+                            converter.removeSymbol(symbol, (err) => {
+                                if (!err) {
+                                    console.log('Successfully remove old symbol '+symbol);
+                                } else {
+                                    console.log('Error removing old symbol ' + symbol, err);                                   
+                                }
+                                callback(err);
+                            });
+                        } else {
+                            console.log('Error converting ' + symbol, err);
+                            callback(err);
+                        }
+                     });
                  })
                  .catch((err) => {
                      callback(err);
