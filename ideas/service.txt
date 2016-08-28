@@ -4,12 +4,16 @@
   H And store data to DB
   M Detect data issue, e.g. the price dropped more than 10% and report to the bot to nofity users
 
+- Portfolio Management
+  - Record Money In/Out
+  - Record Stock Buy/Sell Transaction
+  - Calculate portfolio performance and generate report to the bot to notify user at the end of the day
+
 - Strategy Execution
   H Select current strategy (id)
   H At the EOD after receiving data from the market, the execution is triggered
     - If there's any buy/sell signal, the notification will be sent to the bot to notify user
   H Receive buy/sell order from the bot and store the data to the backend
-  L Calculate portfolio performance and generate report to the bot to notify user at the end of the day
 
 - Facebook Bot for communication with users
   H >> Data Retreive Success

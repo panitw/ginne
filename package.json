@@ -1,13 +1,14 @@
 {
   "dependencies": {
     "async": "^2.0.1",
+    "express": "^4.14.0",
     "fin-data": "git+https://github.com/panitw/fin-data.git",
-    "set-data-reader": "git+https://github.com/panitw/set-data-reader.git",
     "moment": "^2.13.0",
     "mongodb": "^2.1.18",
     "psnode": "0.0.1",
     "request": "^2.72.0",
     "restler": "^3.4.0",
+    "set-data-reader": "git+https://github.com/panitw/set-data-reader.git",
     "talib": "^1.0.2",
     "winston": "^2.2.0",
     "yargs": "^4.8.1"

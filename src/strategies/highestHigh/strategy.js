@@ -92,7 +92,7 @@ actions1
             if (ctx.canTrade(symbol)) {
                 ctx.setPositionPercent(symbol, 0);
             } else {
-                console.log('Can\'t sell ' + symbol + ' on ' + ctx.currentDate());                
+                console.log('Can\'t sell ' + symbol + ' on ' + ctx.currentDate());
             }
         }
 
