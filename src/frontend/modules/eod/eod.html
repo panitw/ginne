@@ -5,9 +5,30 @@
         <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
       </ons-toolbar-button>
     </div>
-    <div class="center">EOD</div>
+    <div class="center">Tomorrow's Actions</div>
   </ons-toolbar>
-  <div>
-    End Of Day Processing
+  <div class="content-padded">
+    <ons-button modifier="large">Execute Strategy (31-Aug-2016)</ons-button>
   </div>
+  <ons-scroller>
+    <ons-list>
+      <ons-list-header>BUY</ons-list-header>
+      <ons-list-item>
+        <ons-row class="positive">
+          <ons-col>TVO</ons-col>
+          <ons-col>1,000 shares</ons-col>
+          <ons-col><div style="text-align: right;">at 32.50</div></ons-col>
+        </ons-row>
+      </ons-list-item>
+      <ons-list-item>
+        <ons-row class="positive">
+          <ons-col>THCOM</ons-col>
+          <ons-col>300 shares</ons-col>
+          <ons-col><div style="text-align: right;">at 28.75</div></ons-col>
+        </ons-row>
+      </ons-list-item>
+      <ons-list-header>SELL</ons-list-header>
+      <ons-list-item class="negative">No sell action</ons-list-item>
+    </ons-list>
+  </ons-scroller>  
 </ons-page>

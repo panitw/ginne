@@ -36,3 +36,9 @@ ons-dialog input {
 	font-size: 20px;
 	line-height: 30px !important;	
 }
+
+.summary .tx-type {
+	color: #555;
+	font-size: 17px;
+	line-height: 30px !important;	
+}
