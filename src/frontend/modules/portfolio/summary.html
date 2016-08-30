@@ -1,0 +1,62 @@
+<ons-page ng-controller="PortfolioSummaryController">
+  <ons-toolbar>
+    <div class="left">
+      <ons-toolbar-button ng-click="app.menu.toggleMenu()">
+        <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+      </ons-toolbar-button>
+    </div>
+    <div class="center" style="text-align: center;">Portfolio Summary</div>
+  	<div class="right">
+      <ons-toolbar-button ng-click="addTransaction()">
+        <ons-icon icon="ion-plus" style="font-size: 32px; width: 1em;"></ons-icon>
+      </ons-toolbar-button>
+  	</div>
+  </ons-toolbar>
+  <ons-scroller>
+    <ons-list>
+      <ons-list-header>Total Equity: 450,000</ons-list-header>    
+      <ons-list-item class="summary" modifier="tappable">
+        <ons-row>
+          <ons-col width="50%">
+            <div class="label">symbol:</div>
+            <div class="symbol">TVO</div>
+            <div class="numbers positive">+0.50, +0.05%</div>
+          </ons-col>
+          <ons-col>
+            <div class="label">last:</div>
+            <div class="numbers">20.25</div>
+            <div class="label">avg.price:</div>
+            <div class="numbers">19.25</div>
+          </ons-col>
+          <ons-col>
+            <div class="label">shares:</div>
+            <div class="numbers">200</div>
+            <div class="label">Cost:</div>
+            <div class="numbers">40,000</div>
+          </ons-col>
+        </ons-row>
+      </ons-list-item>
+      <ons-list-item class="summary" modifier="tappable">
+        <ons-row>
+          <ons-col width="50%">
+            <div class="label">symbol:</div>
+            <div class="symbol">PTTEP</div>
+            <div class="numbers negative">-1.50, +0.10%</div>
+          </ons-col>
+          <ons-col>
+            <div class="label">last:</div>
+            <div class="numbers">20.25</div>
+            <div class="label">avg.price:</div>
+            <div class="numbers">19.25</div>
+          </ons-col>
+          <ons-col>
+            <div class="label">shares:</div>
+            <div class="numbers">200</div>
+            <div class="label">Cost:</div>
+            <div class="numbers">40,000</div>
+          </ons-col>
+        </ons-row>
+      </ons-list-item>
+    </ons-list>
+  </ons-scroller>
+</ons-page>

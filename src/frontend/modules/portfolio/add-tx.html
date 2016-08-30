@@ -1,0 +1,44 @@
+<ons-dialog var="addTxDialog" ng-controller="PortfolioAddTxController">
+    <ons-toolbar inline>
+      <div class="center">
+        Add Transaction
+      </div>
+    </ons-toolbar>
+
+    <div class="button-bar" style="width:250px;margin:0 auto;">
+      <div class="button-bar__item">
+        <input type="radio" name="segment-a" ng-model="vm.txtype" value="buy" checked>
+        <button class="button-bar__button">Buy</button>
+      </div>
+      <div class="button-bar__item">
+        <input type="radio" name="segment-a" ng-model="vm.txtype" value="sell">
+        <button class="button-bar__button">Sell</button>
+      </div>
+      <div class="button-bar__item">
+        <input type="radio" name="segment-a" ng-model="vm.txtype" value="deposit">
+        <button class="button-bar__button">Deposit</button>
+      </div>
+      <div class="button-bar__item">
+        <input type="radio" name="segment-a" ng-model="vm.txtype" value="withdraw">
+        <button class="button-bar__button">Withdr</button>
+      </div>
+    </div>    
+    <p>
+      <input type="date" placeholder="Date" class="text-input" ng-model="vm.date">
+    </p>
+    <p ng-show="vm.showSymbol">
+      <input type="text" placeholder="Symbol" class="text-input" ng-model="vm.symbol">
+    </p>
+    <p>
+      <input type="number" placeholder="Amount" class="text-input" ng-model="vm.amount">
+    </p>
+    <p ng-show="vm.showPrice">
+      <input type="number" placeholder="Price" class="text-input" ng-model="vm.price">
+    </p>
+	<p>
+      <ons-button modifier="large--cta" ng-click="add()">Add</ons-button>
+    </p>
+	<p>
+      <ons-button modifier="large" ng-click="cancel()">Cancel</ons-button>
+    </p>
+</ons-dialog>

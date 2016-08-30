@@ -1,12 +1,14 @@
-<ons-sliding-menu>
-  <div class="menu">
-    <ons-page>
-    Menu page contents
-  </ons-page>
-  </div>
-  <div class="main">
-    <ons-page>
-    Main page contents
-  </ons-page>
-  </div>
-</ons-sliding-menu>
+<ons-list>
+  <ons-list-item modifier="chevron" onclick="app.menu.setMainPage('modules/portfolio/summary.html', {closeMenu: true})">
+    Portfolio
+  </ons-list-item>
+  <ons-list-item onclick="app.menu.setMainPage('modules/portfolio/summary.html', {closeMenu: true})">
+    <div style="padding-left: 20px;">Summary</div>
+  </ons-list-item>
+  <ons-list-item onclick="app.menu.setMainPage('modules/portfolio/tx.html', {closeMenu: true})">
+    <div style="padding-left: 20px;">Transactions</div>
+  </ons-list-item>
+  <ons-list-item modifier="chevron" onclick="app.menu.setMainPage('modules/eod/eod.html', {closeMenu: true})">
+    End Of Day
+  </ons-list-item>
+</ons-list>

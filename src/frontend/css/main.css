@@ -1,0 +1,38 @@
+ons-dialog:not([modifier='material']) p {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+ons-dialog input {
+  width: 100%;
+}
+
+.positive {
+	color: #00bd9c !important;
+}
+
+.negative {
+	color: #fd726d !important;
+}
+
+.summary {
+
+}
+
+.summary .label {
+	color: #666;
+	font-size: 10px !important;
+	line-height: 15px !important;
+}
+
+.summary .symbol {
+	color: #444;
+	font-size: 35px !important;
+	line-height: 40px !important;	
+}
+
+.summary .numbers {
+	color: #444;
+	font-size: 20px;
+	line-height: 30px !important;	
+}

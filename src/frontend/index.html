@@ -2,59 +2,27 @@
 <html>
 <head>
 	<title>Ginne</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
 	<script type="text/javascript" src="bower_components/OnsenUI/js/onsenui.js"></script>
 	<link rel="stylesheet" type="text/css" href="bower_components/OnsenUI/css/onsenui.css">
 	<link rel="stylesheet" type="text/css" href="bower_components/OnsenUI/css/onsen-css-components.css">
+	<link rel="stylesheet" type="text/css" href="bower_components/OnsenUI/css/onsen-css-components-blue-theme.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
     <script src="modules/app.js"></script>
+    <script src="modules/portfolio/summary-controller.js"></script>
+    <script src="modules/portfolio/tx-controller.js"></script>
+    <script src="modules/portfolio/add-tx-controller.js"></script>
   </head>
   <body ng-controller="AppController">
 	<ons-sliding-menu
 		var="app.menu"
-		main-page="portfolio.html"
-		menu-page="menu.html"
+		main-page="modules/portfolio/summary.html"
+		menu-page="modules/menu/menu.html"
 		max-slide-distance="200px"
 		type="reveal"
 		side="left">
 	</ons-sliding-menu>
 
-	<ons-template id="eod.html">
-	  <ons-toolbar>
-	    <div class="left">
-	      <ons-toolbar-button ng-click="app.menu.toggleMenu()">
-	        <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
-	      </ons-toolbar-button>
-	    </div>
-	    <div class="center">EOD</div>
-	  </ons-toolbar>
-	  <ons-page>
-	  	End Of Day Processing
-	  </ons-page>
-	</ons-template>
-
-	<ons-template id="portfolio.html">
-	  <ons-toolbar>
-	    <div class="left">
-	      <ons-toolbar-button ng-click="app.menu.toggleMenu()">
-	        <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
-	      </ons-toolbar-button>
-	    </div>
-	    <div class="center">Portfolio Management</div>
-	  </ons-toolbar>
-	  <ons-page>
-	   	Portfolio Management
-	  </ons-page>
-	</ons-template>
-
-	<ons-template id="menu.html">
-		<ons-list>
-			<ons-list-item modifier="chevron" onclick="app.menu.setMainPage('portfolio.html', {closeMenu: true})">
-				Portfolio
-			</ons-list-item>
-			<ons-list-item modifier="chevron" onclick="app.menu.setMainPage('eod.html', {closeMenu: true})">
-				End Of Day
-			</ons-list-item>
-		</ons-list>
-	</ons-template>
   </body>
 </html>
