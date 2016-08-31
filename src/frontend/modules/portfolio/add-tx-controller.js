@@ -1,6 +1,7 @@
 module.controller('PortfolioAddTxController', function($scope) {
 
 	$scope.vm = {
+		mode: 'add',
 		date: new Date(),
 		txtype: 'buy',
 		showSymbol: true,
@@ -9,10 +10,10 @@ module.controller('PortfolioAddTxController', function($scope) {
 
 	$scope.add = function () {
 
-	}
+	};
 
 	$scope.cancel = function () {
-		addTxDialog.hide();
+		$scope.closeDialog();
 	}
 
 	$scope.$watch('vm.txtype', function (newValue) {

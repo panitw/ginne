@@ -9,5 +9,9 @@
 	"cache" : {
 		"plugin" : "MongoDB",
 		"connectionString" : "mongodb://localhost/ginne"
+	},
+	"portfolio" : {
+		"plugin" : "Local",
+		"connectionString" : "mongodb://localhost/ginne_portfolio"
 	}
 }
