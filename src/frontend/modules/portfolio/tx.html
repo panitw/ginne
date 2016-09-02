@@ -16,7 +16,7 @@
 		<ons-list>
 		    <ons-list-header ng-repeat-start="dateGroup in transactions">{{dateGroup.date}}</ons-list-header>
 			<ons-list-item ng-repeat="tx in dateGroup.txList" class="summary" modifier="tappable" ng-click="editTransaction(tx)">
-				<ons-row ng-if="tx.type === 'withdraw' || tx.type === 'deposit'">
+				<ons-row ng-if="tx.type === 'withdraw' || tx.type === 'deposit' || tx.type === 'commission'">
 					<ons-col>
 						<div style="height: 90px;">
 							<div class="tx-type" ng-class="tx.type === 'deposit' ? 'positive' : 'negative'">{{tx.type}}:</div>
@@ -36,8 +36,8 @@
 						<div class="numbers">{{tx.price | number}}</div>
 					</ons-col>
 					<ons-col>
-						<div class="label">comission:</div>
-						<div class="numbers">{{(tx.commission === undefined)?'TBC':tx.commission | number}}</div>
+						<div class="label">commission:</div>
+						<div class="numbers">{{(tx.commission === undefined)? 'TBC' :tx.commission}}</div>
 						<div class="label">cost:</div>
 						<div class="numbers">{{tx.price * tx.amount | number}}</div>
 					</ons-col>
