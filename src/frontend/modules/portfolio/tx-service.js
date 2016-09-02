@@ -4,7 +4,7 @@ module.service('txService', function($http) {
         return $http.get('portfolio/transactions');
     };
 
-    this.addTransaction = function () {
-
+    this.addTransaction = function (tx) {
+        return $http.post('portfolio/transactions', tx);
     };
 });

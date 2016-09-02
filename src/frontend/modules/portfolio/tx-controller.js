@@ -46,6 +46,7 @@ module.controller('PortfolioTxController', function($scope, txService) {
 			$scope.currentDialog.destroy();
 			$scope.currentDialog = null;
 		}
+		$scope.refreshData();
 	};
 
 	$scope.refreshData();
