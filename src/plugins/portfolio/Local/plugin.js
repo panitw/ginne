@@ -8,6 +8,7 @@ class LocalPortfolioManager {
 
     constructor (config) {
         this._config = config;
+        this._txTypes = ['buy', 'sell', 'deposit', 'withdraw', 'commission'];
     }
 
     init () {
@@ -23,8 +24,8 @@ class LocalPortfolioManager {
         return Transaction.update({ _id: id }, { $set: txInfo});
     }
 
-    getTransactions (startDate, endDate) {
-        return Transaction.find({date: {$gte: startDate, $lt: endDate}}).sort({date: -1}).exec();
+    getAllTransactions () {
+        return Transaction.find({}).sort({date: -1}).exec();
     }
 
     getPositions () {

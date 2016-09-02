@@ -4,12 +4,11 @@ const transactionSchema = mongoose.Schema({
 	type: String,
 	date: Date,
 	symbol: String,
-	shares: Number,
+	amount: Number,
 	price: Number,
-	cost: Number,
 	commission: Number
-});
+}, {timestamps: true});
 
-const Transaction = mongoose.model('Transaction', transactionSchemaTransaction);
+const Transaction = mongoose.model('Transaction', transactionSchema);
 
 module.exports = Transaction;

@@ -9,4 +9,4 @@ const positionSchema = mongoose.Schema({
 
 const Position = mongoose.model('Position', positionSchema);
 
-module.exports = Postion;
+module.exports = Position;

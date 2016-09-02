@@ -1,20 +1,43 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const PluginManager = require('../../plugins/PluginManager');
+const portManager = PluginManager.getPlugin('portfolio');
 
-router.get('/transaction', function(req, res) {
-    res.json({success: true, transactions: []});
-});
+router.route('/transactions')
 
-router.post('/transaction/create', function(req, res) {
-    res.json({success: true});
-});
+    .get((req, res) => {
+        portManager.getAllTransactions()
+            .then((results) => {
+                res.json({success: true, transactions: results});
+            })
+            .catch((ex) => {
+                res.json({success: false, exception: ex});
+            });
+    })
 
-router.post('/transaction/update', function(req, res) {
-    res.json({success: true});
-});
+    .post((req, res) => {
+        var tx = req.body;
+        portManager.addTransaction(tx)
+            .then(() => {
+                res.json({success: true});
+            })
+            .catch((ex) => {
+                res.json({success: false, exception: ex});
+            });
+    });
 
-router.get('/transaction/:id', function(req, res) {
-    res.json({success: true});
-});
+router.route('/transactions/:id')
+
+    .get((req, res) => {
+        res.json({success: true, transaction: {}});
+    })
+
+    .put((req, res) => {
+
+    })
+
+    .delete((req, res) => {
+
+    });
 
 module.exports = router;
