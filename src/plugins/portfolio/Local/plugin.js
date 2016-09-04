@@ -20,8 +20,12 @@ class LocalPortfolioManager {
         return tx.save();
     }
 
-    editTransaction (id, txInfo) {
+    updateTransaction (id, txInfo) {
         return Transaction.update({ _id: id }, { $set: txInfo});
+    }
+
+    deleteTransaction (id) {
+        return Transaction.remove({ _id: id });
     }
 
     getAllTransactions () {

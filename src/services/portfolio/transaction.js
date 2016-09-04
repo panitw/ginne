@@ -16,7 +16,7 @@ router.route('/transactions')
     })
 
     .post((req, res) => {
-        var tx = req.body;
+        let tx = req.body;
         portManager.addTransaction(tx)
             .then(() => {
                 res.json({success: true});
@@ -28,16 +28,25 @@ router.route('/transactions')
 
 router.route('/transactions/:id')
 
-    .get((req, res) => {
-        res.json({success: true, transaction: {}});
-    })
-
     .put((req, res) => {
-
+        let tx = req.body;
+        portManager.updateTransaction(req.params.id, tx)
+            .then(() => {
+                res.json({success: true});
+            })
+            .catch((ex) => {
+                res.json({success: false, exception: ex});
+            });
     })
 
     .delete((req, res) => {
-
+        portManager.deleteTransaction(req.params.id)
+            .then(() => {
+                res.json({success: true});
+            })
+            .catch((ex) => {
+                res.json({success: false, exception: ex});
+            });
     });
 
 module.exports = router;
