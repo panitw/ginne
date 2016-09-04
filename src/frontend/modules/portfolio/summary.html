@@ -14,7 +14,7 @@
   </ons-toolbar>
   <ons-scroller>
     <ons-list>
-      <ons-list-header>Total Equity: 450,000</ons-list-header>    
+      <ons-list-header>Total Equity: {{equity | number:2}}</ons-list-header>
       <ons-list-item class="summary" modifier="tappable" ng-repeat="position in positions">
         <ons-row>
           <ons-col width="50%">

@@ -2,16 +2,18 @@ module.controller('PortfolioSummaryController', function($scope, txService) {
 
 	$scope.refreshData = function () {
 		txService.getAllPositions().then(function (result) {
-			var allPositions = result.data.positions;
+			console.log(result.data);
+			var allPositions = result.data.positions.positions;
 			for (var i=0; i<allPositions.length; i++) {
 				var pos = allPositions[i];
 				pos.last = 32;
 				pos.averagePrice = pos.cost / pos.shares;
-				pos.gain = pos.averagePrice - pos.last;
-				pos.gainPct = ((pos.averagePrice - pos.last) / pos.last) * 100;
+				pos.gain = pos.last - pos.averagePrice;
+				pos.gainPct = (pos.gain / pos.last) * 100;
 				pos.gainSign = (pos.gain > 0) ? '+' : '';
 			}
 			$scope.positions = allPositions;
+			$scope.equity = result.data.positions.equity;
 		});
 	};
 

@@ -3,7 +3,6 @@
 const mongoose = require('mongoose');
 const CommissionModel = require('./CommissionModel');
 const Transaction = require('./Transaction');
-const Position = require('./Position');
 
 class LocalPortfolioManager {
 
@@ -20,10 +19,18 @@ class LocalPortfolioManager {
 		if (txInfo.type === 'buy' || txInfo.type === 'sell') {
 			let tx = null;
 			let commissionModel = null;
-			let currentPosition = null;
-			return Position.getCurrentPosition(txInfo.symbol)
-				.then((position) => {
-					currentPosition = position;
+			let currentPosition = 0;
+			return Transaction.getAllTransactionsOf(txInfo.symbol, true)
+				.then((allSymbolTx) => {
+					for (let i=0; i<allSymbolTx.length; i++) {
+						let tx = allSymbolTx[i];
+						if (tx.type === 'buy') {
+							currentPosition += tx.amount;
+						} else
+						if (tx.type === 'sell') {
+							currentPosition -= tx.amount;
+						}
+					}
 					return CommissionModel.getActiveModel();
 				})
 				.then((model) => {
@@ -31,12 +38,12 @@ class LocalPortfolioManager {
 					if (!commissionModel) {
 						throw new Error('No commission model defined');
 					} else
-					if (!currentPosition) {
+					if (currentPosition === 0) {
 						if (txInfo.type === 'sell') {
 							throw new Error('Unable to sell ' + txInfo.symbol + ' with no position');
 						}
 					} else
-					if (currentPosition && txInfo.type === 'sell' && currentPosition.shares < txInfo.amount) {
+					if (txInfo.type === 'sell' && currentPosition < txInfo.amount) {
 						throw new Error('Unable to sell ' + txInfo.amount + ' positions of ' + txInfo.symbol + ', not enough position');
 					}
 				})
@@ -50,36 +57,6 @@ class LocalPortfolioManager {
 					};
 					tx = new Transaction(txInfo);
 					return tx.save();
-				})
-				.then(() => {
-					if (currentPosition) {
-						if (tx.type === 'buy') {
-							currentPosition.cost = currentPosition.cost + tx.totalCost();
-							currentPosition.shares = currentPosition.shares + tx.amount;
-							return position.save();
-						} else {
-							if (currentPosition.shares > tx.amount) {
-								let percentSharesRemain = (currentPosition.shares - tx.amount) / currentPosition.shares;
-								currentPosition.cost = currentPosition.cost * percentSharesRemain;
-								currentPosition.shares = currentPosition.shares - tx.amount;
-								return currentPosition.save();
-							} else
-							if (currentPosition.shares === tx.amount) {
-								return position.remove();
-							} else {
-								throw new Error('Unable to sell more than what you have');
-							}
-						}
-					} else {
-						if (tx.type === 'buy') {
-							let newPosition = new Position({
-								symbol: tx.symbol,
-								shares: tx.amount,
-								cost: tx.totalCost()
-							});
-							return newPosition.save();
-						}
-					}
 				});
 		} else {
 			let tx = new Transaction(txInfo);
@@ -100,7 +77,54 @@ class LocalPortfolioManager {
 	}
 
 	getPositions () {
-		return Position.find().sort({symbol: 1}).exec();
+		let equity = 0;
+		let positions = {};
+		return Transaction.find({}).sort({date: 1}).exec()
+			.then((txs) => {
+				for (var i=0; i<txs.length; i++) {
+					var tx = txs[i];
+					if (tx.symbol && tx.symbol !== '') {
+						if (!positions[tx.symbol]) {
+							positions[tx.symbol] = {
+								symbol: tx.symbol,
+								shares: 0,
+								cost: 0
+							};
+						}
+					}
+
+					var pos = positions[tx.symbol];
+					if (tx.type === 'buy') {
+						pos.shares += tx.amount;
+						pos.cost += tx.totalCost();
+						equity -= tx.totalCost();
+					}
+					if (tx.type === 'sell') {
+						pos.cost *= (pos.shares - tx.amount) / pos.shares;
+						pos.shares -= tx.amount;
+						equity += (tx.amount * tx.price) - tx.totalCommission();
+					}
+					if (tx.type === 'withdraw') {
+						equity -= tx.amount;
+					}
+					if (tx.type === 'deposit') {
+						equity += tx.amount;
+					}
+				}
+				let output = [];
+				for (let symbol in positions) {
+					if (positions[symbol].shares > 0) {
+						output.push(positions[symbol]);
+					}
+				}
+				output.sort(function (a, b) {
+					return a.symbol.localeCompare(b.symbol);
+				});
+				return {
+					equity: equity,
+					positions: output
+				};
+			});
 	}
 }
 
