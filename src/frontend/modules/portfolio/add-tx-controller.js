@@ -2,34 +2,51 @@ module.controller('PortfolioAddTxController', function($scope, txService) {
 
 	$scope.vm = {
 		mode: 'add',
-		date: new Date(),
-		txtype: 'buy',
-		symbol: '',
-		amount: '',
-		price: '',
+		date: $scope.tx ? new Date($scope.tx.date): new Date(),
+		txtype: $scope.tx ? $scope.tx.type: 'buy',
+		symbol: $scope.tx ? $scope.tx.symbol: '',
+		amount: $scope.tx ? $scope.tx.amount: '',
+		price: $scope.tx ? $scope.tx.price: '',
 		showSymbol: true,
 		showPrice: true
 	};
 
+	console.log($scope.tx);
+
 	$scope.save = function () {
-		var txObj = {
-			type: $scope.vm.txtype,
-			date: $scope.vm.date,
-			symbol: $scope.vm.symbol.toUpperCase(),
-			amount: parseFloat($scope.vm.amount),
-			price: parseFloat($scope.vm.price)
-		};
-		txService.addTransaction(txObj)
-			.then(function (result) {
-				if (result.data.success) {
-					$scope.closeDialog();
-				} else {
-
-				}
-			})
-			.catch(function () {
-
-			});
+		if (!$scope.tx) {
+			$scope.tx = {};
+		}
+		$scope.tx.type = $scope.vm.txtype;
+		$scope.tx.date = $scope.vm.date;
+		$scope.tx.symbol = $scope.vm.symbol.toUpperCase();
+		$scope.tx.amount = parseFloat($scope.vm.amount);
+		$scope.tx.price = parseFloat($scope.vm.price);
+		if ($scope.mode === 'edit') {
+			txService.updateTransaction($scope.tx)
+				.then(function (result) {
+					if (result.data.success) {
+						$scope.closeDialog();
+					} else {
+						//TODO: Handle backend error
+					}
+				})
+				.catch(function () {
+					//TODO: Handle connectivity error
+				});
+		} else {
+			txService.addTransaction($scope.tx)
+				.then(function (result) {
+					if (result.data.success) {
+						$scope.closeDialog();
+					} else {
+						//TODO: Handle backend error
+					}
+				})
+				.catch(function () {
+					//TODO: Handle connectivity error
+				});
+		}
 	};
 
 	$scope.cancel = function () {

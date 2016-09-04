@@ -15,10 +15,10 @@ module.controller('PortfolioTxController', function($scope, txService) {
 					txByDate[dateStr].push(tx);
 				}
 				$scope.transactions = [];
-				for (var i=0; i<dateList.length; i++) {
+				for (var j=0; j<dateList.length; j++) {
 					$scope.transactions.push({
-						date: dateList[i],
-						txList: txByDate[dateList[i]]
+						date: dateList[j],
+						txList: txByDate[dateList[j]]
 					});
 				}
 			}
@@ -33,8 +33,9 @@ module.controller('PortfolioTxController', function($scope, txService) {
 		});		
 	};	
 
-	$scope.editTransaction = function () {
+	$scope.editTransaction = function (tx) {
 		$scope.mode = 'edit';
+		$scope.tx = tx;
 		ons.createDialog('modules/portfolio/add-tx.html', {parentScope: $scope}).then(function(dialog) {
 			$scope.currentDialog = dialog;
 			dialog.show();
