@@ -12,21 +12,31 @@ module.controller('PortfolioAddTxController', function($scope, txService) {
 	};
 
 	$scope.delete = function () {
-		if ($scope.tx) {
-			txService.deleteTransaction($scope.tx._id)
-				.then(function (result) {
-					if (result.data.success) {
-						$scope.closeDialog();
+
+		$scope.closeDialog();
+
+		ons.notification.confirm({
+			message: 'Do you want to delete the transaction?',
+			callback: function(idx) {
+				if (idx === 1) {
+					if ($scope.tx) {
+						txService.deleteTransaction($scope.tx._id)
+							.then(function (result) {
+								if (result.data.success) {
+									$scope.closeDialog();
+								} else {
+									//TODO: Handle known backend error
+								}
+							})
+							.catch(function () {
+								//TODO: Handle unknown error
+							});
 					} else {
-						//TODO: Handle known backend error
+						$scope.closeDialog();
 					}
-				})
-				.catch(function () {
-					//TODO: Handle unknown error
-				});
-		} else {
-			$scope.closeDialog();
-		}
+				}
+			}
+		});
 	};
 
 	$scope.save = function () {
