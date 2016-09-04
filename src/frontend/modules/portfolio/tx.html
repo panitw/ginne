@@ -37,9 +37,9 @@
 					</ons-col>
 					<ons-col>
 						<div class="label">commission:</div>
-						<div class="numbers">{{(tx.commission === undefined)? 'TBC' :tx.commission}}</div>
+						<div class="numbers">{{tx.commission.commission + tx.commission.vat | number}}</div>
 						<div class="label">cost:</div>
-						<div class="numbers">{{tx.price * tx.amount | number}}</div>
+						<div class="numbers">{{(tx.price * tx.amount) + (tx.commission.commission + tx.commission.vat) | number}}</div>
 					</ons-col>
 				</ons-row>
 			</ons-list-item>

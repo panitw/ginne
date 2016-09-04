@@ -22,7 +22,7 @@ router.route('/transactions')
                 res.json({success: true});
             })
             .catch((ex) => {
-                res.json({success: false, exception: ex});
+                res.json({success: false, exception: ex.message});
             });
     });
 
