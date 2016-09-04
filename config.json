@@ -13,5 +13,8 @@
 	"portfolio" : {
 		"plugin" : "Local",
 		"connectionString" : "mongodb://localhost/ginne_portfolio"
+	},
+	"notification" : {
+		"plugin" : "Twitter"
 	}
 }

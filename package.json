@@ -7,11 +7,14 @@
     "moment": "^2.13.0",
     "mongodb": "^2.1.18",
     "mongoose": "^4.5.10",
+    "node-schedule": "^1.1.1",
     "psnode": "0.0.1",
     "request": "^2.72.0",
     "restler": "^3.4.0",
     "set-data-reader": "git+https://github.com/panitw/set-data-reader.git",
     "talib": "^1.0.2",
+    "twitter": "^1.4.0",
+    "twitter-node-client": "0.0.6",
     "winston": "^2.2.0",
     "yargs": "^4.8.1"
   }
