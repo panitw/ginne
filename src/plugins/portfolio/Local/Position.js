@@ -6,6 +6,10 @@ const positionSchema = mongoose.Schema({
 	cost: Number
 });
 
+positionSchema.statics.getCurrentPosition = function (symbol) {
+	return this.findOne({symbol: symbol}).exec();
+};
+
 positionSchema.virtual('averagePrice').get(function () {
 	return this.cost / this.shares;
 });

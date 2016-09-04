@@ -20,40 +20,51 @@ class LocalPortfolioManager {
 		if (txInfo.type === 'buy' || txInfo.type === 'sell') {
 			let tx = null;
 			let commissionModel = null;
-			return CommissionModel.getActiveModel()
+			let currentPosition = null;
+			return Position.getCurrentPosition(txInfo.symbol)
+				.then((position) => {
+					currentPosition = position;
+					return CommissionModel.getActiveModel();
+				})
 				.then((model) => {
 					commissionModel = model;
-					if (commissionModel) {
-						let totalPrice = txInfo.price * txInfo.amount;
-						let comm = totalPrice * commissionModel.percent;
-						let vat = comm * commissionModel.vat;
-						txInfo.commission = {
-							commission: comm,
-							vat: vat
-						};
-						tx = new Transaction(txInfo);
-						return tx.save();
-					} else {
-						throw new Error('No commission model');
+					if (!commissionModel) {
+						throw new Error('No commission model defined');
+					} else
+					if (!currentPosition) {
+						if (txInfo.type === 'sell') {
+							throw new Error('Unable to sell ' + txInfo.symbol + ' with no position');
+						}
+					} else
+					if (currentPosition && txInfo.type === 'sell' && currentPosition.shares < txInfo.amount) {
+						throw new Error('Unable to sell ' + txInfo.amount + ' positions of ' + txInfo.symbol + ', not enough position');
 					}
 				})
 				.then(() => {
-					return Position.findOne({symbol: tx.symbol}).exec();
+					let totalPrice = txInfo.price * txInfo.amount;
+					let comm = totalPrice * commissionModel.percent;
+					let vat = comm * commissionModel.vat;
+					txInfo.commission = {
+						commission: comm,
+						vat: vat
+					};
+					tx = new Transaction(txInfo);
+					return tx.save();
 				})
-				.then((position) => {
-					if (position) {
+				.then(() => {
+					if (currentPosition) {
 						if (tx.type === 'buy') {
-							position.cost = position.cost + tx.totalCost();
-							position.shares = position.shares + tx.amount;
+							currentPosition.cost = currentPosition.cost + tx.totalCost();
+							currentPosition.shares = currentPosition.shares + tx.amount;
 							return position.save();
 						} else {
-							if (position.shares > tx.amount) {
-								let percentSharesRemain = (position.shares - tx.amount) / position.shares;
-								position.cost = position.cost * percentSharesRemain;
-								position.shares = position.shares - tx.amount;
-								return position.save();
+							if (currentPosition.shares > tx.amount) {
+								let percentSharesRemain = (currentPosition.shares - tx.amount) / currentPosition.shares;
+								currentPosition.cost = currentPosition.cost * percentSharesRemain;
+								currentPosition.shares = currentPosition.shares - tx.amount;
+								return currentPosition.save();
 							} else
-							if (position.shares === tx.amount) {
+							if (currentPosition.shares === tx.amount) {
 								return position.remove();
 							} else {
 								throw new Error('Unable to sell more than what you have');
@@ -67,8 +78,6 @@ class LocalPortfolioManager {
 								cost: tx.totalCost()
 							});
 							return newPosition.save();
-						} else {
-							throw new Error('Unable to sell the stock that you do not have');
 						}
 					}
 				});
