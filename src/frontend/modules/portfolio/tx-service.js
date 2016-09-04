@@ -10,5 +10,9 @@ module.service('txService', function($http) {
 
     this.updateTransaction = function (tx) {
         return $http.put('portfolio/transactions/' + tx._id, tx);
-    }
+    };
+
+    this.deleteTransaction = function (txId) {
+        return $http.delete('portfolio/transactions/' + txId);
+    };
 });

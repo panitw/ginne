@@ -11,7 +11,23 @@ module.controller('PortfolioAddTxController', function($scope, txService) {
 		showPrice: true
 	};
 
-	console.log($scope.tx);
+	$scope.delete = function () {
+		if ($scope.tx) {
+			txService.deleteTransaction($scope.tx._id)
+				.then(function (result) {
+					if (result.data.success) {
+						$scope.closeDialog();
+					} else {
+						//TODO: Handle known backend error
+					}
+				})
+				.catch(function () {
+					//TODO: Handle unknown error
+				});
+		} else {
+			$scope.closeDialog();
+		}
+	};
 
 	$scope.save = function () {
 		if (!$scope.tx) {
@@ -28,11 +44,11 @@ module.controller('PortfolioAddTxController', function($scope, txService) {
 					if (result.data.success) {
 						$scope.closeDialog();
 					} else {
-						//TODO: Handle backend error
+						//TODO: Handle known backend error
 					}
 				})
 				.catch(function () {
-					//TODO: Handle connectivity error
+					//TODO: Handle unknown error
 				});
 		} else {
 			txService.addTransaction($scope.tx)
@@ -40,11 +56,11 @@ module.controller('PortfolioAddTxController', function($scope, txService) {
 					if (result.data.success) {
 						$scope.closeDialog();
 					} else {
-						//TODO: Handle backend error
+						//TODO: Handle known backend error
 					}
 				})
 				.catch(function () {
-					//TODO: Handle connectivity error
+					//TODO: Handle unknown error
 				});
 		}
 	};
