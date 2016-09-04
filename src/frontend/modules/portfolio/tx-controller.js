@@ -27,6 +27,7 @@ module.controller('PortfolioTxController', function($scope, txService) {
 
 	$scope.addTransaction = function () {
 		$scope.mode = 'add';
+		$scope.tx = null;
 		ons.createDialog('modules/portfolio/add-tx.html', {parentScope: $scope}).then(function(dialog) {
 			$scope.currentDialog = dialog;
 			dialog.show();
