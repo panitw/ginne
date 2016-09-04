@@ -2,7 +2,6 @@ module.controller('PortfolioSummaryController', function($scope, txService) {
 
 	$scope.refreshData = function () {
 		txService.getAllPositions().then(function (result) {
-			console.log(result.data);
 			var allPositions = result.data.positions.positions;
 			for (var i=0; i<allPositions.length; i++) {
 				var pos = allPositions[i];
