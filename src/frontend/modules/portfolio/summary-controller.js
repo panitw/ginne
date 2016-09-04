@@ -1,4 +1,19 @@
-module.controller('PortfolioSummaryController', function($scope, $window) {
+module.controller('PortfolioSummaryController', function($scope, txService) {
+
+	$scope.refreshData = function () {
+		txService.getAllPositions().then(function (result) {
+			var allPositions = result.data.positions;
+			for (var i=0; i<allPositions.length; i++) {
+				var pos = allPositions[i];
+				pos.last = 32;
+				pos.averagePrice = pos.cost / pos.shares;
+				pos.gain = pos.averagePrice - pos.last;
+				pos.gainPct = ((pos.averagePrice - pos.last) / pos.last) * 100;
+				pos.gainSign = (pos.gain > 0) ? '+' : '';
+			}
+			$scope.positions = allPositions;
+		});
+	};
 
 	$scope.addTransaction = function () {
 		var newScope = $scope.$new();
@@ -15,5 +30,7 @@ module.controller('PortfolioSummaryController', function($scope, $window) {
 			dialog.show();
 		});
 	};
+
+	$scope.refreshData();
 
 });

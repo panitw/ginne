@@ -15,4 +15,8 @@ module.service('txService', function($http) {
     this.deleteTransaction = function (txId) {
         return $http.delete('portfolio/transactions/' + txId);
     };
+
+    this.getAllPositions = function () {
+        return $http.get('portfolio/positions');
+    };
 });

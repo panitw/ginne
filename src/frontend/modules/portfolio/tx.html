@@ -31,15 +31,15 @@
 					</ons-col>
 					<ons-col>
 						<div class="label">shares:</div>
-						<div class="numbers">{{tx.amount | number}}</div>
+						<div class="numbers">{{tx.amount | number:2}}</div>
 						<div class="label">price/share:</div>
-						<div class="numbers">{{tx.price | number}}</div>
+						<div class="numbers">{{tx.price | number:2}}</div>
 					</ons-col>
 					<ons-col>
 						<div class="label">commission:</div>
-						<div class="numbers">{{tx.commission.commission + tx.commission.vat | number}}</div>
+						<div class="numbers">{{tx.commission.commission + tx.commission.vat | number:2}}</div>
 						<div class="label">cost:</div>
-						<div class="numbers">{{(tx.price * tx.amount) + (tx.commission.commission + tx.commission.vat) | number}}</div>
+						<div class="numbers">{{(tx.price * tx.amount) + (tx.commission.commission + tx.commission.vat) | number:2}}</div>
 					</ons-col>
 				</ons-row>
 			</ons-list-item>

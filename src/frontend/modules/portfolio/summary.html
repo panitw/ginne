@@ -15,45 +15,26 @@
   <ons-scroller>
     <ons-list>
       <ons-list-header>Total Equity: 450,000</ons-list-header>    
-      <ons-list-item class="summary" modifier="tappable">
+      <ons-list-item class="summary" modifier="tappable" ng-repeat="position in positions">
         <ons-row>
           <ons-col width="50%">
             <div class="label">symbol:</div>
-            <div class="symbol">TVO</div>
-            <div class="numbers positive">+0.50, +0.05%</div>
+            <div class="symbol">{{position.symbol}}</div>
+            <div class="numbers" ng-class="position.gain >= 0 ? 'positive' : 'negative'">
+              {{position.gainSign}}{{ position.gain | number:2}}, {{position.gainSign}}{{ position.gainPct | number:2}}%
+            </div>
           </ons-col>
           <ons-col>
             <div class="label">last:</div>
-            <div class="numbers">20.25</div>
+            <div class="numbers">{{position.last | number:2}}</div>
             <div class="label">avg.price:</div>
-            <div class="numbers">19.25</div>
+            <div class="numbers">{{position.averagePrice | number:2}}</div>
           </ons-col>
           <ons-col>
             <div class="label">shares:</div>
-            <div class="numbers">200</div>
+            <div class="numbers">{{position.shares | number:2}}</div>
             <div class="label">Cost:</div>
-            <div class="numbers">40,000</div>
-          </ons-col>
-        </ons-row>
-      </ons-list-item>
-      <ons-list-item class="summary" modifier="tappable">
-        <ons-row>
-          <ons-col width="50%">
-            <div class="label">symbol:</div>
-            <div class="symbol">PTTEP</div>
-            <div class="numbers negative">-1.50, +0.10%</div>
-          </ons-col>
-          <ons-col>
-            <div class="label">last:</div>
-            <div class="numbers">20.25</div>
-            <div class="label">avg.price:</div>
-            <div class="numbers">19.25</div>
-          </ons-col>
-          <ons-col>
-            <div class="label">shares:</div>
-            <div class="numbers">200</div>
-            <div class="label">Cost:</div>
-            <div class="numbers">40,000</div>
+            <div class="numbers">{{position.cost | number:2}}</div>
           </ons-col>
         </ons-row>
       </ons-list-item>
