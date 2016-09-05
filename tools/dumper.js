@@ -9,9 +9,7 @@ const PluginManager = require('../src/plugins/PluginManager');
 const universePlugin = PluginManager.getPlugin('universe');
 
 let set = [
-	"GIFT.BK",
-	"MONTRIu.BK",
-	"RJH.BK"
+	"M-PATu.BK"
 ];
 let provider = new DataProvider();
 let last = '';
@@ -21,7 +19,7 @@ set.splice(0, lastIndex + 1);
 provider.init().then(() => {
 	async.eachSeries(set, (ric, callback) => {
 		var actualRic = ric;
-		provider.getData(actualRic, new Date('2000-01-01')).then((data) => {
+		provider.getData(actualRic, new Date('2016-08-01')).then((data) => {
 			logger.info('Received data for ' + actualRic + ' waiting 1s for the next');
 			setTimeout(() => {
 				callback();

@@ -52,11 +52,11 @@ class UDFSource {
 				var output = data.TATimeSeries.R[0].Data.map((item) => {
 					return {
 						d: new Date(item.Date),
-						o: item.Open,
-						h: item.High,
-						l: item.Low,
-						c: item.Close,
-						v: item.Volume
+						o: parseFloat(item.Open),
+						h: parseFloat(item.High),
+						l: parseFloat(item.Low),
+						c: parseFloat(item.Close),
+						v: parseFloat(item.Volume)
 					}
 				});
 				resolve(output);
