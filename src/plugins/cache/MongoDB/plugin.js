@@ -67,7 +67,7 @@ class MongoDBPlugin {
 	}
 
 	_getSymbolCollection(symbol) {
-		symbol = symbol.replace('.','_');
+		symbol = symbol.replace('u.BK','').replace('.BK','');
 		return this._db.collection(symbol);
 	}
 
