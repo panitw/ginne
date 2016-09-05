@@ -26,7 +26,7 @@ app.listen(80, function () {
 	console.log('Web server is up and running');
 });
 
-console.log('Schedule EOD task at every 19.00 GMT');
+console.log('Schedule data retrieval task');
 schedule.scheduleJob({hour: [6, 12]}, () => {
 
 	//Pull data from SET and store to DB
