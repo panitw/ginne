@@ -3,6 +3,7 @@
 const Eikon = require('./Eikon');
 const moment = require('moment');
 const logger = require('winston');
+const SETTR = require('../../universe/Static/SET_TR');
 
 class UDFSource {
 
@@ -15,6 +16,11 @@ class UDFSource {
 	}
 
 	getData(symbol, start, end) {
+		let ric = symbol + '.BK';
+		if (SETTR.indexOf(ric) === -1) {
+			ric = symbol + 'u.BK';
+		}
+		symbol = ric;
 		logger.debug('Getting data from Eikon UDF source of ' + symbol + ' from ' + moment(start).format("YYYY-MM-DD") + ' to ' + moment(end).format("YYYY-MM-DD"));
 		var actualStart = null;
 		var actualEnd = null;

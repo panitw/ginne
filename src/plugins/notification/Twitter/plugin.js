@@ -14,15 +14,16 @@ class TwitterNotifier {
 		};
 
 		this._twitter = new Twitter(accountConfig);
+		this._target = config.target;
 	}
 
 	init () {
 	}
 
-	notify (target, message) {
+	notify (message) {
 		return new Promise((resolve, reject) => {
 			this._twitter.post('direct_messages/new', {
-				'screen_name': target,
+				'screen_name': this._target,
 				'text': message
 			},
 				(err, response, body) => {

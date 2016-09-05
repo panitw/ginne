@@ -15,6 +15,7 @@
 		"connectionString" : "mongodb://localhost/ginne_portfolio"
 	},
 	"notification" : {
-		"plugin" : "Twitter"
+		"plugin" : "Twitter",
+		"target" : "panitw"
 	}
 }

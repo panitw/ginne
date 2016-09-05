@@ -13,15 +13,19 @@ class MongoDBPlugin {
 	init() {
 		logger.debug('Initialize MongoDB database connection');
 		return new Promise((resolve, reject) => {
-			MongoClient.connect(this._config.connectionString, (err, db) => {
-				if (err) {
-					reject(err);
-				} else {
-					logger.debug('MongoDB database connection established');
-					this._db = db;
-					resolve();
-				}
-			});			
+			if (!this._db) {
+				MongoClient.connect(this._config.connectionString, (err, db) => {
+					if (err) {
+						reject(err);
+					} else {
+						logger.debug('MongoDB database connection established');
+						this._db = db;
+						resolve();
+					}
+				});
+ 			} else {
+ 				resolve();
+			}
 		});
 	}
 
@@ -54,6 +58,12 @@ class MongoDBPlugin {
 		let symbolCol = this._getSymbolCollection(symbol);
 		symbolCol.createIndex({d:1});
 		return symbolCol.insertMany(data);
+	}
+
+	updateData (symbol, data) {
+		logger.debug('Updating data of ' + symbol + ' at date ' + moment(data.d).format('YYYY-MM-DD') + 'to MongoDB cache');
+		let symbolCol = this._getSymbolCollection(symbol);
+		return symbolCol.update({d: {"$eq": moment(data.d).toDate()}}, data);
 	}
 
 	_getSymbolCollection(symbol) {
