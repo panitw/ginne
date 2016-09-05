@@ -9,7 +9,10 @@ const PluginManager = require('../src/plugins/PluginManager');
 const universePlugin = PluginManager.getPlugin('universe');
 
 let set = [
-	"M-PATu.BK"
+	"M-IIu.BK",
+	"MITu.BK",
+	"M-STORu.BK",
+	"SIRIPu.BK"
 ];
 let provider = new DataProvider();
 let last = '';

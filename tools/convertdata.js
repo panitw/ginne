@@ -87,14 +87,7 @@ converter.init().then(() => {
                      converter.saveData(newSymbol, converted, (err) => {
                         if (!err) {
                             console.log('Successfully save data for '+symbol+' as new symbol '+newSymbol);
-                            converter.removeSymbol(symbol, (err) => {
-                                if (!err) {
-                                    console.log('Successfully remove old symbol '+symbol);
-                                } else {
-                                    console.log('Error removing old symbol ' + symbol, err);                                   
-                                }
-                                callback(err);
-                            });
+                            callback();
                         } else {
                             console.log('Error converting ' + symbol, err);
                             callback(err);
