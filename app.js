@@ -27,7 +27,7 @@ app.listen(80, function () {
 });
 
 console.log('Schedule data retrieval task');
-schedule.scheduleJob({hour: [6, 12]}, () => {
+schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
 
 	//Pull data from SET and store to DB
 	task_updateData.execute()
