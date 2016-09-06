@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const commissionModelSchema = mongoose.Schema({
     percent: Number,
@@ -7,12 +8,12 @@ const commissionModelSchema = mongoose.Schema({
     activeDate: Date
 });
 
-commissionModelSchema.statics.getActiveModel = function () {
-	return this.find({}).sort({'activeDate': -1}).limit(1).then((models) => {
-		if (models && models.length > 0) {
-			return models[0];
-		}
-	});
+commissionModelSchema.statics.getActiveModel = function (atDate) {
+	if (!atDate) {
+		return this.findOne({}).sort({'activeDate': -1});
+	} else {
+		return this.findOne({activeDate: {$lte: atDate}}).sort({'activeDate': -1});
+	}
 };
 
 const CommissionModel = mongoose.model('CommissionModel', commissionModelSchema);
