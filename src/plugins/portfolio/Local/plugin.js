@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const moment = require('moment');
 const CommissionModel = require('./CommissionModel');
 const Transaction = require('./Transaction');
 
@@ -8,7 +9,6 @@ class LocalPortfolioManager {
 
 	constructor (config) {
 		this._config = config;
-		this._txTypes = ['buy', 'sell', 'deposit', 'withdraw', 'commission'];
 	}
 
 	init () {
@@ -57,6 +57,9 @@ class LocalPortfolioManager {
 					};
 					tx = new Transaction(txInfo);
 					return tx.save();
+				})
+				.then(() => {
+					return this._calculateCommission(txInfo.date);
 				});
 		} else {
 			let tx = new Transaction(txInfo);
@@ -65,11 +68,27 @@ class LocalPortfolioManager {
 	}
 
 	updateTransaction (id, txInfo) {
-		return Transaction.update({ _id: id }, { $set: txInfo});
+		return Transaction.update({ _id: id }, { $set: txInfo})
+			.then(() => {
+				return this._calculateCommission(txInfo.date);
+			});
 	}
 
 	deleteTransaction (id) {
-		return Transaction.remove({ _id: id });
+		let txToBeDeleted = null;
+		return Transaction.findOne({ _id: id })
+			.exec()
+			.then((txInfo) => {
+				if (txInfo) {
+					txToBeDeleted = txInfo;
+					return txInfo.remove();
+				}
+			})
+			.then(() => {
+				if (txToBeDeleted) {
+					return this._calculateCommission(txToBeDeleted.date);
+				}
+			});
 	}
 
 	getAllTransactions () {
@@ -124,6 +143,68 @@ class LocalPortfolioManager {
 					equity: equity,
 					positions: output
 				};
+			});
+	}
+
+	_calculateCommission (ofDate) {
+		let startDate = moment.utc(ofDate).startOf('day').toDate();
+		let endDate = moment.utc(startDate).add(1, 'day').toDate();
+		let commissionModel = null;
+		CommissionModel.getActiveModel(ofDate)
+			.then((model) => {
+				if (!model) {
+					throw new Error('No commission model on ' + ofDate);
+				} else {
+					commissionModel = model;
+					return Transaction.getTransactionsBetween(startDate, endDate);
+				}
+			})
+			.then((txs) => {
+				let allPromises = [];
+				let totalCommission = 0;
+				let commTx = null;
+				for (let i=0; i<txs.length; i++) {
+					let tx = txs[i];
+					if (tx.type === 'buy' || tx.type === 'sell') {
+						let totalPrice = tx.price * tx.amount;
+						let comm = totalPrice * commissionModel.percent;
+						let vat = comm * commissionModel.vat;
+						tx.commission = {
+							commission: comm,
+							vat: vat
+						};
+						totalCommission += comm;
+						allPromises.push(tx.save());
+					} else
+					if (tx.type === 'commission') {
+						commTx = tx;
+					}
+				}
+				if (totalCommission < commissionModel.minimumPerDay) {
+					var remainingComm = commissionModel.minimumPerDay - totalCommission;
+					var remainingVat = remainingComm * commissionModel.vat;
+					if (!commTx) {
+						commTx = new Transaction({
+							type: 'commission',
+							date: startDate,
+							commission: {
+								commission: remainingComm,
+								vat: remainingVat
+							}
+						});
+					} else {
+						commTx.commission = {
+							commission: remainingComm,
+							vat: remainingVat
+						};
+					}
+					allPromises.push(commTx.save());
+				} else {
+					if (commTx) {
+						allPromises.push(commTx.remove());
+					}
+				}
+				return Promise.all(allPromises);
 			});
 	}
 }

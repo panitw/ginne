@@ -5,7 +5,7 @@
         <span ng-show="mode === 'edit'">Edit Transaction</span>
       </div>
       <div class="right">
-        <ons-toolbar-button ng-click="delete()" ng-hide="true">
+        <ons-toolbar-button ng-click="delete()" ng-hide="mode === 'add'">
           <ons-icon icon="ion-trash-a" style="font-size: 32px; width: 1em;" class="negative"></ons-icon>
         </ons-toolbar-button>
       </div>
@@ -13,37 +13,37 @@
     <div style="padding-top: 10px;">
       <div class="button-bar" style="width:250px;margin:0 auto;">
         <div class="button-bar__item">
-          <input type="radio" name="segment-a" ng-model="vm.txtype" value="buy" checked ng-disabled="mode === 'edit'">
-          <button class="button-bar__button" ng-disabled="mode === 'edit'">Buy</button>
+          <input type="radio" name="segment-a" ng-model="vm.txtype" value="buy" checked>
+          <button class="button-bar__button">Buy</button>
         </div>
         <div class="button-bar__item">
-          <input type="radio" name="segment-a" ng-model="vm.txtype" value="sell" ng-disabled="mode === 'edit'">
-          <button class="button-bar__button" ng-disabled="mode === 'edit'">Sell</button>
+          <input type="radio" name="segment-a" ng-model="vm.txtype" value="sell">
+          <button class="button-bar__button">Sell</button>
         </div>
         <div class="button-bar__item">
-          <input type="radio" name="segment-a" ng-model="vm.txtype" value="deposit" ng-disabled="mode === 'edit'">
-          <button class="button-bar__button" ng-disabled="mode === 'edit'">Deposit</button>
+          <input type="radio" name="segment-a" ng-model="vm.txtype" value="deposit">
+          <button class="button-bar__button">Deposit</button>
         </div>
         <div class="button-bar__item">
-          <input type="radio" name="segment-a" ng-model="vm.txtype" value="withdraw" ng-disabled="mode === 'edit'">
-          <button class="button-bar__button" ng-disabled="mode === 'edit'">Withdrw</button>
+          <input type="radio" name="segment-a" ng-model="vm.txtype" value="withdraw">
+          <button class="button-bar__button">Withdrw</button>
         </div>
       </div>    
     </div>
     <p>
-      <input type="date" placeholder="Date" class="text-input" ng-model="vm.date" ng-disabled="mode === 'edit'">
+      <input type="date" placeholder="Date" class="text-input" ng-model="vm.date">
     </p>
     <p ng-show="vm.showSymbol">
-      <input type="text" placeholder="Symbol" class="text-input" ng-model="vm.symbol" ng-disabled="mode === 'edit'">
+      <input type="text" placeholder="Symbol" class="text-input" ng-model="vm.symbol">
     </p>
     <p>
-      <input type="number" placeholder="Amount" class="text-input" ng-model="vm.amount" ng-disabled="mode === 'edit'">
+      <input type="number" placeholder="Amount" class="text-input" ng-model="vm.amount">
     </p>
     <p ng-show="vm.showPrice">
-      <input type="number" placeholder="Price" class="text-input" ng-model="vm.price" ng-disabled="mode === 'edit'">
+      <input type="number" placeholder="Price" class="text-input" ng-model="vm.price">
     </p>
 	  <p>
-      <ons-button modifier="large--cta" ng-click="save()" ng-hide="mode === 'edit'">Save</ons-button>
+      <ons-button modifier="large--cta" ng-click="save()">Save</ons-button>
     </p>
 	<p>
       <ons-button modifier="large" ng-click="cancel()">Cancel</ons-button>

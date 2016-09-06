@@ -38,10 +38,12 @@ schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
 			notifier.notify('Error updating data from SET, '+ex.message);
 		});
 
+});
+
+schedule.scheduleJob({minute: 0, hour: 19}, () => {
 	//Process EOD commissions
 
 	//Execute strategy for tomorrow
 
 	//Notify that the job has been executed
-
 });

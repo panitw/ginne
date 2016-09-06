@@ -12,12 +12,20 @@ const transactionSchema = mongoose.Schema({
 	}
 }, {timestamps: true});
 
-transactionSchema.statics.getAllTransactionsOf = function (symbol, sortDecending) {
+transactionSchema.statics.getAllTransactionsOf = function (symbol, sortDescending) {
 	let sortDir = 1;
-	if (sortDecending) {
+	if (sortDescending) {
 		sortDir = -1;
 	}
 	return this.find({symbol: symbol}).sort({date: sortDir}).exec();
+};
+
+transactionSchema.statics.getTransactionsBetween = function (fromDate, toDate, sortDescending) {
+	let sortDir = 1;
+	if (sortDescending) {
+		sortDir = -1;
+	}
+	return this.find({date: {$gte: fromDate, $lt: toDate}}).sort({date: sortDir}).exec();
 };
 
 transactionSchema.methods.totalCost = function () {
