@@ -5,7 +5,6 @@ module.controller('PortfolioSummaryController', function($scope, txService) {
 			var allPositions = result.data.positions.positions;
 			for (var i=0; i<allPositions.length; i++) {
 				var pos = allPositions[i];
-				pos.last = 32;
 				pos.averagePrice = pos.cost / pos.shares;
 				pos.gain = pos.last - pos.averagePrice;
 				pos.gainPct = (pos.gain / pos.last) * 100;
