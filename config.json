@@ -17,5 +17,9 @@
 	"notification" : {
 		"plugin" : "Twitter",
 		"target" : "panitw"
+	},
+	"strategy" : {
+		"plugin" : "Local",
+		"strategy" : "highestHigh"
 	}
 }

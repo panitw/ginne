@@ -7,7 +7,7 @@ const TradingActions = require('../../pipeline/TradingActions');
 //     Screening
 // -------------------
 
-var scr1 = new Screener('SET');
+var scr1 = new Screener(['BAY']);
 scr1.addAnalysis('sma', {
 		type: 'SMA',
 		field: 'close',
