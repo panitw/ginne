@@ -1,7 +1,7 @@
 'use strict';
 
 const logger = require('winston');
-const BackTester = require('./src/backtesting/BackTester');
+const BackTester = require('./src/execution/BackTester');
 const DataProvider = require('./src/data/DataProvider');
 
 logger.level = 'debug';

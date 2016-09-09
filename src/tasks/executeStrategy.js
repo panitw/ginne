@@ -1,6 +1,9 @@
+'use strict';
+
 const PluginManager = require('../plugins/PluginManager');
 const strategy = PluginManager.getPlugin('strategy');
 const cache = PluginManager.getPlugin('cache');
+const universe = PluginManager.getPlugin('universe');
 
 module.exports = {
 	execute: () => {
@@ -10,8 +13,8 @@ module.exports = {
 		let trading = strategy.getTradingActions();
 
 		//Phase-I:
-		// Read data to memory
-		//  scan how long to read the historical data
+
+		//Scan how long to read the historical data
 		let screenerCmds = screener.commands();
 		let maxPeriod = 20;
 		for (let i=0; i<screenerCmds.length; i++) {
@@ -26,11 +29,13 @@ module.exports = {
 				}
 			}
 		}
-		//  Times 2 to get enough data
+		//Times 2 to get enough data
 		maxPeriod *= 2;
 		console.log(maxPeriod);
 
-		// Run screening actions
+		//Get Universe
+		let symbolUniverse = universe.getUniverse(screener.universe());
+
 
 		//Phase-II: Create context and execution
 		// Get current positions

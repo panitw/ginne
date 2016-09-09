@@ -1,3 +1,5 @@
+'use strict';
+
 class LocalStrategy {
 
 	constructor (config) {

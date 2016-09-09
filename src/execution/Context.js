@@ -12,8 +12,8 @@ class Context {
         this._endDate = options.end;
         this._targetPositions = options.targetPositions;
         this._slippagePercent = options.slippagePercent;
-        this._comissionPercent = options.tradeCommission;
-        this._minDailyComission = options.minDailyCommission;
+        this._commissionPercent = options.tradeCommission;
+        this._minDailyCommission = options.minDailyCommission;
         this._cutLossPercent = options.cutLossPercent;
         this._vat = options.vat;
         this._universe = null;
@@ -24,7 +24,7 @@ class Context {
         this._transactions = [];
         this._positions = {};
         this._currentDateTradeSize = 0;
-        this._currentDateComission = 0;
+        this._currentDateCommission = 0;
     }
 
     asset () {
@@ -121,19 +121,19 @@ class Context {
 
     endOfDayProcessing () {
         if (this._currentDateTradeSize > 0) {
-            let minComission = this._minDailyComission + (this._minDailyComission * this._vat);
-            if (this._currentDateComission < minComission) {
-                let gap = minComission- this._currentDateComission;
+            let minCommission = this._minDailyCommission + (this._minDailyCommission * this._vat);
+            if (this._currentDateCommission < minCommission) {
+                let gap = minCommission- this._currentDateCommission;
                 this._asset -= gap;
-                this._currentDateComission = minComission;
+                this._currentDateCommission = minCommission;
             }
-            this._addComissionTransection(this.currentDate(), this._currentDateComission);
+            this._addCommissionTransaction(this.currentDate(), this._currentDateCommission);
         }
         this._equityCurve.setRow(this.currentDate(), {
             equity: this.portfolioSize()
         });
         this._currentDateTradeSize = 0;
-        this._currentDateComission = 0;
+        this._currentDateCommission = 0;
     }
 
     portfolioSize (useYesterdayPrice) {
@@ -198,14 +198,14 @@ class Context {
             let gapToFill = targetSymbolPositionSize - currentPositionSize;
             if (gapToFill > 0) {
                 let buyPrice = symbolPrice + (symbolPrice * this._slippagePercent);
-                let commissionPerShare = (buyPrice * this._comissionPercent);
+                let commissionPerShare = (buyPrice * this._commissionPercent);
                 let commissionVat = commissionPerShare * this._vat;
-                let totalComissionPerShare = commissionPerShare + commissionVat;
-                let buyPriceWithComission = buyPrice + totalComissionPerShare;
-                let buyPosition = Math.floor(gapToFill / buyPriceWithComission);
-                let totalComission = buyPosition * totalComissionPerShare;
-                this._asset -= totalComission;
-                this._currentDateComission += totalComission;
+                let totalCommissionPerShare = commissionPerShare + commissionVat;
+                let buyPriceWithCommission = buyPrice + totalCommissionPerShare;
+                let buyPosition = Math.floor(gapToFill / buyPriceWithCommission);
+                let totalCommission = buyPosition * totalCommissionPerShare;
+                this._asset -= totalCommission;
+                this._currentDateCommission += totalCommission;
 
                 this._buy(symbol, buyPosition, buyPrice);
             } else
@@ -215,11 +215,11 @@ class Context {
                 if (sellPosition > position.number()) {
                     sellPosition = position.number();
                 }
-                let commission = (sellPrice * sellPosition) * this._comissionPercent;
+                let commission = (sellPrice * sellPosition) * this._commissionPercent;
                 let commissionVat = commission * this._vat;
-                let totalComission = commission + commissionVat;
-                this._asset -= totalComission;
-                this._currentDateComission += totalComission;
+                let totalCommission = commission + commissionVat;
+                this._asset -= totalCommission;
+                this._currentDateCommission += totalCommission;
 
                 this._sell(symbol, sellPosition, sellPrice);
             }
@@ -239,7 +239,7 @@ class Context {
         console.log(date, type, symbol, number, price, '[' + this.portfolioSize() + ']');
     }
 
-    _addComissionTransection (date, cost) {
+    _addCommissionTransaction (date, cost) {
         this._transactions.push({
             type: 'C',
             date: date,
