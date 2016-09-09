@@ -1,103 +1,117 @@
+'use strict';
+
 const moment = require('moment');
 const logger = require('winston');
 const fin = require('fin-data');
 const talib = require('talib');
+const async = require('async');
 
 class TradeExecutor {
 
-	processScreener (ctx, screener) {
-		let universe = ctx.universe();
-		let allUniversePromises = universe.map((symbol) => {
-			return this._dataProvider.getCachedData(symbol, ctx.startDate(), ctx.endDate())
-				.then((data) => {
-					logger.debug('Received data from MongoDB ' + symbol);
-					ctx.setAnalyzedData(symbol, data);
-					let commandPromises = screener.commands().map((cmdObj) => {
-						if (cmdObj.cmd === 'ANALYSIS') {
-							return this._addAnalysis(ctx, symbol, cmdObj.column, cmdObj.options);
-						} else
-						if (cmdObj.cmd === 'MASK') {
-							return this._mask(ctx, symbol, cmdObj.column, cmdObj.func);
-						}
-					});
-					return Promise.all(commandPromises);
-				});
-		});
-		return Promise.all(allUniversePromises);
+	constructor (dataProvider) {
+		this._dataProvider = dataProvider;
 	}
 
-	_addAnalysis (ctx, symbol, toColumn, options, callback) {
-		return new Promise(function (resolve, reject) {
-			let dataFrame = ctx.analyzedData(symbol);
-
-			//Skip processing if there's no data
-			if (dataFrame.count() <= 0) {
-				callback();
-				return;
-			}
-
-			let startIdx = 0;
-			let endIdx = dataFrame.count() - 1;
-
-			//Prepare analysis object
-			let taParam = {
-				name: options.type,
-				startIdx: startIdx,
-				endIdx: endIdx
-			};
-			if (options.input) {
-				for (let inputName in options.input) {
-					let upperFirst = inputName[0].toUpperCase() + inputName.substring(1);
-					taParam['optIn' + upperFirst] = options.input[inputName];
-				}
-			}
-			if (options.field) {
-				taParam.inReal = dataFrame.value(options.field);
-			}
-			taParam.open = dataFrame.value('open');
-			taParam.high = dataFrame.value('high');
-			taParam.low = dataFrame.value('low');
-			taParam.close = dataFrame.value('close');
-			taParam.volume = dataFrame.value('volume');
-
-			talib.execute(taParam, (result) => {
-				if (result.error) {
-					reject(result.error);
-					return;
-				} else
-				if (result && result.result) {
-					for (let resultName in result.result) {
-						let indices = dataFrame.index().slice(result.begIndex, result.begIndex + result.nbElement);
-						let newSeries = new fin.Series(result.result[resultName], indices);
-						let column = null;
-						if (resultName === 'outReal') {
-							column = toColumn;
-						} else {
-							column = toColumn + '_' + resultName.substring(3);
-						}
-						dataFrame.addColumn(newSeries, column);
-					}
-				}
-				resolve();
+	processScreener (ctx, screener) {
+		return new Promise((resolve) => {
+			let universe = ctx.universe();
+			async.eachSeries(universe, (symbol, callback) => {
+				this._dataProvider.getCachedData(symbol, ctx.startDate(), ctx.endDate())
+					.then((data) => {
+						logger.debug('Received data from MongoDB ' + symbol);
+						ctx.setAnalyzedData(symbol, data);
+						async.eachSeries(screener.commands(), (cmdObj, callback) => {
+							if (cmdObj.cmd === 'ANALYSIS') {
+								this._addAnalysis(ctx, symbol, cmdObj.column, cmdObj.options, callback);
+							} else
+							if (cmdObj.cmd === 'MASK') {
+								this._mask(ctx, symbol, cmdObj.column, cmdObj.func, callback);
+							} else {
+								callback();
+							}
+						}, () => {
+							callback();
+						});
+					})
+					.catch((err) => {
+						callback(err);
+					});
+			}, (err) => {
+				resolve(err);
 			});
 		});
 	}
 
-	_mask (ctx, symbol, toColumn, func) {
-		return new Promise(function (resolve) {
-			let dataFrame = ctx.analyzedData(symbol);
-			let indices = dataFrame.index();
-			if (indices.length > 0) {
-				let prevRow = null;
-				for (var i=0; i<indices.length; i++) {
-					let row = dataFrame.row(indices[i]);
-					let maskValue = func(row, prevRow);
-					dataFrame.setValue(toColumn, indices[i], maskValue);
-					prevRow = row;
+	_addAnalysis (ctx, symbol, toColumn, options, callback) {
+		let dataFrame = ctx.analyzedData(symbol);
+
+		//Skip processing if there's no data
+		if (dataFrame.count() <= 0) {
+			callback();
+			return;
+		}
+
+		let startIdx = 0;
+		let endIdx = dataFrame.count() - 1;
+
+		//Prepare analysis object
+		let taParam = {
+			name: options.type,
+			startIdx: startIdx,
+			endIdx: endIdx
+		};
+		if (options.input) {
+			for (let inputName in options.input) {
+				let upperFirst = inputName[0].toUpperCase() + inputName.substring(1);
+				taParam['optIn' + upperFirst] = options.input[inputName];
+			}
+		}
+		if (options.field) {
+			taParam.inReal = dataFrame.value(options.field);
+		}
+		taParam.open = dataFrame.value('open');
+		taParam.high = dataFrame.value('high');
+		taParam.low = dataFrame.value('low');
+		taParam.close = dataFrame.value('close');
+		taParam.volume = dataFrame.value('volume');
+
+		talib.execute(taParam, (result) => {
+			if (result.error) {
+				reject(result.error);
+				return;
+			} else
+			if (result && result.result) {
+				for (let resultName in result.result) {
+					let indices = dataFrame.index().slice(result.begIndex, result.begIndex + result.nbElement);
+					let newSeries = new fin.Series(result.result[resultName], indices);
+					let column = null;
+					if (resultName === 'outReal') {
+						column = toColumn;
+					} else {
+						column = toColumn + '_' + resultName.substring(3);
+					}
+					dataFrame.addColumn(newSeries, column);
 				}
 			}
-			resolve();
+			console.log('Analysis ' + options.type + ' added to ' + symbol);
+			callback();
 		});
+	}
+
+	_mask (ctx, symbol, toColumn, func, callback) {
+		let dataFrame = ctx.analyzedData(symbol);
+		let indices = dataFrame.index();
+		if (indices.length > 0) {
+			let prevRow = null;
+			for (var i=0; i<indices.length; i++) {
+				let row = dataFrame.row(indices[i]);
+				let maskValue = func(row, prevRow);
+				dataFrame.setValue(toColumn, indices[i], maskValue);
+				prevRow = row;
+			}
+		}
+		console.log('Mask added to ' + toColumn + ' of ' + symbol);
+		callback();
 	}
 
 	processTradingActions (ctx, tradingActions) {

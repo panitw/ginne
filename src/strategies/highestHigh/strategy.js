@@ -7,7 +7,7 @@ const TradingActions = require('../../pipeline/TradingActions');
 //     Screening
 // -------------------
 
-var scr1 = new Screener('SET');
+var scr1 = new Screener(['PRAKIT']);
 scr1.addAnalysis('max', {
         type: 'MAX',
         field: 'close',

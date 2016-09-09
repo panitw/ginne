@@ -8,7 +8,7 @@ const moment = require('moment');
 class BackTester extends TradeExecutor {
 
     constructor (dataProvider) {
-        this._dataProvider = dataProvider;
+    	super(dataProvider);
     }
 
     run (strategy, options) {
@@ -28,7 +28,7 @@ class BackTester extends TradeExecutor {
             })
             .then(() => {
 	            ctx.closeAllPositions();
-	            result = {
+	            let result = {
 		            initialCapital: options.initialAsset,
 		            endCapital: ctx.asset(),
 		            netProfit: ctx.asset() - options.initialAsset,
@@ -44,10 +44,14 @@ class BackTester extends TradeExecutor {
 
 	            //Drawdown Duration
 	            let ddDuration = ctx.equityCurve().drawdownDuration('equity');
-	            let startIndex = ctx.equityCurve().indexAtLoc(ddDuration.startIndex);
-	            let endIndex = ctx.equityCurve().indexAtLoc(ddDuration.endIndex);
-	            let drawdownDays = moment(endIndex).diff(startIndex, 'days');
-	            result.drawdownDuration = drawdownDays;
+	            if (ddDuration) {
+		            let startIndex = ctx.equityCurve().indexAtLoc(ddDuration.startIndex);
+		            let endIndex = ctx.equityCurve().indexAtLoc(ddDuration.endIndex);
+		            let drawdownDays = moment(endIndex).diff(startIndex, 'days');
+		            result.drawdownDuration = drawdownDays;
+	            } else {
+		            result.drawdownDuration = 0;
+	            }
 
 	            return result;
             });
