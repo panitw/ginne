@@ -36,10 +36,10 @@ scr1.addAnalysis('max', {
     .mask('trade_signal', function (row, prevRow) {
         if (row && prevRow) {
             if (!isNaN(prevRow.max) && row.close > prevRow.max) {
-                return 'B';
+                return 'S';
             } else
             if (!isNaN(prevRow.min) && row.close < prevRow.min) {
-                return 'S';
+                return 'B';
             } else {
                 return '-';
             }

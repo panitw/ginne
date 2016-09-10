@@ -173,10 +173,11 @@ class Context {
 	}
 
 	setPositionPercent (symbol, percent) {
+		let portSize = this.portfolioSize();
+
 		if (!this._positions[symbol]) {
 			this._positions[symbol] = new Position(0, 0);
 		}
-		let portSize = this.portfolioSize();
 
 		//Buy at the open price of the day
 		let symbolPrice = this._latestData.value('open', symbol);

@@ -10,10 +10,10 @@ class TodayContext extends Context {
 	constructor (date, currentPositions) {
 		let today = date;
 		super({
-			asset: currentPositions.equity,
+			initialAsset: currentPositions.equity,
 			start: today,
 			end: today,
-			targetPosition: 5,
+			targetPositions: 5,
 			cutLossPercent: 0.1
 		});
 		var positions = {};
