@@ -147,6 +147,10 @@ class LocalPortfolioManager {
 			});
 	}
 
+	getCommissionModel (ofDate) {
+		return CommissionModel.getActiveModel(ofDate);
+	}
+
 	_calculateCommission (ofDate) {
 		let startDate = moment.utc(ofDate).startOf('day').toDate();
 		let endDate = moment.utc(startDate).add(1, 'day').toDate();

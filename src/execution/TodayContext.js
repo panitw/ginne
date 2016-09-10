@@ -7,14 +7,17 @@ const universe = PluginManager.getPlugin('universe');
 
 class TodayContext extends Context {
 
-	constructor (date, currentPositions) {
+	constructor (date, currentPositions, commissionModel) {
 		let today = date;
 		super({
 			initialAsset: currentPositions.equity,
 			start: today,
 			end: today,
 			targetPositions: 5,
-			cutLossPercent: 0.1
+			cutLossPercent: 0.1,
+			tradeCommission: commissionModel.percent,
+			minDailyCommission: commissionModel.minimumPerDay,
+			vat: commissionModel.vat
 		});
 		var positions = {};
 		currentPositions.positions.forEach((position) => {
@@ -37,6 +40,10 @@ class TodayContext extends Context {
 			allPromises.push(promise);
 		}
 		return Promise.all(allPromises);
+	}
+
+	setPositionPercent (symbol, percent) {
+		super.setPositionPercent(symbol, percent, false, 'close');
 	}
 
 	endOfDayProcessing () {

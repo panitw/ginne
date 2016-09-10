@@ -1,3 +1,5 @@
+'use strict';
+
 const mongoose = require('mongoose');
 const CommissionModel = require('../src/plugins/portfolio/Local/CommissionModel');
 

@@ -172,15 +172,19 @@ class Context {
 		return !isNaN(symbolPrice);
 	}
 
-	setPositionPercent (symbol, percent) {
+	setPositionPercent (symbol, percent, useSlippage, priceField) {
 		let portSize = this.portfolioSize();
+		let useField = 'open';
+		if (priceField) {
+			useField = priceField;
+		}
 
 		if (!this._positions[symbol]) {
 			this._positions[symbol] = new Position(0, 0);
 		}
 
 		//Buy at the open price of the day
-		let symbolPrice = this._latestData.value('open', symbol);
+		let symbolPrice = this._latestData.value(useField, symbol);
 
 		if (!isNaN(symbolPrice)) {
 			let position = this._positions[symbol];
@@ -188,7 +192,10 @@ class Context {
 			let targetSymbolPositionSize = portSize * percent;
 			let gapToFill = targetSymbolPositionSize - currentPositionSize;
 			if (gapToFill > 0) {
-				let buyPrice = symbolPrice + (symbolPrice * this._slippagePercent);
+				let buyPrice = symbolPrice;
+				if (useSlippage === undefined || useSlippage === true) {
+					buyPrice += (symbolPrice * this._slippagePercent);
+				}
 				let commissionPerShare = (buyPrice * this._commissionPercent);
 				let commissionVat = commissionPerShare * this._vat;
 				let totalCommissionPerShare = commissionPerShare + commissionVat;
@@ -201,7 +208,10 @@ class Context {
 				this._buy(symbol, buyPosition, buyPrice);
 			} else
 			if (gapToFill < 0) {
-				let sellPrice = symbolPrice - (symbolPrice * this._slippagePercent);
+				let sellPrice = symbolPrice;
+				if (useSlippage === undefined || useSlippage === true) {
+					sellPrice -= (symbolPrice * this._slippagePercent);
+				}
 				let sellPosition = Math.floor((-1 * gapToFill) / sellPrice);
 				if (sellPosition > position.number()) {
 					sellPosition = position.number();

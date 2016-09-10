@@ -19,6 +19,7 @@ class TodayExecutor extends TradeExecutor {
 
 	run (strategy, universe, numberOfDaysBack) {
 		let currentPositions = null;
+		let commissionModel = null;
 		return portfolio.getPositions()
 			.then((positions) => {
 				if (!positions) {
@@ -27,8 +28,12 @@ class TodayExecutor extends TradeExecutor {
 				currentPositions = positions;
 			})
 			.then(() => {
+				return portfolio.getCommissionModel(this._today);
+			})
+			.then((commission) => {
+				commissionModel = commission;
 				let startDate = moment(this._today).add(-1 * numberOfDaysBack, 'days').toDate();
-				this._context = new TodayContext(this._today, currentPositions);
+				this._context = new TodayContext(this._today, currentPositions, commissionModel);
 				this._context.setUniverse(universe);
 				this._context.setStartDate(startDate);
 				return this.processScreener(this._context, strategy.screener);
