@@ -10,7 +10,7 @@ let provider = new DataProvider();
 provider
 	.init()
 	.then(() => {
-		let strategy = require('./src/strategies/highestHigh/strategy');
+		let strategy = require('./src/strategies/emaCrossOver/strategy');
 		let options = {
 			initialAsset: 100000,
 			targetPositions: 5,

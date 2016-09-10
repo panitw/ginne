@@ -85,13 +85,6 @@ actions1
                 continue;
             }
 
-            //Take Profit at 20%
-            if (row.close > position.averageCost() * 1.2) {
-            	if (row.trade_signal !== 'B') {
-		            exitList.push(symbol);
-		            continue;
-	            }
-            }
         }
 
         // Close the position for existing symbol
