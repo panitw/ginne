@@ -34,6 +34,10 @@ class Context {
 		return this._startDate;
 	}
 
+	setStartDate (startDate) {
+		this._startDate = startDate;
+	}
+
 	endDate () {
 		return this._endDate;
 	}

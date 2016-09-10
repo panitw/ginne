@@ -26,14 +26,14 @@ class TodayExecutor extends TradeExecutor {
 				currentPositions = positions;
 			})
 			.then(() => {
-				let endDate = moment(this._today).add(-1 * numberOfDaysBack, 'days').toDate();
+				let startDate = moment(this._today).add(-1 * numberOfDaysBack, 'days').toDate();
 				this._context = new TodayContext(this._today, currentPositions);
 				this._context.setUniverse(universe);
-				this._context.setEndDate(endDate);
+				this._context.setStartDate(startDate);
 				return this.processScreener(this._context, strategy.screener);
 			})
 			.then(() => {
-				this._context.setEndDate(this._today);
+				this._context.setStartDate(this._today);
 				return this.processTradingActions(this._context, strategy.tradingActions);
 			})
 			.then(() => {
