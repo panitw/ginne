@@ -133,6 +133,7 @@ class LocalPortfolioManager {
 				let output = [];
 				for (let symbol in positions) {
 					if (positions[symbol].shares > 0) {
+						positions[symbol].price = positions[symbol].cost / positions[symbol].shares;
 						output.push(positions[symbol]);
 					}
 				}

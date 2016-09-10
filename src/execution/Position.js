@@ -45,6 +45,14 @@ class Position {
         this._cutLossTarget = target;
     }
 
+    last () {
+    	return this._last;
+    }
+
+    setLast (last) {
+		this._last = last;
+    }
+
 }
 
 module.exports = Position;

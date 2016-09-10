@@ -7,27 +7,39 @@ const TradingActions = require('../../pipeline/TradingActions');
 //     Screening
 // -------------------
 
-var scr1 = new Screener(['ADVANC']);
-scr1.addAnalysis('ema10', {
+var scr1 = new Screener([
+    'BAY',
+    'BBL',
+    'KKP',
+    'KTB',
+    'TCAP',
+    'TMB',
+    'KBANK',
+    'SCB',
+    'CIMBT',
+    'TISCO',
+    'LHBANK'
+]);
+scr1.addAnalysis('ema60', {
         type: 'EMA',
         field: 'close',
         input: {
-            timePeriod: 10
+            timePeriod: 60
         }
     })
-    .addAnalysis('ema20', {
+    .addAnalysis('ema90', {
         type: 'EMA',
         field: 'close',
         input: {
-            timePeriod: 20
+            timePeriod: 90
         }
     })
     .mask('trade_signal', function (row, prevRow) {
-        if (prevRow) {
-            if (prevRow.ema10 <= prevRow.ema20 && row.ema10 > row.ema20) {
+        if (row && prevRow) {
+            if (prevRow.ema60 <= prevRow.ema90 && row.ema60 > row.ema90) {
                 return 'B';
             } else
-            if (prevRow.ema10 >= prevRow.ema20 && row.ema10 < row.ema20) {
+            if (prevRow.ema60 >= prevRow.ema90 && row.ema60 < row.ema90) {
                 return 'S';
             } else {
                 return '-';
@@ -55,7 +67,7 @@ action1
         let symbol, position, row;
         for (symbol in ctx.positions()) {
             //Exit signal
-            row = ctx.previousData().row(symbol);
+            row = ctx.latestData().row(symbol);
             if (row.trade_signal === 'S') {
                 console.log('Exit Signal: ' + symbol);
                 exitList.push(symbol);
@@ -84,7 +96,7 @@ action1
 
         // Adjust the stop loss price using trailing stop
         for (symbol in ctx.positions()) {
-            row = ctx.previousData().row(symbol);
+            row = ctx.latestData().row(symbol);
             position = ctx.positions()[symbol];
             let gapPercent = (row.close - position.cutLossTarget()) / row.close;
             if (gapPercent > cutLossPercent) {

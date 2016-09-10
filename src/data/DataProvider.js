@@ -1,7 +1,6 @@
 'use strict';
 
 const moment = require('moment');
-const async = require('async');
 const logger = require('winston');
 const fin = require('fin-data');
 const PluginManager = require('../plugins/PluginManager');
@@ -101,7 +100,7 @@ class DataProvider {
 		var low = [];
 		var close = [];
 		var volume = [];
-		var output = data.forEach((item) => {
+		data.forEach((item) => {
 			index.push(new Date(item.d));
 			open.push(item.o);
 			high.push(item.h);

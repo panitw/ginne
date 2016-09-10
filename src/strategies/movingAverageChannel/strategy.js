@@ -74,7 +74,7 @@ actions1
 		let symbol, position, row;
 		for (symbol in ctx.positions()) {
 			//Exit signal
-			row = ctx.previousData().row(symbol);
+			row = ctx.latestData().row(symbol);
 			if (row.trade_signal === 'S') {
 				exitList.push(symbol);
 				continue;
@@ -100,7 +100,7 @@ actions1
 
 		// Adjust the stop loss price using trailing stop
 		for (symbol in ctx.positions) {
-			row = ctx.previousData().row(symbol);
+			row = ctx.latestData().row(symbol);
 			position = ctx.positions()[symbol];
 			let gapPercent = (row.close - position.cutLossTarget()) / row.close;
 			if (gapPercent > cutLossPercent) {
@@ -112,8 +112,8 @@ actions1
 		// buy some more using the screening result (if there's some in the screening result)
 		let morePosition = ctx.targetPositions() - ctx.positionCount();
 		if (morePosition > 0) {
-			let prevData = ctx.previousData();
-			let buySignal = prevData.filter(function (row, symbol) {
+			let latestData = ctx.latestData();
+			let buySignal = latestData.filter(function (row, symbol) {
 				return row.trade_signal === 'B' && !ctx.positions()[symbol] && row.slope > 0.2;
 			});
 			buySignal.sort('higher_ratio', 'a');
