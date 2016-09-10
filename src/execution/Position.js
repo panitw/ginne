@@ -2,20 +2,39 @@
 
 class Position {
 
-    constructor (numberOfPositions) {
-        if (numberOfPositions === undefined) {
-            numberOfPositions = 0;
-        }
-        this._numberOfPositions = numberOfPositions;
+    constructor (numberOfPositions, price) {
+        this._numberOfPositions = 0;
+	    this._cost = 0;
         this._cutLossTarget = null;
+	    if (numberOfPositions !== undefined && price !== undefined) {
+		    this.add(numberOfPositions, price);
+	    }
+    }
+
+    add (number, price) {
+        this._numberOfPositions += number;
+        this._cost += (price * number);
+    }
+
+    remove (number) {
+        this._cost *= (this._numberOfPositions - number) / this._numberOfPositions;
+	    this._numberOfPositions -= number;
     }
 
     number () {
         return this._numberOfPositions;
     }
 
-    setNumber (numberOfPositions) {
-        this._numberOfPositions = numberOfPositions;
+    cost () {
+        return this._cost;
+    }
+
+    averageCost () {
+        if (this._numberOfPositions != 0) {
+            return this._cost / this._numberOfPositions;
+        } else {
+            return 0;
+        }
     }
 
     cutLossTarget () {

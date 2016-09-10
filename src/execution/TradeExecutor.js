@@ -93,7 +93,6 @@ class TradeExecutor {
 					dataFrame.addColumn(newSeries, column);
 				}
 			}
-			console.log('Analysis ' + options.type + ' added to ' + symbol);
 			callback();
 		});
 	}
@@ -110,15 +109,14 @@ class TradeExecutor {
 				prevRow = row;
 			}
 		}
-		console.log('Mask added to ' + toColumn + ' of ' + symbol);
 		callback();
 	}
 
 	processTradingActions (ctx, tradingActions) {
 		return new Promise((resolve) => {
 			//Loop through each day of the specified period
-			let runner = ctx.startDate();
-			let end = ctx.endDate();
+			let runner = moment.utc(ctx.startDate()).toDate();
+			let end = moment.utc(ctx.endDate()).toDate();
 			let lastValidRow = {};
 			let prevData = null;
 
@@ -172,7 +170,7 @@ class TradeExecutor {
 					prevData = dayData;
 				}
 
-				runner = moment(runner).add(1, 'day').toDate();
+				runner = moment.utc(moment(runner).add(1, 'day').format('YYYY-MM-DD')).toDate();
 			}
 			resolve();
 		});

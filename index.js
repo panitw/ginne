@@ -15,7 +15,7 @@ provider
 			initialAsset: 100000,
 			targetPositions: 5,
 			cutLossPercent: 0.1,
-			start: new Date('2015-01-01'),
+			start: new Date('2005-01-01'),
 			end: new Date('2015-12-31'),
 			tradeCommission: 0.001578,
 			vat: 0.07,

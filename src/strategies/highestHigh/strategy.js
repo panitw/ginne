@@ -7,7 +7,7 @@ const TradingActions = require('../../pipeline/TradingActions');
 //     Screening
 // -------------------
 
-var scr1 = new Screener(['PRAKIT']);
+var scr1 = new Screener(['ADVANC']);
 scr1.addAnalysis('max', {
         type: 'MAX',
         field: 'close',
@@ -24,7 +24,7 @@ scr1.addAnalysis('max', {
     })
     .mask('enough_volume', function (row) {
         if (row) {
-            if (row.volume > 10000000) {
+            if (row.volume > 10000) {
                 return 'Y';
             } else {
                 return 'N';
@@ -66,7 +66,7 @@ actions1
         // Exit Criteria:
         //  - exit signal        
         //  - cut loss
-        let cutLossPercent = 0.1;
+        let cutLossPercent = ctx.cutLossPercent();
         let percentPositionSize = 1 / ctx.targetPositions();
         let exitList = [];
         let symbol, position, row;
@@ -80,9 +80,17 @@ actions1
 
             //Cut-loss
             position = ctx.positions()[symbol];
-            if (row.close <= position.cutLossTarget) {
+            if (row.close <= position.cutLossTarget()) {
                 exitList.push(symbol);
                 continue;
+            }
+
+            //Take Profit at 20%
+            if (row.close > position.averageCost() * 1.2) {
+            	if (row.trade_signal !== 'B') {
+		            exitList.push(symbol);
+		            continue;
+	            }
             }
         }
 
@@ -97,12 +105,12 @@ actions1
         }
 
         // Adjust the stop loss price using trailing stop
-        for (symbol in ctx.positions) {
+        for (symbol in ctx.positions()) {
             row = ctx.previousData().row(symbol);
             position = ctx.positions()[symbol];
-            let gapPercent = (row.close - position.cutLossTarget) / row.close;
+            let gapPercent = (row.close - position.cutLossTarget()) / row.close;
             if (gapPercent > cutLossPercent) {
-                position.cutLossTarget = row.close - (row.close * cutLossPercent);
+                position.setCutLossTarget(row.close - (row.close * cutLossPercent));
             }
         }
 

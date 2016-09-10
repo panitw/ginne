@@ -184,7 +184,7 @@ class Context {
 
     setPositionPercent (symbol, percent) {
         if (!this._positions[symbol]) {
-            this._positions[symbol] = new Position(0);
+            this._positions[symbol] = new Position(0, 0);
         }
         let portSize = this.portfolioSize(true);
 
@@ -250,13 +250,15 @@ class Context {
 
     _buy (symbol, number, atPrice) {
         if (!this._positions[symbol]) {
-            this._positions[symbol] = new Position(0);
+            this._positions[symbol] = new Position(0, 0);
         }
         let position = this._positions[symbol];
         let tradeSize = number * atPrice;
 
         //Set position number
-        position.setNumber(position.number() + number);
+        position.add(number, atPrice);
+
+        //Set initial cut-loss target
 	    position.setCutLossTarget(atPrice - (atPrice * this._cutLossPercent));
 
         //Adjust asset in hand
@@ -282,7 +284,7 @@ class Context {
         }
 
         //Set position number
-        position.setNumber(position.number() - number);
+        position.remove(number);
 
         //Adjust asset in hand
         this._asset += tradeSize;
