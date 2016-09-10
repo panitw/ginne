@@ -1,3 +1,5 @@
+'use strict';
+
 const moment = require('moment');
 const reader = require('set-data-reader');
 const PluginManager = require('../plugins/PluginManager');

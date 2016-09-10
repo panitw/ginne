@@ -1,3 +1,5 @@
+'use strict';
+
 const express = require('express');
 const PluginManager = require('../../plugins/PluginManager');
 const portManager = PluginManager.getPlugin('portfolio');

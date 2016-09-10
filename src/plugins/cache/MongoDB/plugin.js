@@ -11,7 +11,7 @@ class MongoDBPlugin {
 	}
 
 	init() {
-		logger.debug('Initialize MongoDB database connection');
+		logger.debug('Cache Plugin: Initialize MongoDB database connection. Use ' + this._config.connectionString);
 		return new Promise((resolve, reject) => {
 			if (!this._db) {
 				MongoClient.connect(this._config.connectionString, (err, db) => {

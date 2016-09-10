@@ -1,3 +1,5 @@
+'use strict';
+
 const Context = require('./Context');
 const PluginManager = require('../plugins/PluginManager');
 const cache = PluginManager.getPlugin('cache');
@@ -5,8 +7,8 @@ const universe = PluginManager.getPlugin('universe');
 
 class TodayContext extends Context {
 
-	constructor (currentPositions, analyzedData, latestData) {
-		let today = moment.utc();
+	constructor (date, currentPositions) {
+		let today = date;
 		super({
 			asset: currentPositions.equity,
 			start: today,
@@ -21,8 +23,6 @@ class TodayContext extends Context {
 		this.setPositions(positions);
 		this.setCurrentDate(today);
 		this.setUniverse(universe.getUniverse('SET'));
-		this.setAnalyzedData(analyzedData);
-		this.setLatestData(latestData);
 	}
 
 	init () {
@@ -42,5 +42,6 @@ class TodayContext extends Context {
 	endOfDayProcessing () {
 		// Override to do nothing
 	}
-
 }
+
+module.exports = TodayContext;

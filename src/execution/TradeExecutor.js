@@ -118,7 +118,6 @@ class TradeExecutor {
 			let runner = moment.utc(ctx.startDate()).toDate();
 			let end = moment.utc(ctx.endDate()).toDate();
 			let lastValidRow = {};
-			let prevData = null;
 
 			while (runner.getTime() <= end.getTime()) {
 				//Create a new data frame that contains the row of all the instrument in the universe
@@ -153,8 +152,7 @@ class TradeExecutor {
 
 					//Before Market Opened
 					ctx.setCurrentDate(runner);
-					if (prevData && dayData) {
-						ctx.setPreviousData(prevData);
+					if (dayData) {
 						ctx.setLatestData(dayData);
 						let handlers = tradingActions.handlers('marketOpen');
 						if (handlers && handlers.length > 0) {
@@ -166,8 +164,6 @@ class TradeExecutor {
 
 					//Process EOD commission
 					ctx.endOfDayProcessing();
-
-					prevData = dayData;
 				}
 
 				runner = moment.utc(moment(runner).add(1, 'day').format('YYYY-MM-DD')).toDate();
