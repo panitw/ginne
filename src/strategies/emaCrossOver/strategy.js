@@ -12,15 +12,22 @@ scr1.addAnalysis('ema10', {
         type: 'EMA',
         field: 'close',
         input: {
-            timePeriod: 22
+            timePeriod: 10
+        }
+    })
+    .addAnalysis('ema20', {
+        type: 'EMA',
+        field: 'close',
+        input: {
+            timePeriod: 20
         }
     })
     .mask('trade_signal', function (row, prevRow) {
         if (prevRow) {
-            if (prevRow.close <= prevRow.ema10 && row.close > row.ema10) {
+            if (prevRow.ema10 <= prevRow.ema20 && row.ema10 > row.ema20) {
                 return 'B';
             } else
-            if (prevRow.close > prevRow.ema10 && row.close <= row.ema10) {
+            if (prevRow.ema10 >= prevRow.ema20 && row.ema10 < row.ema20) {
                 return 'S';
             } else {
                 return '-';
