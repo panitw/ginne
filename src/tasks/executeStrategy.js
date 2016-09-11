@@ -7,6 +7,7 @@ const Recommendation = require('../execution/Recommendation');
 const PluginManager = require('../plugins/PluginManager');
 const strategy = PluginManager.getPlugin('strategy');
 const universe = PluginManager.getPlugin('universe');
+const notification = PluginManager.getPlugin('notification');
 
 module.exports = {
 	execute: () => {
@@ -57,12 +58,15 @@ module.exports = {
 								price: item.price,
 								amount: item.number
 							};
-							console.log(recommendation);
 							recommendationObj.recommendations.push(recommendation);
 						}
 					});
 					return recommendationObj.save().then(() => {
-						return results;
+						if (results.length > 0) {
+							return notification.notify("There's new trade suggestion! Check it out http://ginne.ddns.net");
+						} else {
+							return results;
+						}
 					});
 				} else {
 					return [];
