@@ -3,6 +3,7 @@
 const moment = require('moment');
 const DataProvider = require('../data/DataProvider');
 const TodayExecutor = require('../execution/TodayExecutor');
+const Recommendation = require('../execution/Recommendation');
 const PluginManager = require('../plugins/PluginManager');
 const strategy = PluginManager.getPlugin('strategy');
 const universe = PluginManager.getPlugin('universe');
@@ -41,6 +42,31 @@ module.exports = {
 			.then(() => {
 				executor = new TodayExecutor(today, dataProvider);
 				return executor.run(tradeStrategy, derivedUniverse, maxPeriod);
+			})
+			.then((results) => {
+				if (results) {
+					let recommendationObj = new Recommendation({
+						date: today,
+						recommendations: []
+					});
+					results.forEach((item) => {
+						if (item.type === 'B' || item.type === 'S') {
+							let recommendation = {
+								type: ((item.type === 'B')? 'buy' : 'sell'),
+								symbol: item.symbol,
+								price: item.price,
+								amount: item.number
+							};
+							console.log(recommendation);
+							recommendationObj.recommendations.push(recommendation);
+						}
+					});
+					return recommendationObj.save().then(() => {
+						return results;
+					});
+				} else {
+					return [];
+				}
 			});
 	}
 };
