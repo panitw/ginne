@@ -1,34 +1,35 @@
-<ons-page>
+<ons-page ng-controller="EODController">
   <ons-toolbar>
     <div class="left">
       <ons-toolbar-button ng-click="app.menu.toggleMenu()">
         <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
       </ons-toolbar-button>
     </div>
-    <div class="center">Tomorrow's Actions</div>
+    <div class="center">Recommendation</div>
   </ons-toolbar>
   <div class="content-padded">
-    <ons-button modifier="large">Execute Strategy (31-Aug-2016)</ons-button>
+    <ons-button modifier="large">Strategy Executed At {{recommendation.date}}</ons-button>
   </div>
   <ons-scroller>
     <ons-list>
       <ons-list-header>BUY</ons-list-header>
-      <ons-list-item>
+      <ons-list-item ng-if="recommendation.buys.length > 0" ng-repeat="buyItem in recommendation.buys">
         <ons-row class="positive">
-          <ons-col>TVO</ons-col>
-          <ons-col>1,000 shares</ons-col>
-          <ons-col><div style="text-align: right;">at 32.50</div></ons-col>
+          <ons-col>{{buyItem.symbol}}</ons-col>
+          <ons-col>{{buyItem.amount | number}} shares</ons-col>
+          <ons-col><div style="text-align: right;">at {{buyItem.price | number:2}}</div></ons-col>
         </ons-row>
       </ons-list-item>
-      <ons-list-item>
-        <ons-row class="positive">
-          <ons-col>THCOM</ons-col>
-          <ons-col>300 shares</ons-col>
-          <ons-col><div style="text-align: right;">at 28.75</div></ons-col>
-        </ons-row>
-      </ons-list-item>
+      <ons-list-item ng-if="recommendation.buys.length === 0">No buy action today</ons-list-item>
       <ons-list-header>SELL</ons-list-header>
-      <ons-list-item class="negative">No sell action</ons-list-item>
+      <ons-list-item ng-if="recommendation.sells.length > 0" ng-repeat="sellItem in recommendation.sells">
+        <ons-row class="negative">
+          <ons-col>{{sellItem.symbol}}</ons-col>
+          <ons-col>{{sellItem.amount | number}} shares</ons-col>
+          <ons-col><div style="text-align: right;">at {{sellItem.price | number:2}}</div></ons-col>
+        </ons-row>
+      </ons-list-item>
+      <ons-list-item ng-if="recommendation.sells.length === 0">No sell action today</ons-list-item>
     </ons-list>
   </ons-scroller>  
 </ons-page>

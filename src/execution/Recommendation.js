@@ -15,7 +15,7 @@ const recommendationSchema = mongoose.Schema({
 });
 
 recommendationSchema.statics.getLastest = function () {
-	return this.find({}).sort({date: -1}).limit(1).next();
+	return this.findOne({}).sort({date: -1});
 };
 
 const Recommendation = mongoose.model('Recommendation', recommendationSchema);

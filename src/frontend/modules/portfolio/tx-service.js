@@ -19,4 +19,8 @@ module.service('txService', function($http) {
     this.getAllPositions = function () {
         return $http.get('portfolio/positions');
     };
+
+    this.getAllRecommendations = function () {
+        return $http.get('portfolio/recommendations');
+    }
 });
