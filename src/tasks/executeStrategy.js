@@ -63,7 +63,10 @@ module.exports = {
 					});
 					return recommendationObj.save().then(() => {
 						if (results.length > 0) {
-							return notification.notify("There's new trade suggestion! Check it out http://ginne.ddns.net");
+							return notification.notify("There's new trade suggestion! Check it out http://ginne.ddns.net")
+								.then(() => {
+									return results;
+								});
 						} else {
 							return results;
 						}
