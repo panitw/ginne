@@ -64,7 +64,7 @@ actions1
     .on('marketOpen', function (ctx) {
         // Validate all entries if we need to exit any position and exit if need to
         // Exit Criteria:
-        //  - exit signal        
+        //  - exit signal
         //  - cut loss
         let cutLossPercent = ctx.cutLossPercent();
         let percentPositionSize = 1 / ctx.targetPositions();
