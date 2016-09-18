@@ -31,11 +31,11 @@ class MemoryCache {
 	}
 
 	getData(symbol, start, end) {
-		let leftIndex = this._findIndex(start);
-		let rightIndex = this._findIndex(end);
+		let leftIndex = this._findIndex(symbol, start);
+		let rightIndex = this._findIndex(symbol, end);
 		if (leftIndex !== -1 && rightIndex !== -1) {
 			let leftItem = this._getDataAtIndex(symbol, leftIndex);
-			if (leftItem.d.getTime() !== start.getTime()) {
+			if (leftItem.d.getTime() < start.getTime()) {
 				leftIndex++;
 				leftItem = this._getDataAtIndex(symbol, leftIndex);
 				if (!leftItem) {
@@ -79,18 +79,22 @@ class MemoryCache {
 		let data = this._cache[symbol];
 		if (data) {
 			if (!exact) {
-				return bs.closest(data, date, this._comparer);
+				return bs.closest(data, {d: date}, this._comparer);
 			} else {
-				return bs(data, date, this._comparer);
+				return bs(data, {d: date}, this._comparer);
 			}
 		} else {
 			return -1;
 		}
 	}
 
-	static _comparer (value, find) {
-		if (value.d > find.d) return 1;
-		else if(value.d < find.d) return -1;
+	_comparer (value, find) {
+		if (value.d > find.d) {
+			return 1;
+		} else
+		if(value.d < find.d) {
+			return -1;
+		}
 		return 0;
 	}
 }
