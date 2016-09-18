@@ -42,10 +42,7 @@ class MemoryCache {
 					return Promise.resolve([]);
 				}
 			}
-			let rightItem = this._getDataAtIndex(symbol, rightIndex);
-			if (rightItem.d.getTime() === end.getTime()) {
-				rightIndex++;
-			}
+			rightIndex++;
 			return Promise.resolve(this._cache[symbol].slice(leftIndex, rightIndex));
 		} else {
 			return Promise.resolve([]);
