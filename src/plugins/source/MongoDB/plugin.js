@@ -11,7 +11,7 @@ class MongoDBSource {
 	}
 
 	init() {
-		logger.debug('Cache Plugin: Initialize MongoDB database connection. Use ' + this._config.connectionString);
+		logger.debug('Source Plugin: Initialize MongoDB database connection. Use ' + this._config.connectionString);
 		return new Promise((resolve, reject) => {
 			if (!this._db) {
 				MongoClient.connect(this._config.connectionString, (err, db) => {
@@ -31,16 +31,27 @@ class MongoDBSource {
 
 	getData(symbol, start, end) {
 		if (typeof end === 'number') {
-			logger.debug('Getting data from MongoDB cache of ' + symbol + ' from ' + moment(start).format("YYYY-MM-DD") + ' going back ' + end + ' days');
+			logger.debug('Getting data from MongoDB source of ' + symbol + ' from ' + moment(start).format("YYYY-MM-DD") + ' going back ' + end + ' days');
 			let symbolCol = this._getSymbolCollection(symbol);
 			return symbolCol.find({d: {$lte: start}}, {_id: 0}).sort({d: -1}).limit(end).toArray();
 		} else {
-			logger.debug('Getting data from MongoDB cache of ' + symbol + ' from ' + moment(start).format("YYYY-MM-DD") + ' to ' + moment(end).format("YYYY-MM-DD"));
+			if (!end) {
+				end = moment().utc().toDate();
+			}
+			logger.debug('Getting data from MongoDB source of ' + symbol + ' from ' + moment(start).format("YYYY-MM-DD") + ' to ' + moment(end).format("YYYY-MM-DD"));
 			let symbolCol = this._getSymbolCollection(symbol);
 			return symbolCol.find({d: {$gte: start, $lt: end}}, {_id: 0}).sort({d: -1}).toArray();
 		}
 	}
 
+	getLastData(symbol) {
+		let symbolCol = this._getSymbolCollection(symbol);
+		return symbolCol.find({}).sort({d: -1}).limit(1).next();
+	}
+
+	_getSymbolCollection(symbol) {
+		return this._db.collection(symbol);
+	}
 }
 
 module.exports = MongoDBSource;

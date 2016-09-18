@@ -16,7 +16,7 @@ class TradeExecutor {
 		return new Promise((resolve) => {
 			let universe = ctx.universe();
 			async.eachSeries(universe, (symbol, callback) => {
-				this._dataProvider.getCachedData(symbol, ctx.startDate(), ctx.endDate())
+				this._dataProvider.getData(symbol, ctx.startDate(), ctx.endDate())
 					.then((data) => {
 						logger.debug('Received data from MongoDB ' + symbol);
 						ctx.setAnalyzedData(symbol, data);

@@ -3,12 +3,11 @@
 		"plugin" : "Static"
 	},
 	"source" : {
-		"plugin" : "Eikon",
-		"environment" : "prod"
-	},
-	"cache" : {
 		"plugin" : "MongoDB",
 		"connectionString" : "mongodb://localhost/ginne"
+	},
+	"cache" : {
+		"plugin" : "Memory"
 	},
 	"portfolio" : {
 		"plugin" : "Local",

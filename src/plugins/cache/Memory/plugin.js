@@ -52,9 +52,15 @@ class MemoryCache {
 	addData(symbol, data) {
 		let cache = this._cache[symbol];
 		if (cache) {
-			bs.insert(cache, data, {unique: true}, this._comparer);
+			if (!Array.isArray(data)) {
+				data = [data];
+			}
+			for (let i=0; i<data.length; i++) {
+				bs.insert(cache, data[i], {unique: true}, this._comparer);
+			}
 		} else {
-			this._cache[symbol] = [data];
+			data.sort(this._comparer);
+			this._cache[symbol] = data;
 		}
 		return Promise.resolve();
 	}

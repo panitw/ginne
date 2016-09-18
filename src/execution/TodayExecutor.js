@@ -6,7 +6,6 @@ const TradeExecutor = require('./TradeExecutor');
 const TodayContext = require('./TodayContext');
 const PluginManager = require('../plugins/PluginManager');
 const portfolio = PluginManager.getPlugin('portfolio');
-const cache = PluginManager.getPlugin('cache');
 const universe = PluginManager.getPlugin('universe');
 
 class TodayExecutor extends TradeExecutor {
@@ -33,7 +32,7 @@ class TodayExecutor extends TradeExecutor {
 			.then((commission) => {
 				commissionModel = commission;
 				let startDate = moment(this._today).add(-1 * numberOfDaysBack, 'days').toDate();
-				this._context = new TodayContext(this._today, currentPositions, commissionModel);
+				this._context = new TodayContext(this._dataProvider, this._today, currentPositions, commissionModel);
 				this._context.setUniverse(universe);
 				this._context.setStartDate(startDate);
 				return this.processScreener(this._context, strategy.screener);

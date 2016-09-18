@@ -2,12 +2,11 @@
 
 const Context = require('./Context');
 const PluginManager = require('../plugins/PluginManager');
-const cache = PluginManager.getPlugin('cache');
 const universe = PluginManager.getPlugin('universe');
 
 class TodayContext extends Context {
 
-	constructor (date, currentPositions, commissionModel) {
+	constructor (dataProvider, date, currentPositions, commissionModel) {
 		let today = date;
 		super({
 			initialAsset: currentPositions.equity,
@@ -23,6 +22,7 @@ class TodayContext extends Context {
 		currentPositions.positions.forEach((position) => {
 			positions[position.symbol] = new Position(position.shares, position.price);
 		});
+		this._dataProvider = dataProvider;
 		this.setPositions(positions);
 		this.setCurrentDate(today);
 		this.setUniverse(universe.getUniverse('SET'));
@@ -31,7 +31,7 @@ class TodayContext extends Context {
 	init () {
 		let allPromises = [];
 		for (let symbol in this.positions()) {
-			var promise = cache.getLastData(symbol)
+			var promise = this._dataProvider.getLastData(symbol)
 				.then(function (position, lastData) {
 					if (lastData) {
 						position.setLast(lastData.c);
