@@ -50,11 +50,11 @@ class MemoryCache {
 	}
 
 	addData(symbol, data) {
+		if (!Array.isArray(data)) {
+			data = [data];
+		}
 		let cache = this._cache[symbol];
 		if (cache) {
-			if (!Array.isArray(data)) {
-				data = [data];
-			}
 			for (let i=0; i<data.length; i++) {
 				bs.insert(cache, data[i], {unique: true}, this._comparer);
 			}
