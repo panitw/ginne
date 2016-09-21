@@ -47,8 +47,7 @@ class BackTester extends TradeExecutor {
 	            if (ddDuration) {
 		            let startIndex = ctx.equityCurve().indexAtLoc(ddDuration.startIndex);
 		            let endIndex = ctx.equityCurve().indexAtLoc(ddDuration.endIndex);
-		            let drawdownDays = moment(endIndex).diff(startIndex, 'days');
-		            result.drawdownDuration = drawdownDays;
+		            result.drawdownDuration = moment(endIndex).diff(startIndex, 'days');;
 	            } else {
 		            result.drawdownDuration = 0;
 	            }

@@ -2,24 +2,26 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 const schedule = require('node-schedule');
 const PluginManager = require('./src/plugins/PluginManager');
 const notifier = PluginManager.getPlugin('notification');
 const task_updateData = require('./src/tasks/updateData');
 const task_executeStrategy = require('./src/tasks/executeStrategy');
 
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+
 const logger = require('winston');
 logger.level = 'debug';
 
 let app = express();
+let server = require('http').Server(app);
+let io = require('socket.io')(server);
 let transactionRouter = require('./src/services/portfolio/transaction');
 let positionsRouter = require('./src/services/portfolio/positions');
 let recommendationsRouter = require('./src/services/portfolio/recommendation');
 
 console.log('Ginne 1.0 starting up');
-
-mongoose.Promise = global.Promise;
 
 app.use(bodyParser.json());
 app.use('/', express.static('src/frontend'));
@@ -27,8 +29,15 @@ app.use('/portfolio', transactionRouter);
 app.use('/portfolio', positionsRouter);
 app.use('/portfolio', recommendationsRouter);
 
-app.listen(80, function () {
+server.listen(80, function () {
 	console.log('Web server is up and running');
+});
+
+io.on('connection', (socket) => {
+	socket.emit('news', { hello: 'world'});
+	socket.on('my other event', function (data) {
+		console.log(data);
+	});
 });
 
 console.log('Schedule data retrieval task');
