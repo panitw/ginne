@@ -54,7 +54,7 @@ schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
 
 });
 
-schedule.scheduleJob({minute: 0, hour: 19}, () => {
+schedule.scheduleJob({minute: 0, hour: 13}, () => {
 
 	//Execute strategy
 	task_executeStrategy.execute()
