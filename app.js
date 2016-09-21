@@ -34,10 +34,10 @@ server.listen(80, function () {
 });
 
 io.on('connection', (socket) => {
-	socket.emit('news', { hello: 'world'});
-	socket.on('my other event', function (data) {
-		console.log(data);
-	});
+	console.log('client connected');
+	setInterval(function () {
+		socket.emit('news', { hello: 'world', time: new Date()});
+	}, 5000);
 });
 
 console.log('Schedule data retrieval task');

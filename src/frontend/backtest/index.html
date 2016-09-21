@@ -2,13 +2,19 @@
 <head>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io.connect('http://ginne.ddns.net');
+        var socket = io.connect('http://localhost');
+
+        function logOutput(data) {
+            var output = document.getElementById('output');
+            output.innerHTML = output.innerHTML + JSON.stringify(data) + '<br>';
+        }
+
         socket.on('news', function (data) {
-            console.log(data);
-            socket.emit('my other event', { my: 'data' });
+            logOutput(data);
         });
     </script>
 </head>
 <body>
+<div id="output"></div>
 </body>
 </html>
