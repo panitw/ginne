@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const schedule = require('node-schedule');
 const PluginManager = require('./src/plugins/PluginManager');
 const notifier = PluginManager.getPlugin('notification');
+const BackTestDaemon = require('./src/services/backtest/daemon');
+
 const task_updateData = require('./src/tasks/updateData');
 const task_executeStrategy = require('./src/tasks/executeStrategy');
 
@@ -33,16 +35,12 @@ server.listen(80, function () {
 	console.log('Web server is up and running');
 });
 
-// io.on('connection', (socket) => {
-// 	console.log('client connected');
-// 	setInterval(function () {
-// 		socket.emit('news', { hello: 'world', time: new Date()});
-// 	}, 5000);
-// });
+console.log('Starting Back Test daemon');
+let backTestDaemon = new BackTestDaemon();
+io.on('connection', backTestDaemon.handle);
 
 console.log('Schedule data retrieval task');
 schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
-
 	//Pull data from SET and store to DB
 	task_updateData.execute()
 		.then(() => {
@@ -54,8 +52,8 @@ schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
 
 });
 
+console.log('Schedule strategy execution task');
 schedule.scheduleJob({minute: 0, hour: 13}, () => {
-
 	//Execute strategy
 	task_executeStrategy.execute()
 		.then(() => {
