@@ -33,12 +33,12 @@ server.listen(80, function () {
 	console.log('Web server is up and running');
 });
 
-io.on('connection', (socket) => {
-	console.log('client connected');
-	setInterval(function () {
-		socket.emit('news', { hello: 'world', time: new Date()});
-	}, 5000);
-});
+// io.on('connection', (socket) => {
+// 	console.log('client connected');
+// 	setInterval(function () {
+// 		socket.emit('news', { hello: 'world', time: new Date()});
+// 	}, 5000);
+// });
 
 console.log('Schedule data retrieval task');
 schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
