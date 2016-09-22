@@ -11,19 +11,19 @@ app.directive('layout', function ($templateRequest, $compile) {
 					content:[{
 						type: 'component',
 						componentName: 'template',
-						componentState: { template: 'scripts/code-panel/code-panel.html' },
+						componentState: { template: '<code-panel></code-panel>' },
 						title: 'Strategy Code'
 					},{
 						type: 'column',
 						content:[{
 							type: 'component',
 							componentName: 'template',
-							componentState: { template: 'scripts/equity-curve-panel/equity-curve-panel.html' },
+							componentState: { template: '<equity-curve-panel></equity-curve-panel>' },
 							title: 'Equity Curve'
 						},{
 							type: 'component',
 							componentName: 'template',
-							componentState: { template: 'scripts/log-panel/log-panel.html' },
+							componentState: { template: '<log-panel></log-panel>' },
 							title: 'Log Detail'
 						}]
 					}]
@@ -33,11 +33,9 @@ app.directive('layout', function ($templateRequest, $compile) {
 			scope.layout = new GoldenLayout(scope.config, element);
 
 			scope.layout.registerComponent( 'template', function(container, componentState) {
-				$templateRequest(componentState.template).then(function (html) {
-					var linkFn = $compile(html);
-					var content = linkFn(scope);
-					container.getElement().append(content);
-				});
+				var linkFn = $compile(componentState.template);
+				var content = linkFn(scope);
+				container.getElement().append(content);
 			});
 
 			scope.layout.init();
