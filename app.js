@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const schedule = require('node-schedule');
 const PluginManager = require('./src/plugins/PluginManager');
 const notifier = PluginManager.getPlugin('notification');
-const BackTestDaemon = require('./src/services/backtest/daemon');
+const BackTestDaemon = require('./src/services/backtest/BackTestDaemon');
 
 const task_updateData = require('./src/tasks/updateData');
 const task_executeStrategy = require('./src/tasks/executeStrategy');
@@ -41,6 +41,7 @@ io.on('connection', backTestDaemon.handle);
 
 console.log('Schedule data retrieval task');
 schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
+	console.log('Pulling data');
 	//Pull data from SET and store to DB
 	task_updateData.execute()
 		.then(() => {

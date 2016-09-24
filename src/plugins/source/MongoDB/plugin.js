@@ -44,6 +44,10 @@ class MongoDBSource {
 		}
 	}
 
+	setData(symbol, data) {
+
+	}
+
 	getLastData(symbol) {
 		let symbolCol = this._getSymbolCollection(symbol);
 		return symbolCol.find({}).sort({d: -1}).limit(1).next();
