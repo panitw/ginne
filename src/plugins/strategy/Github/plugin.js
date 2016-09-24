@@ -15,11 +15,59 @@ class GithubStrategy {
 		return Promise.resolve();
 	}
 
+	setMasterStrategy (id) {
+		let currentMaster = null;
+		let newMaster = null;
+		return this.getStrategyList()
+			.then((list) => {
+				list.forEach((item) => {
+					if (item.name.indexOf('MASTER:') === 0) {
+						currentMaster = item;
+					}
+					if (item.id === id) {
+						newMaster = item;
+					}
+				});
+				if (newMaster && currentMaster && newMaster.id === currentMaster.id) {
+					throw 'ALREADY_SET';
+				}
+			})
+			.then(() => {
+				if (newMaster && currentMaster) {
+					return this.updateStrategy(currentMaster.id, currentMaster.name.replace('MASTER:', ''));
+				}
+			})
+			.then(() => {
+				if (newMaster) {
+					return this.updateStrategy(newMaster.id, 'MASTER:' + newMaster.name);
+				} else {
+					throw new Error('Invalid strategy id ' + id);
+				}
+			})
+			.catch((err) => {
+				if (err !== 'ALREADY_SET') {
+					throw err;
+				}
+			});
+	}
+
 	getStrategy (id) {
 		if (id !== undefined) {
 			return this._api.getGist(id);
 		} else {
-			return Promise.resolve(null);
+			return this.getStrategyList()
+				.then((list) => {
+					let masterStrategyId = null;
+					list.some((item) => {
+						if (item.name.indexOf('MASTER:') === 0) {
+							masterStrategyId = item.id;
+							return true;
+						}
+					});
+					if (masterStrategyId) {
+						return this.getStrategy(masterStrategyId);
+					}
+				});
 		}
 	}
 
@@ -31,7 +79,7 @@ class GithubStrategy {
 					if (item.description.indexOf('GINNE:') === 0) {
 						list.push({
 							id: item.id,
-							description: item.description.replace('GINNE:', '')
+							name: item.description.replace('GINNE:', '')
 						});
 					}
 				});

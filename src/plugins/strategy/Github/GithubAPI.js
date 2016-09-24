@@ -74,17 +74,21 @@ class GithubAPI {
 	}
 
 	editGist (id, fileName, newDescription, newContent) {
-		let files = {};
-		files[fileName] = {
-			content: newContent
+		let body = {
+			description: newDescription
 		};
+
+		if (newContent !== undefined) {
+			let files = {};
+			files[fileName] = {
+				content: newContent
+			};
+			body.files = files;
+		}
 		let options = {
 			method: 'PATCH',
 			uri: this._endpoint + '/gists/' + id,
-			body: {
-				description: newDescription,
-				files: files
-			},
+			body: body,
 			headers: {
 				'User-Agent': 'node.js',
 				'Authorization': 'token ' + this._token
