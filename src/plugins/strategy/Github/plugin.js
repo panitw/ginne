@@ -24,6 +24,9 @@ class GithubStrategy {
 	}
 
 	_validateStrategy (source) {
+		if (source === undefined) {
+			return Promise.resolve();
+		}
 		try {
 			let strategyObj = this._createStrategyObj(source);
 			if (!strategyObj.analyze || !strategyObj.execute) {
@@ -94,6 +97,11 @@ class GithubStrategy {
 		}
 	}
 
+	getStrategyCode (id) {
+		return this._api.getGist(id);
+	}
+
+
 	getStrategyList() {
 		return this._api.listAllGist()
 			.then((result) => {
@@ -113,7 +121,12 @@ class GithubStrategy {
 	createStrategy(name, source) {
 		return this._validateStrategy(source)
 			.then(() => {
-				this._api.createGist('strategy.js', 'GINNE:' + name, source);
+				return this._api.createGist('strategy.js', 'GINNE:' + name, source);
+			})
+			.then((response) => {
+				if (response) {
+					return response.id;
+				}
 			});
 	}
 

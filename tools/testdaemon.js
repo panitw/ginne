@@ -8,6 +8,8 @@ const logger = require('winston');
 const BackTestDaemon = require('../src/services/backtest/BackTestDaemon');
 const DataProvider = require('../src/data/DataProvider');
 
+const strategyRouter = require('../src/services/strategy/strategy');
+
 mongoose.Promise = global.Promise;
 logger.level = 'debug';
 
@@ -18,6 +20,7 @@ let dataProvider = new DataProvider();
 
 app.use(bodyParser.json());
 app.use('/', express.static('src/frontend'));
+app.use('/strategy', strategyRouter);
 
 server.listen(8080, function () {
 	logger.info('Web server is up and running');
