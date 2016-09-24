@@ -3,6 +3,8 @@
 const logger = require('winston');
 const BackTester = require('./src/execution/BackTester');
 const DataProvider = require('./src/data/DataProvider');
+const Plugin = require('./src/plugins/PluginManager');
+const strategyPlugin = Plugin.getPlugin('strategy');
 
 logger.level = 'debug';
 
@@ -10,7 +12,9 @@ let provider = new DataProvider();
 provider
 	.init()
 	.then(() => {
-		let strategy = require('./src/strategies/emaCrossOver/strategy');
+		return strategyPlugin.getStrategy();
+	})
+	.then((strategy) => {
 		let options = {
 			initialAsset: 100000,
 			targetPositions: 5,

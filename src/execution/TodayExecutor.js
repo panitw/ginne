@@ -19,6 +19,11 @@ class TodayExecutor extends TradeExecutor {
 	run (strategy, universe, numberOfDaysBack) {
 		let currentPositions = null;
 		let commissionModel = null;
+		let analyzer = new Analyzer();
+		let tradingActions = new TradingActions();
+		strategy.analyze(analyzer);
+		strategy.execute(tradingActions);
+
 		return portfolio.getPositions()
 			.then((positions) => {
 				if (!positions) {
@@ -35,11 +40,11 @@ class TodayExecutor extends TradeExecutor {
 				this._context = new TodayContext(this._dataProvider, this._today, currentPositions, commissionModel);
 				this._context.setUniverse(universe);
 				this._context.setStartDate(startDate);
-				return this.processScreener(this._context, strategy.screener);
+				return this.processScreener(this._context, analyzer);
 			})
 			.then(() => {
 				this._context.setStartDate(this._today);
-				return this.processTradingActions(this._context, strategy.tradingActions);
+				return this.processTradingActions(this._context, tradingActions);
 			})
 			.then(() => {
 				return this._context.transactions();

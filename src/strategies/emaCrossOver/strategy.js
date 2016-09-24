@@ -1,13 +1,13 @@
 'use strict';
 
-const Screener = require('../../pipeline/Screener');
+const Screener = require('../../pipeline/Analyzer');
 const TradingActions = require('../../pipeline/TradingActions');
 
 // -------------------
 //     Screening
 // -------------------
 
-var scr1 = new Screener([
+var scr1 = new Analyzer([
     'BAY',
     'BBL',
     'KKP',

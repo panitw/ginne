@@ -1,6 +1,6 @@
 'use strict';
 
-class Screener {
+class Analyzer {
 
     constructor(universe) {
         this._universe = universe;
@@ -29,10 +29,15 @@ class Screener {
         return this._universe;
     }
 
+    setUniverse (universe) {
+        this._universe = universe;
+	    return this;
+    }
+
     commands () {
         return this._commandList;
     }
 
 }
 
-module.exports = Screener;
+module.exports = Analyzer;

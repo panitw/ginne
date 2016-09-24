@@ -1,13 +1,13 @@
 'use strict';
 
-const Screener = require('../../pipeline/Screener');
+const Screener = require('../../pipeline/Analyzer');
 const TradingActions = require('../../pipeline/TradingActions');
 
 // -------------------
 //     Screening
 // -------------------
 
-var scr1 = new Screener('SET');
+var scr1 = new Analyzer('SET');
 scr1.addAnalysis('slope', {
         type: 'LINEARREG_SLOPE',
         field: 'close',

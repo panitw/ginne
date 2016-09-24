@@ -1,13 +1,13 @@
 'use strict';
 
-const Screener = require('../../pipeline/Screener');
+const Screener = require('../../pipeline/Analyzer');
 const TradingActions = require('../../pipeline/TradingActions');
 
 // -------------------
 //     Screening
 // -------------------
 
-var scr1 = new Screener(['ADVANC']);
+var scr1 = new Analyzer(['ADVANC']);
 scr1.addAnalysis('max', {
         type: 'MAX',
         field: 'close',

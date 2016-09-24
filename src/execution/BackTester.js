@@ -1,5 +1,7 @@
 'use strict';
 
+const Analyzer = require('../pipeline/Analyzer');
+const TradingActions = require('../pipeline/TradingActions');
 const TradeExecutor = require('./TradeExecutor');
 const PluginManager = require('../plugins/PluginManager');
 const Context = require('./Context');
@@ -13,16 +15,19 @@ class BackTester extends TradeExecutor {
 
     run (strategy, options) {
         let ctx = new Context(options);
-        let screener = strategy.screener;
-        let universeName = screener.universe();
-        let tradingActions = strategy.tradingActions;
-        
+	    let analyzer = new Analyzer();
+	    let tradingActions = new TradingActions();
+
+	    strategy.analyze(analyzer);
+	    strategy.execute(tradingActions);
+
+        let universeName = analyzer.universe();
         let universePlugin = PluginManager.getPlugin('universe');
         let universe = universePlugin.getUniverse(universeName);
 
         ctx.setUniverse(universe);
 
-        return this.processScreener(ctx, screener)
+        return this.processScreener(ctx, analyzer)
             .then(() => {
                 return this.processTradingActions(ctx, tradingActions);
             })

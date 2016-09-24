@@ -1,7 +1,7 @@
 // -------------------
 // Phase 1 - Screening
 // -------------------
-var scr1 = new Screener();
+var scr1 = new Analyzer();
 scr1.universe('.SETI')
     .addAnalysis('slope', {
         type: 'LINEARREG_SLOPE',
