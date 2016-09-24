@@ -1,6 +1,7 @@
 'use strict';
 
 const GithubAPI = require('./GithubAPI');
+const vm = require('vm');
 
 class GithubStrategy {
 
@@ -12,6 +13,26 @@ class GithubStrategy {
 	}
 
 	init () {
+		return Promise.resolve();
+	}
+
+	_createStrategyObj (code) {
+		let script = new vm.Script(code);
+		let Strategy = script.runInNewContext();
+		let strategyObj = new Strategy();
+		return strategyObj;
+	}
+
+	_validateStrategy (source) {
+		try {
+			let strategyObj = this._createStrategyObj(source);
+			if (!strategyObj.analyze || !strategyObj.execute) {
+				throw new Error('Missing analyze() and/or execute() method.');
+			}
+		}
+		catch (ex) {
+			return Promise.reject(new Error('Invalid strategy code: ' + ex.message));
+		}
 		return Promise.resolve();
 	}
 
@@ -53,7 +74,9 @@ class GithubStrategy {
 
 	getStrategy (id) {
 		if (id !== undefined) {
-			return this._api.getGist(id);
+			return this._api.getGist(id).then((code) => {
+				return this._createStrategyObj(code);
+			});
 		} else {
 			return this.getStrategyList()
 				.then((list) => {
@@ -88,11 +111,17 @@ class GithubStrategy {
 	}
 
 	createStrategy(name, source) {
-		return this._api.createGist('strategy.js', 'GINNE:' + name, source);
+		return this._validateStrategy(source)
+			.then(() => {
+				this._api.createGist('strategy.js', 'GINNE:' + name, source);
+			});
 	}
 
 	updateStrategy(id, newName, newSource) {
-		return this._api.editGist(id, 'strategy.js', 'GINNE:' + newName, newSource);
+		return this._validateStrategy(newSource)
+			.then(() => {
+				return this._api.editGist(id, 'strategy.js', 'GINNE:' + newName, newSource);
+			});
 	}
 
 	deleteStrategy(id) {
