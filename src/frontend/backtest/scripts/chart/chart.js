@@ -4,12 +4,15 @@ app.directive('chart', function () {
 		templateUrl: 'scripts/chart/chart.html',
 		replace: true,
 		link: function (scope, element) {
-			scope.chart = new Highcharts.Chart(element[0], {
+			scope.chart = new Highcharts.StockChart(element[0], {
 				rangeSelector: {
 					selected: 1
 				},
 				title: {
 					text: 'AAPL Stock Price'
+				},
+				navigator: {
+					enabled: false
 				},
 				series: [{
 					name: 'AAPL',
@@ -25,7 +28,6 @@ app.directive('chart', function () {
 					}
 				}]
 			});
-			scope.chart.setOptions(Highcharts.theme);
 		}
 	};
 });

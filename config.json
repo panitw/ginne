@@ -18,7 +18,6 @@
 		"target" : "panitw"
 	},
 	"strategy" : {
-		"plugin" : "Local",
-		"strategy" : "highestHigh"
+		"plugin" : "Github"
 	}
 }
