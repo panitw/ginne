@@ -7,6 +7,11 @@ app.directive('codePanel', function () {
 			scope.editor = ace.edit(element.find('.code-editor')[0]);
 			scope.editor.setTheme('ace/theme/twilight');
 			scope.editor.getSession().setMode('ace/mode/javascript');
+
+			scope.editor.getSession().on('change', function(e) {
+				scope.onCodeChange();
+				scope.$apply();
+			});
 		}
 	};
 });

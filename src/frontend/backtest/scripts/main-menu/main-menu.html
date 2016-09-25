@@ -12,9 +12,17 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+                <li ng-show="!vm.editingName">
+                    <a href="javascript:void(0)" ng-click="editName()">{{(vm.dirtyFlag)?'*':''}} {{vm.strategyName}}</a>
+                </li>
+                <li ng-show="vm.editingName">
+                    <input type="text" class="form-control" style="margin-top: 6px;" placeholder="Strategy Name" ng-model="vm.strategyName" ng-keypress="renameKeyPressed($event)">
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                        Strategy <span class="caret"></span>
+                        File <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#">New</a></li>
@@ -22,7 +30,13 @@
                         <li><a href="#">Open</a></li>
                         <li><a href="#">Save</a></li>
                         <li><a href="#">Save As</a></li>
-                        <li class="divider"></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        Execution <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
                         <li><a href="#">Execute</a></li>
                         <li><a href="#">Stop</a></li>
                     </ul>
