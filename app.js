@@ -16,12 +16,13 @@ mongoose.Promise = global.Promise;
 const logger = require('winston');
 logger.level = 'debug';
 
-let app = express();
-let server = require('http').Server(app);
-let io = require('socket.io')(server);
-let transactionRouter = require('./src/services/portfolio/transaction');
-let positionsRouter = require('./src/services/portfolio/positions');
-let recommendationsRouter = require('./src/services/portfolio/recommendation');
+const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+const transactionRouter = require('./src/services/portfolio/transaction');
+const positionsRouter = require('./src/services/portfolio/positions');
+const recommendationsRouter = require('./src/services/portfolio/recommendation');
+const strategyRouter = require('./src/services/strategy/strategy');
 
 console.log('Ginne 1.0 starting up');
 
@@ -30,6 +31,7 @@ app.use('/', express.static('src/frontend'));
 app.use('/portfolio', transactionRouter);
 app.use('/portfolio', positionsRouter);
 app.use('/portfolio', recommendationsRouter);
+app.use('/strategy', strategyRouter);
 
 server.listen(80, function () {
 	console.log('Web server is up and running');
