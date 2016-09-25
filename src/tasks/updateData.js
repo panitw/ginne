@@ -3,12 +3,12 @@
 const moment = require('moment');
 const reader = require('set-data-reader');
 const PluginManager = require('../plugins/PluginManager');
-const cache = PluginManager.getPlugin('cache');
+const source = PluginManager.getPlugin('source');
 
 module.exports = {
 	execute: () => {
 		let data = {};
-		return cache.init()
+		return source.init()
 			.then(() => {
 				return reader.read();
 			})
@@ -34,12 +34,12 @@ module.exports = {
 				for (let symbol in data) {
 					let dataDate = moment(data[symbol].d).startOf('day').toDate();
 					let dataNextDay = moment(dataDate).add(1, 'days').toDate();
-					let promise = cache.getData(symbol, dataDate, dataNextDay)
+					let promise = source.getData(symbol, dataDate, dataNextDay)
 						.then((dataAtDate) => {
 							if (dataAtDate && dataAtDate.length > 0) {
-								return cache.updateData(symbol, data[symbol]);
+								return source.updateData(symbol, data[symbol]);
 							} else {
-								return cache.addData(symbol, [data[symbol]]);
+								return source.addData(symbol, [data[symbol]]);
 							}
 						});
 

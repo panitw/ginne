@@ -44,8 +44,17 @@ class MongoDBSource {
 		}
 	}
 
-	setData(symbol, data) {
+	addData(symbol, data) {
+		logger.debug('Adding ' + data.length + ' data points of ' + symbol + ' to MongoDB cache');
+		let symbolCol = this._getSymbolCollection(symbol);
+		symbolCol.createIndex({d:1});
+		return symbolCol.insertMany(data);
+	}
 
+	updateData (symbol, data) {
+		logger.debug('Updating data of ' + symbol + ' at date ' + moment(data.d).format('YYYY-MM-DD') + 'to MongoDB cache');
+		let symbolCol = this._getSymbolCollection(symbol);
+		return symbolCol.update({d: {"$eq": moment(data.d).toDate()}}, data);
 	}
 
 	getLastData(symbol) {

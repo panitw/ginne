@@ -41,7 +41,7 @@ io.on('connection', backTestDaemon.handle);
 
 console.log('Schedule data retrieval task');
 schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
-	console.log('Pulling data');
+	console.log('Start pulling data from SET');
 	//Pull data from SET and store to DB
 	task_updateData.execute()
 		.then(() => {
