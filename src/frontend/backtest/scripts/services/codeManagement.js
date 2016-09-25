@@ -94,6 +94,7 @@ app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, s
 			if (code) {
 				return strategyService.saveStrategy(codeData.id, codeData.name, codeData.isMaster, code)
 					.then(function () {
+						logger.info('Strategy "' + codeData.name + '" has been saved.');
 						state = STATE_SAVED;
 						this.resetDirtyFlag();
 					}.bind(this));
@@ -110,6 +111,7 @@ app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, s
 				.then(function (newName) {
 					return strategyService.createStrategy(newName, code)
 						.then(function () {
+							logger.info('New strategy "' + newName + '" has been created.');
 							state = STATE_SAVED;
 							//No master created using saveAs method
 							codeData.isMaster = false;
