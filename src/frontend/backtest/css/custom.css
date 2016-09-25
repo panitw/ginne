@@ -1,10 +1,10 @@
 .navbar {
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
 .layout {
     width: 100%;
-    height: calc(100% - 50px);
+    height: calc(100% - 52px);
 }
 
 .code-editor {
@@ -15,4 +15,18 @@
 .chart-panel {
     width: 100%;
     height: 100%;
+}
+
+.log-panel {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.log-line.error {
+    color: #ff1d99;
+}
+
+.log-line.info {
+    color: #aff1ff;
 }

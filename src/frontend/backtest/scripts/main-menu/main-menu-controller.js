@@ -1,9 +1,8 @@
-app.controller('MainMenuController', function ($rootScope, $scope) {
+app.controller('MainMenuController', function ($rootScope, $scope, codeManagement) {
 
 		$scope.vm = {
 			dirtyFlag: false,
-			previousName: 'Untitled Strategy',
-			strategyName: 'Untitled Strategy',
+			strategyName: codeManagement.getStrategyName(),
 			editingName: false
 		};
 
@@ -18,9 +17,7 @@ app.controller('MainMenuController', function ($rootScope, $scope) {
 		$scope.renameKeyPressed = function (keyEvent) {
 			if (keyEvent.which === 13) {
 				$scope.vm.editingName = false;
-				if ($scope.vm.strategyName !== $scope.vm.previousName) {
-					$scope.vm.dirtyFlag = true;
-				}
+				codeManagement.setStrategyName($scope.vm.strategyName);
 			}
 		};
 	}

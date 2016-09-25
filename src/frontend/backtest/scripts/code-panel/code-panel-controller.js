@@ -1,7 +1,7 @@
-app.controller('CodePanelController', function ($rootScope, $scope) {
+app.controller('CodePanelController', function ($rootScope, $scope, codeManagement) {
 
 	$scope.onCodeChange = function () {
-		$rootScope.$emit('codeChanged');
+		codeManagement.codeEdited();
 	}
 
 });

@@ -24,7 +24,8 @@ app.directive('layout', function ($templateRequest, $compile) {
 							type: 'component',
 							componentName: 'template',
 							componentState: { template: '<log-panel></log-panel>' },
-							title: 'Log Detail'
+							title: 'Log Detail',
+							height: 30
 						}]
 					}]
 				}]

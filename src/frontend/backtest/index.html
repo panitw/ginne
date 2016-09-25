@@ -4,11 +4,15 @@
     <script src="../bower_components/angular/angular.min.js"></script>
     <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../bower_components/golden-layout/dist/goldenlayout.min.js"></script>
+    <script src="../bower_components/moment/min/moment.min.js"></script>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/custom.css">
     <link rel="stylesheet" href="../bower_components/golden-layout/src/css/goldenlayout-base.css">
     <link rel="stylesheet" href="../bower_components/golden-layout/src/css/goldenlayout-dark-theme.css">
     <script src="/socket.io/socket.io.js"></script>
+    <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../bower_components/highcharts/highstock.js"></script>
+    <script src="../bower_components/highcharts/themes/dark-unica.js"></script>
     <script src="scripts/app.js"></script>
     <script src="scripts/main-menu/main-menu.js"></script>
     <script src="scripts/main-menu/main-menu-controller.js"></script>
@@ -21,9 +25,8 @@
     <script src="scripts/layout/layout.js"></script>
     <script src="scripts/chart/chart.js"></script>
     <script src="scripts/chart/chart-controller.js"></script>
-    <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script src="../bower_components/highcharts/highstock.js"></script>
-    <script src="../bower_components/highcharts/themes/dark-unica.js"></script>
+    <script src="scripts/services/codeManagement.js"></script>
+    <script src="scripts/services/logger.js"></script>
 </head>
 <body ng-app="backtester">
     <main-menu></main-menu>
