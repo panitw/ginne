@@ -15,5 +15,5 @@ task.execute()
 		console.log(results);
 	})
 	.catch((ex) => {
-		console.log('Error: ', ex);
+		console.log('Error: ', ex, ex.stack);
 	});

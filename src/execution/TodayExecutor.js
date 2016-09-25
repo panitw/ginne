@@ -2,6 +2,8 @@
 
 const moment = require('moment');
 const fin = require('fin-data');
+const Analyzer = require('../pipeline/Analyzer');
+const TradingActions = require('../pipeline/TradingActions');
 const TradeExecutor = require('./TradeExecutor');
 const TodayContext = require('./TodayContext');
 const PluginManager = require('../plugins/PluginManager');
