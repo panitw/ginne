@@ -1,4 +1,4 @@
-app.directive('codePanel', function () {
+app.directive('codePanel', function (codeEditor) {
 	return {
 		restrict: 'E',
 		templateUrl: 'scripts/code-panel/code-panel.html',
@@ -17,6 +17,9 @@ app.directive('codePanel', function () {
 					scope.$apply();
 				}
 			});
+
+			//Export editor for global access
+			codeEditor.setEditor(scope.editor);
 
 			scope.setCode = function (code) {
 				forceSettingValue = true;

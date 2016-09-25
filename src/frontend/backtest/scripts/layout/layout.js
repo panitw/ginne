@@ -15,6 +15,7 @@ app.directive('layout', function ($templateRequest, $compile, $window) {
 						title: 'Strategy Code'
 					},{
 						type: 'column',
+						width: 40,
 						content:[{
 							type: 'component',
 							componentName: 'template',
@@ -25,7 +26,7 @@ app.directive('layout', function ($templateRequest, $compile, $window) {
 							componentName: 'template',
 							componentState: { template: '<log-panel></log-panel>' },
 							title: 'Log Detail',
-							height: 30
+							height: 50
 						}]
 					}]
 				}]

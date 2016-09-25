@@ -1,0 +1,16 @@
+<div>
+    <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Save Strategy</h3>
+    </div>
+    <div class="modal-body" id="modal-body">
+        <div class="form-group">
+            <label for="strategyName">Strategy name:</label>
+            <span style="color: mediumvioletred;" ng-show="vm.nameAlreadyExists">* Strategy name already exists *</span>
+            <input type="text" class="form-control" id="strategyName" placeholder="Strategy Name" ng-model="vm.name" ng-disabled="!vm.nameEditable">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="!vm.validated">OK</button>
+        <button class="btn" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</div>

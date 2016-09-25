@@ -1,4 +1,4 @@
-app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, strategyService, logger) {
+app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, saveAsDialog, strategyService, codeEditor, logger) {
 
 	var STATE_NEW = 0;
 	var STATE_NEW_EDITED = 1;
@@ -21,6 +21,10 @@ app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, s
 			state = STATE_SAVED_EDITED
 		}
 		$rootScope.$emit('codeChanged');
+	};
+
+	this.currentStrategy = function () {
+		return codeData;
 	};
 
 	this.setStrategyName = function (newName) {
@@ -46,6 +50,10 @@ app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, s
 		});
 	};
 
+	this.resetDirtyFlag = function () {
+		$rootScope.$emit('strategyDirtyFlagReset');
+	};
+
 	this.new = function () {
 		if (state === STATE_NEW_EDITED || state === STATE_SAVED_EDITED) {
 			confirmDialog.open({
@@ -67,7 +75,7 @@ app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, s
 				this.resetStrategy();
 			}.bind(this)).catch(function (err) {
 				if (err !== 'CANCEL') {
-
+					//TODO: Display Error
 				}
 			});
 		} else {
@@ -76,11 +84,43 @@ app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, s
 	};
 
 	this.save = function () {
-
+		if (state === STATE_SAVED) {
+			return Promise.resolve();
+		} else
+		if (state === STATE_NEW || state === STATE_NEW_EDITED) {
+			return this.saveAs();
+		} else {
+			var code = codeEditor.getCode();
+			if (code) {
+				return strategyService.saveStrategy(codeData.id, codeData.name, codeData.isMaster, code)
+					.then(function () {
+						state = STATE_SAVED;
+						this.resetDirtyFlag();
+					}.bind(this));
+			} else {
+				return Promise.reject(new Error('Code Editor is not ready'));
+			}
+		}
 	};
 
 	this.saveAs = function () {
-
+		var code = codeEditor.getCode();
+		if (code) {
+			return saveAsDialog.open(codeData.name)
+				.then(function (newName) {
+					return strategyService.createStrategy(newName, code)
+						.then(function () {
+							state = STATE_SAVED;
+							//No master created using saveAs method
+							codeData.isMaster = false;
+							$rootScope.$emit('strategyNameChanged', newName);
+							$rootScope.$emit('strategyMasterReset', newName);
+							this.resetDirtyFlag();
+						}.bind(this));
+				}.bind(this));
+		} else {
+			return Promise.reject(new Error('Code Editor is not ready'));
+		}
 	};
 
 	this.open = function () {

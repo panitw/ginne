@@ -12,11 +12,14 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+                <li>
+                    <span ng-show="vm.isMaster" class="glyphicon glyphicon-star" style="color: yellow; font-size: 20px; margin-top: 13px;" aria-hidden="true"></span>
+                </li>
                 <li ng-show="!vm.editingName">
                     <a href="javascript:void(0)" ng-click="editName()">{{(vm.dirtyFlag)?'*':''}} {{vm.strategyName}}</a>
                 </li>
                 <li ng-show="vm.editingName">
-                    <input type="text" class="form-control" style="margin-top: 6px;" placeholder="Strategy Name" ng-model="vm.strategyName" ng-keypress="renameKeyPressed($event)">
+                    <input type="text" class="form-control" style="margin-top: 6px; width: 300px;" placeholder="Strategy Name" ng-model="vm.strategyName" ng-keypress="renameKeyPressed($event)" esc-key="resetName()" ng-blur="resetName()">
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -28,8 +31,8 @@
                         <li><a href="#" ng-click="new()">New</a></li>
                         <li class="divider"></li>
                         <li><a href="#" ng-click="open()">Open</a></li>
-                        <li><a href="#">Save</a></li>
-                        <li><a href="#">Save As</a></li>
+                        <li><a href="#" ng-click="save()">Save</a></li>
+                        <li><a href="#" ng-click="saveAs()">Save As</a></li>
                         <li class="divider"></li>
                         <li><a href="#">Set As Master</a></li>
                     </ul>

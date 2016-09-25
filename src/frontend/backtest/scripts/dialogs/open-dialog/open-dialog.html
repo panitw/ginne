@@ -6,6 +6,9 @@
         <table class="table table-striped table-hover ">
             <tbody>
                 <tr ng-repeat="strategy in vm.strategyList" ng-class="$index === vm.selectedIndex ? 'success' : ''" ng-click="select($index)">
+                    <td style="width: 30px;">
+                        <span ng-show="strategy.isMaster" class="glyphicon glyphicon-star" style="color: yellow; font-size: 20px;" aria-hidden="true"></span>
+                    </td>
                     <td>{{strategy.name}}</td>
                 </tr>
             </tbody>
