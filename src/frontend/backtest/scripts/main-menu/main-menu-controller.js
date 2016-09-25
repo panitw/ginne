@@ -10,6 +10,19 @@ app.controller('MainMenuController', function ($rootScope, $scope, codeManagemen
 			$scope.vm.dirtyFlag = true;
 		});
 
+		$rootScope.$on('strategyOpened', function (e, data) {
+			$scope.vm.strategyName = data.strategy.name;
+			$scope.vm.dirtyFlag = false;
+		});
+
+		$scope.new = function () {
+			codeManagement.new();
+		};
+
+		$scope.open = function () {
+			codeManagement.open();
+		};
+
 		$scope.editName = function () {
 			$scope.vm.editingName = true;
 		};

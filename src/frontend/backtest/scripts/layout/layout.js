@@ -1,4 +1,4 @@
-app.directive('layout', function ($templateRequest, $compile) {
+app.directive('layout', function ($templateRequest, $compile, $window) {
 	return {
 		restricted: 'E',
 		templateUrl: 'scripts/layout/layout.html',
@@ -40,6 +40,10 @@ app.directive('layout', function ($templateRequest, $compile) {
 			});
 
 			scope.layout.init();
+
+			$window.addEventListener('resize', function () {
+				scope.layout.updateSize();
+			});
 		}
 	};
 });

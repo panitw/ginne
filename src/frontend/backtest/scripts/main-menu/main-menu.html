@@ -25,11 +25,13 @@
                         File <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">New</a></li>
+                        <li><a href="#" ng-click="new()">New</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Open</a></li>
+                        <li><a href="#" ng-click="open()">Open</a></li>
                         <li><a href="#">Save</a></li>
                         <li><a href="#">Save As</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Set As Master</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -40,6 +42,11 @@
                         <li><a href="#">Execute</a></li>
                         <li><a href="#">Stop</a></li>
                     </ul>
+                </li>
+                <li>
+                    <div>
+                        <span class="glyphicon glyphicon-remove-sign" aria-hidden="true" style="font-size: 20px; margin-top: 12px;"></span>
+                    </div>
                 </li>
             </ul>
         </div>

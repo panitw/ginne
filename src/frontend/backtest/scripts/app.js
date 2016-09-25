@@ -1,2 +1,2 @@
-var app = angular.module('backtester', []);
+var app = angular.module('backtester', ['ngAnimate', 'ui.bootstrap']);
 
