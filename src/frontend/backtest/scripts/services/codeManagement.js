@@ -1,4 +1,4 @@
-app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, saveAsDialog, strategyService, codeEditor, logger) {
+app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, saveAsDialog, errorDialog, strategyService, codeEditor, logger) {
 
 	var STATE_NEW = 0;
 	var STATE_NEW_EDITED = 1;
@@ -97,7 +97,10 @@ app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, s
 						logger.info('Strategy "' + codeData.name + '" has been saved.');
 						state = STATE_SAVED;
 						this.resetDirtyFlag();
-					}.bind(this));
+					}.bind(this))
+					.catch(function (err) {
+						errorDialog.open(err.message);
+					});
 			} else {
 				return Promise.reject(new Error('Code Editor is not ready'));
 			}
@@ -118,7 +121,10 @@ app.service('codeManagement', function ($rootScope, openDialog, confirmDialog, s
 							$rootScope.$emit('strategyNameChanged', newName);
 							$rootScope.$emit('strategyMasterReset', newName);
 							this.resetDirtyFlag();
-						}.bind(this));
+						}.bind(this))
+						.catch(function (err) {
+							errorDialog.open(err.message);
+						});
 				}.bind(this));
 		} else {
 			return Promise.reject(new Error('Code Editor is not ready'));

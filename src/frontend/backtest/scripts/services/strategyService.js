@@ -69,7 +69,7 @@ app.service('strategyService', function ($http, logger) {
 			if (result && result.data && result.data.success) {
 				return true;
 			} else {
-				throw Error('Error updating strategy: ' + result.data.exception);
+				throw Error('Error saving strategy: ' + result.data.exception);
 			}
 		});
 	};
@@ -82,7 +82,7 @@ app.service('strategyService', function ($http, logger) {
 			if (result && result.data && result.data.success) {
 				return true;
 			} else {
-				throw Error('Error saving strategy: ' + result.data.exception);
+				throw Error('Error creating strategy: ' + result.data.exception);
 			}
 		});
 	}
