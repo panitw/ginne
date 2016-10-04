@@ -6,7 +6,8 @@ app.controller('MainMenuController', function ($rootScope, $scope, codeManagemen
 		editingName: false,
 		isMaster: false,
 		connected: false,
-		iconColor: 'red'
+		iconColor: 'red',
+		executing: false
 	};
 
 	$rootScope.$on('codeChanged', function () {
@@ -41,6 +42,14 @@ app.controller('MainMenuController', function ($rootScope, $scope, codeManagemen
 		$scope.vm.connected = false;
 		$scope.vm.iconColor = 'red';
 		$scope.$apply();
+	});
+
+	$rootScope.$on('executionStarted', function () {
+		$scope.vm.executing = true;
+	});
+
+	$rootScope.$on('executionStopped', function () {
+		$scope.vm.executing = false;
 	});
 
 	$scope.new = function () {
@@ -84,4 +93,11 @@ app.controller('MainMenuController', function ($rootScope, $scope, codeManagemen
 				break;
 		}
 	};
+
+	executor.query()
+		.then(function (result) {
+			if (result.state === 'STATE_PROCESSING') {
+				$scope.vm.executing = true;
+			}
+		});
 });

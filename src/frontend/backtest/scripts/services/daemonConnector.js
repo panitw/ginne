@@ -1,4 +1,4 @@
-app.service('daemonConnector', function ($rootScope) {
+app.service('daemonConnector', function ($q, $rootScope) {
 
 	this.socket = null;
 
@@ -21,11 +21,15 @@ app.service('daemonConnector', function ($rootScope) {
 	};
 
 	this.publish = function (channel, data) {
-		if (this.socket) {
-			this.socket.emit(channel, JSON.stringify(data));
-		} else {
-			throw new Error('No connection available');
-		}
+		return $q(function (resolve, reject) {
+			if (this.socket) {
+				this.socket.emit(channel, data, function (result) {
+					resolve(result);
+				});
+			} else {
+				reject(new Error('No connection available'))
+			}
+		}.bind(this));
 	};
 
 });

@@ -1,4 +1,4 @@
-app.service('executor', function (daemonConnector, codeEditor, logger) {
+app.service('executor', function ($rootScope, daemonConnector, codeEditor, logger) {
 
 	var STATE_IDLE = 0;
 	var STATE_EXECUTING = 1;
@@ -7,7 +7,10 @@ app.service('executor', function (daemonConnector, codeEditor, logger) {
 	var subscribed = false;
 
 	var processIncomingMsg = function (message) {
-		if (message.type === 'progress') {
+		if (message.type === 'error') {
+			logger.error(message.message);
+		} else
+		if (message.type === 'notification') {
 			logger.info(message.message);
 		} else
 		if (message.type === 'result') {
@@ -20,9 +23,20 @@ app.service('executor', function (daemonConnector, codeEditor, logger) {
 		}
 	};
 
+	this.query = function () {
+		return daemonConnector.publish('message', {
+			type: 'QUERY'
+		}).then(function (result) {
+			if (result.state === 'STATE_PROCESSING') {
+				currentState = STATE_EXECUTING;
+			}
+			return result;
+		});
+	};
+
 	this.execute = function () {
 		if (!subscribed) {
-			daemonConnector.subscribe('execution', processIncomingMsg);
+			daemonConnector.subscribe('message', processIncomingMsg);
 			subscribed = true;
 		}
 		if (currentState === STATE_IDLE) {
@@ -39,8 +53,15 @@ app.service('executor', function (daemonConnector, codeEditor, logger) {
 				vat: 0.07,
 				minDailyCommission: 50,
 				slippagePercent: 0.01
+			}).then(function (result) {
+				if (result.success) {
+					logger.info('Execution started.');
+					currentState = STATE_EXECUTING;
+					$rootScope.$emit('executionStarted');
+				} else {
+					logger.error(result.message);
+				}
 			});
-			currentState = STATE_EXECUTING;
 		}
 	};
 
@@ -48,8 +69,9 @@ app.service('executor', function (daemonConnector, codeEditor, logger) {
 		daemonConnector.publish('message', {type: 'STOP'})
 			.then(function (result) {
 				if (result.success) {
-					currentState = STATE_IDLE;
 					logger.info('Execution stopped.');
+					currentState = STATE_IDLE;
+					$rootScope.$emit('executionStopped');
 				}
 			});
 	};
