@@ -22,7 +22,7 @@ app.service('daemonConnector', function ($rootScope) {
 
 	this.publish = function (channel, data) {
 		if (this.socket) {
-			this.socket.emit(channel, data);
+			this.socket.emit(channel, JSON.stringify(data));
 		} else {
 			throw new Error('No connection available');
 		}

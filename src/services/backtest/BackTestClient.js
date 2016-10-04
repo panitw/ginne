@@ -17,7 +17,7 @@ class BackTestClient extends EventEmitter {
 		this._socket = socket;
 		this._state = STATE_IDLE;
 
-		this._socket.on('command', (cmd) => {
+		this._socket.on('message', (cmd) => {
 			logger.info('Client: command received');
 			this.processCommand(cmd);
 		});
@@ -55,7 +55,8 @@ class BackTestClient extends EventEmitter {
 		switch (this._state) {
 			case STATE_IDLE:
 				if (cmd.type === CMD_EXECUTE) {
-
+					logger.info('Executing Code');
+					logger.info(cmd.code);
 				}
 				break;
 			case STATE_PROCESSING:

@@ -1,4 +1,4 @@
-app.controller('MainMenuController', function ($rootScope, $scope, codeManagement) {
+app.controller('MainMenuController', function ($rootScope, $scope, codeManagement, executor) {
 
 	$scope.vm = {
 		dirtyFlag: false,
@@ -66,7 +66,15 @@ app.controller('MainMenuController', function ($rootScope, $scope, codeManagemen
 	$scope.resetName = function () {
 		$scope.vm.editingName = false;
 		$scope.vm.strategyName = codeManagement.currentStrategy().name;
-	}
+	};
+
+	$scope.execute = function () {
+		executor.execute();
+	};
+
+	$scope.stop = function () {
+		executor.stop();
+	};
 
 	$scope.renameKeyPressed = function (keyEvent) {
 		switch (keyEvent.which) {
