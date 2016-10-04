@@ -48,7 +48,11 @@
                 </li>
                 <li>
                     <div>
-                        <span class="glyphicon glyphicon-remove-sign" aria-hidden="true" style="font-size: 20px; margin-top: 12px;"></span>
+                        <span class="glyphicon"
+                              aria-hidden="true"
+                              style="font-size: 20px; margin-top: 12px;"
+                              ng-class="vm.connected ? 'glyphicon-ok-sign' : 'glyphicon-remove-sign'"
+                              ng-style="{'color': vm.iconColor}"></span>
                     </div>
                 </li>
             </ul>

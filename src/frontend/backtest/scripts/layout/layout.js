@@ -1,4 +1,4 @@
-app.directive('layout', function ($templateRequest, $compile, $window) {
+app.directive('layout', function ($rootScope, $templateRequest, $compile, $window) {
 	return {
 		restricted: 'E',
 		templateUrl: 'scripts/layout/layout.html',
@@ -38,6 +38,10 @@ app.directive('layout', function ($templateRequest, $compile, $window) {
 				var linkFn = $compile(componentState.template);
 				var content = linkFn(scope);
 				container.getElement().append(content);
+			});
+
+			scope.layout.on('stateChanged', function () {
+				$rootScope.$emit('layoutChanged');
 			});
 
 			scope.layout.init();

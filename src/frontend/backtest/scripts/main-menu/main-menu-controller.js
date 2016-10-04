@@ -4,7 +4,9 @@ app.controller('MainMenuController', function ($rootScope, $scope, codeManagemen
 		dirtyFlag: false,
 		strategyName: codeManagement.getStrategyName(),
 		editingName: false,
-		isMaster: false
+		isMaster: false,
+		connected: false,
+		iconColor: 'red'
 	};
 
 	$rootScope.$on('codeChanged', function () {
@@ -27,6 +29,18 @@ app.controller('MainMenuController', function ($rootScope, $scope, codeManagemen
 
 	$rootScope.$on('strategyMasterReset', function () {
 		$scope.vm.isMaster = codeManagement.currentStrategy().isMaster;
+	});
+
+	$rootScope.$on('daemonConnected', function () {
+		$scope.vm.connected = true;
+		$scope.vm.iconColor = 'green';
+		$scope.$apply();
+	});
+
+	$rootScope.$on('daemonDisconnected', function () {
+		$scope.vm.connected = false;
+		$scope.vm.iconColor = 'red';
+		$scope.$apply();
 	});
 
 	$scope.new = function () {
