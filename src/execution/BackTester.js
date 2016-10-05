@@ -18,6 +18,8 @@ class BackTester extends TradeExecutor {
 	    let analyzer = new Analyzer();
 	    let tradingActions = new TradingActions();
 
+	    ctx.on('transactionAdded', this._newTransactionHandler);
+
 	    strategy.analyze(analyzer);
 	    strategy.execute(tradingActions);
 
@@ -60,6 +62,10 @@ class BackTester extends TradeExecutor {
 	            return result;
             });
     }
+
+	_newTransactionHandler (tx) {
+		this.emit('transactionAdded', tx);
+	}
 
 }
 

@@ -5,8 +5,9 @@ const logger = require('winston');
 const fin = require('fin-data');
 const talib = require('talib');
 const async = require('async');
+const EventEmitter = require('events');
 
-class TradeExecutor {
+class TradeExecutor extends EventEmitter {
 
 	constructor (dataProvider) {
 		this._dataProvider = dataProvider;

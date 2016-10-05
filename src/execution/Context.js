@@ -3,8 +3,9 @@
 const fin = require('fin-data');
 const Position = require('./Position');
 const moment = require('moment');
+const EventEmitter = require('events');
 
-class Context {
+class Context extends EventEmitter {
 
 	constructor (options) {
 		this._asset = options.initialAsset;
@@ -238,6 +239,13 @@ class Context {
 			price: price
 		});
 		console.log(date, type, symbol, number, price, '[' + this.portfolioSize() + ']');
+		this.emit('transactionAdded', {
+			type: type,
+			date: date,
+			symbol: symbol,
+			number: number,
+			price: price
+		});
 	}
 
 	_addCommissionTransaction (date, cost) {
@@ -247,6 +255,11 @@ class Context {
 			cost: cost
 		});
 		console.log(date, 'C', cost);
+		this.emit('transactionAdded', {
+			type: 'C',
+			date: date,
+			cost: cost
+		});
 	}
 
 	_buy (symbol, number, atPrice) {
