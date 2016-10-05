@@ -8,6 +8,7 @@ const EventEmitter = require('events');
 class Context extends EventEmitter {
 
 	constructor (options) {
+		super();
 		this._asset = options.initialAsset;
 		this._startDate = options.start;
 		this._endDate = options.end;

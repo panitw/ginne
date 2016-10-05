@@ -60,6 +60,7 @@ app.service('executor', function ($rootScope, daemonConnector, codeEditor, logge
 					$rootScope.$emit('executionStarted');
 				} else {
 					logger.error(result.message);
+					logger.error(result.stack);
 				}
 			});
 		}

@@ -10,6 +10,7 @@ const EventEmitter = require('events');
 class TradeExecutor extends EventEmitter {
 
 	constructor (dataProvider) {
+		super();
 		this._dataProvider = dataProvider;
 	}
 

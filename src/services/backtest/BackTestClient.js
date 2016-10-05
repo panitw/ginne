@@ -3,6 +3,7 @@
 const EventEmitter = require('events');
 const logger = require('winston');
 const BackTester = require('../../execution/BackTester');
+const vm = require('vm');
 
 const STATE_IDLE = 0;
 const STATE_PROCESSING = 1;
@@ -70,28 +71,40 @@ class BackTestClient extends EventEmitter {
 			switch (this._state) {
 				case STATE_IDLE:
 					if (cmd.type === CMD_EXECUTE) {
-						let strategy = _createStrategyObj(cmd.code);
-						let backTester = new BackTester(this._dataProvider);
-						backTester.on('transactionAdded', function (tx) {
+						try {
+							let strategy = this._createStrategyObj(cmd.code);
+							let backTester = new BackTester(this._dataProvider);
+							backTester.on('transactionAdded', (tx) => {
+								if (tx.type === 'C') {
+									this.notify('Transaction: "' + tx.type + '" [' + tx.date + '] [' + tx.cost + ']');
+								} else {
+									this.notify('Transaction: "' + tx.type + '" [' + tx.date + '] [' +tx.symbol+ '] ' + '[' + tx.number + '] ' + '[' + tx.price + ']');
+								}
+							});
 
-						});
-
-						backTester.run(strategy, {
-							initialAsset: cmd.initialAsset,
-							targetPositions: cmd.targetPositions,
-							cutLossPercent: cmd.cutLossPercent,
-							start: new Date(cmd.start),
-							end: new Date(cmd.end),
-							tradeCommission: cmd.tradeCommission,
-							vat: cmd.vat,
-							minDailyCommission: cmd.minDailyCommission,
-							slippagePercent: cmd.slippagePercent
-						});
-
-						this._state = STATE_PROCESSING;
-						notifier({
-							success: true
-						});
+							backTester.run(strategy, {
+								initialAsset: cmd.initialAsset,
+								targetPositions: cmd.targetPositions,
+								cutLossPercent: cmd.cutLossPercent,
+								start: new Date(cmd.start),
+								end: new Date(cmd.end),
+								tradeCommission: cmd.tradeCommission,
+								vat: cmd.vat,
+								minDailyCommission: cmd.minDailyCommission,
+								slippagePercent: cmd.slippagePercent
+							});
+							this._state = STATE_PROCESSING;
+							notifier({
+								success: true
+							});
+						}
+						catch (ex) {
+							notifier({
+								success: false,
+								message: ex.message,
+								stack: ex.stack
+							});
+						}
 					}
 					break;
 				case STATE_PROCESSING:
