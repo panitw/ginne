@@ -4,6 +4,7 @@ const EventEmitter = require('events');
 const logger = require('winston');
 const BackTester = require('../../execution/BackTester');
 const vm = require('vm');
+const moment = require('moment');
 
 const STATE_IDLE = 0;
 const STATE_PROCESSING = 1;
@@ -53,6 +54,24 @@ class BackTestClient extends EventEmitter {
 		}
 	}
 
+	notifyComplete (success, result) {
+		if (this._socket) {
+			if (success) {
+				this._socket.emit('message', {
+					type: 'completed',
+					success: success,
+					result: result
+				});
+			} else {
+				this._socket.emit('message', {
+					type: 'completed',
+					success: success,
+					message: result
+				});
+			}
+		}
+	}
+
 	processCommand (cmd, notifier) {
 		if (cmd.type == CMD_QUERY) {
 			let stateString = '';
@@ -76,10 +95,14 @@ class BackTestClient extends EventEmitter {
 							let backTester = new BackTester(this._dataProvider);
 							backTester.on('transactionAdded', (tx) => {
 								if (tx.type === 'C') {
-									this.notify('Transaction: "' + tx.type + '" [' + tx.date + '] [' + tx.cost + ']');
+									this.notify('Transaction: "' + tx.type + '" [' + moment(tx.date).format('DD-MM-YYYY') + '] [' + tx.cost + ']');
 								} else {
-									this.notify('Transaction: "' + tx.type + '" [' + tx.date + '] [' +tx.symbol+ '] ' + '[' + tx.number + '] ' + '[' + tx.price + ']');
+									this.notify('Transaction: "' + tx.type + '" [' + moment(tx.date).format('DD-MM-YYYY') + '] [' +tx.symbol+ '] ' + '[' + tx.number + '] ' + '[' + tx.price + ']');
 								}
+							});
+
+							backTester.on('analyzingData', (e) => {
+								this.notify('Analyzing ' + e.symbol);
 							});
 
 							backTester.run(strategy, {
@@ -92,6 +115,12 @@ class BackTestClient extends EventEmitter {
 								vat: cmd.vat,
 								minDailyCommission: cmd.minDailyCommission,
 								slippagePercent: cmd.slippagePercent
+							}).then((result) => {
+								this.notifyComplete(true, result);
+								this._state = STATE_IDLE;
+							}).catch((err) => {
+								this.notifyComplete(false, err);
+								this.error(err);
 							});
 							this._state = STATE_PROCESSING;
 							notifier({

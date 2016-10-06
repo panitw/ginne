@@ -2,31 +2,34 @@ app.directive('chart', function () {
 	return {
 		restrict: 'E',
 		templateUrl: 'scripts/chart/chart.html',
+		scope: {
+			data: '='
+		},
 		replace: true,
-		link: function (scope, element) {
+		link: function (scope, element, attrs) {
 			scope.chart = new Highcharts.StockChart(element[0], {
 				rangeSelector: {
 					selected: 1
 				},
 				title: {
-					text: 'AAPL Stock Price'
+					text: attrs.title
 				},
 				navigator: {
 					enabled: false
 				},
-				series: [{
-					name: 'AAPL',
-					data: [
-						[1253750400000,26.26],
-						[1253836800000,26.05],
-						[1254096000000,26.59],
-						[1254182400000,26.48],
-						[1254268800000,26.48]
-					],
-					tooltip: {
-						valueDecimals: 2
+				series: []
+			});
+
+			scope.$watch('data', function (newData) {
+				if (newData) {
+					while (scope.chart.series.length > 0) {
+						scope.chart.series[0].remove(true);
 					}
-				}]
+					scope.chart.addSeries({
+						name: newData.name,
+						data: newData.data
+					});
+				}
 			});
 		}
 	};

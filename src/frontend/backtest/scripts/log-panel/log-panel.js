@@ -13,10 +13,12 @@ app.directive('logPanel', function ($rootScope) {
 
 			$rootScope.$on('logInfo', function (e, message) {
 				logPanel.append('<div class="log-line info">' + getTime() + ' ' + message + '</div>');
+				logPanel[0].scrollTop = logPanel[0].scrollHeight;
 			});
 
 			$rootScope.$on('logError', function (e, message) {
 				logPanel.append('<div class="log-line error">' + getTime() + ' ' + message + '</div>');
+				logPanel[0].scrollTop = logPanel[0].scrollHeight;
 			});
 
 		}

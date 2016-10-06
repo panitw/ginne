@@ -18,7 +18,7 @@ class BackTester extends TradeExecutor {
 	    let analyzer = new Analyzer();
 	    let tradingActions = new TradingActions();
 
-	    ctx.on('transactionAdded', this._newTransactionHandler);
+	    ctx.on('transactionAdded', this._newTransactionHandler.bind(this));
 
 	    strategy.analyze(analyzer);
 	    strategy.execute(tradingActions);
@@ -40,7 +40,7 @@ class BackTester extends TradeExecutor {
 		            endCapital: ctx.asset(),
 		            netProfit: ctx.asset() - options.initialAsset,
 		            percentNetProfit: ((ctx.asset() - options.initialAsset) / options.initialAsset) * 100,
-		            //equityCurve: ctx.equityCurve(),
+		            equityCurve: ctx.equityCurve().toArray(),
 		            maximumDrawdown: ctx.equityCurve().maximumDrawdown('equity') * 100
 	            };
 

@@ -50,6 +50,7 @@ app.controller('MainMenuController', function ($rootScope, $scope, codeManagemen
 
 	$rootScope.$on('executionStopped', function () {
 		$scope.vm.executing = false;
+		$scope.$apply();
 	});
 
 	$scope.new = function () {

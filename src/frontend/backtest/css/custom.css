@@ -24,9 +24,9 @@
 }
 
 .log-line.error {
-    color: #ff1d99;
+    color: red;
 }
 
 .log-line.info {
-    color: #aff1ff;
+    color: white;
 }

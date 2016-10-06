@@ -28,8 +28,7 @@ provider
 		};
 
 		let tester = new BackTester(provider);
-		tester
-			.run(strategy, options)
+		tester.run(strategy, options)
 			.then((result) => {
 				console.log(result);
 			})

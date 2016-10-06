@@ -13,13 +13,16 @@ app.service('executor', function ($rootScope, daemonConnector, codeEditor, logge
 		if (message.type === 'notification') {
 			logger.info(message.message);
 		} else
-		if (message.type === 'result') {
+		if (message.type === 'completed') {
 			if (message.success) {
-				logger.info('Execution finished.')
+				logger.info('Execution finished.');
+				console.log(message.result);
+				$rootScope.$emit('resultAvailable', message.result);
 			} else {
 				logger.info('Execution error: ' + message.message);
 			}
 			currentState = STATE_IDLE;
+			$rootScope.$emit('executionStopped');
 		}
 	};
 

@@ -21,6 +21,11 @@ class TradeExecutor extends EventEmitter {
 				this._dataProvider.getData(symbol, ctx.startDate(), ctx.endDate())
 					.then((data) => {
 						logger.debug('Received data from MongoDB ' + symbol);
+
+						this.emit('analyzingData', {
+							symbol: symbol
+						});
+
 						ctx.setAnalyzedData(symbol, data);
 						async.eachSeries(screener.commands(), (cmdObj, callback) => {
 							if (cmdObj.cmd === 'ANALYSIS') {
