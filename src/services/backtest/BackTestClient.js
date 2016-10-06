@@ -120,7 +120,7 @@ class BackTestClient extends EventEmitter {
 								this._state = STATE_IDLE;
 							}).catch((err) => {
 								this.notifyComplete(false, err);
-								this.error(err);
+								this.error(err.message);
 							});
 							this._state = STATE_PROCESSING;
 							notifier({

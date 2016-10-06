@@ -10,6 +10,7 @@ class DataProvider {
 	constructor () {
 		this._srcPlugin = PluginManager.getPlugin('source');
 		this._cachePlugin = PluginManager.getPlugin('cache');
+		this._cacheDate = {};
 	}
 
 	init () {
@@ -19,9 +20,31 @@ class DataProvider {
 	}
 
 	getData (symbol, startDate, endDate, cacheOnly) {
-		return this._getData(symbol, startDate, endDate, cacheOnly).then((data) => {
-			return this._dataToDataFrame(data);
-		});
+		if (this._cacheDate[symbol] &&
+			this._cacheDate[symbol].start <= startDate &&
+			this._cacheDate[symbol].end >= endDate) {
+			return this._cachePlugin.getData(symbol, startDate, endDate)
+				.then((data) => {
+					return this._dataToDataFrame(data);
+				});
+		} else {
+			return this._getData(symbol, startDate, endDate, cacheOnly).then((data) => {
+				if (!this._cacheDate[symbol]) {
+					this._cacheDate[symbol] = {
+						start: startDate,
+						end: endDate
+					};
+				} else {
+					if (this._cacheDate[symbol].start > startDate) {
+						this._cacheDate[symbol].start = startDate;
+					}
+					if (this._cacheDate[symbol].end < endDate) {
+						this._cacheDate[symbol].end = endDate;
+					}
+				}
+				return this._dataToDataFrame(data);
+			});
+		}
 	}
 
 	getLastData (symbol) {

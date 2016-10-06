@@ -15,7 +15,7 @@ class TradeExecutor extends EventEmitter {
 	}
 
 	processScreener (ctx, screener) {
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
 			let universe = ctx.universe();
 			async.eachSeries(universe, (symbol, callback) => {
 				this._dataProvider.getData(symbol, ctx.startDate(), ctx.endDate())
@@ -36,15 +36,19 @@ class TradeExecutor extends EventEmitter {
 							} else {
 								callback();
 							}
-						}, () => {
-							callback();
+						}, (err) => {
+							callback(err);
 						});
 					})
 					.catch((err) => {
 						callback(err);
 					});
 			}, (err) => {
-				resolve(err);
+				if (err) {
+					reject(err);
+				} else {
+					resolve();
+				}
 			});
 		});
 	}
