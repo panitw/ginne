@@ -1,4 +1,4 @@
-app.directive('chart', function () {
+app.directive('chart', function ($rootScope) {
 	return {
 		restrict: 'E',
 		templateUrl: 'scripts/chart/chart.html',
@@ -30,6 +30,10 @@ app.directive('chart', function () {
 						data: newData.data
 					});
 				}
+			});
+
+			$rootScope.$on('layoutChanged', function (e) {
+				scope.chart.reflow();
 			});
 		}
 	};
