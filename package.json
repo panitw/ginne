@@ -6,6 +6,7 @@
     "express": "^4.14.0",
     "fast-csv": "^2.2.0",
     "fin-data": "git+https://github.com/panitw/fin-data.git",
+    "lupus": "0.0.1",
     "moment": "^2.13.0",
     "mongodb": "^2.1.18",
     "mongoose": "^4.5.10",

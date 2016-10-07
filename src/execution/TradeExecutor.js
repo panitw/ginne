@@ -129,57 +129,63 @@ class TradeExecutor extends EventEmitter {
 			let runner = moment.utc(ctx.startDate()).toDate();
 			let end = moment.utc(ctx.endDate()).toDate();
 			let lastValidRow = {};
+			let task = null;
 
-			while (runner.getTime() <= end.getTime()) {
-				//Create a new data frame that contains the row of all the instrument in the universe
-				let universe = ctx.universe();
-				let dayData = new fin.DataFrame();
-				let foundAnyData = false;
-				for (let i=0; i<universe.length; i++) {
-					let symbol = universe[i];
-					let symbolData = ctx.analyzedData(symbol);
-					let data = symbolData.row(runner);
-					if (data) {
-						foundAnyData = true;
-						dayData.setRow(symbol, data);
-						lastValidRow[symbol] = data;
-					}
-				}
-
-				//Consider the day as a valid day if there are some data, then
-				//process each stage of event if there's any valid data for that day
-				if (foundAnyData) {
-					//Make sure that there's a row for each symbol in the universe, if not, use data from
-					//last valid row
-					let availableSymbols = dayData.index();
+			let iterator = () => {
+				if (runner.getTime() <= end.getTime()) {
+					//Create a new data frame that contains the row of all the instrument in the universe
+					let universe = ctx.universe();
+					let dayData = new fin.DataFrame();
+					let foundAnyData = false;
 					for (let i=0; i<universe.length; i++) {
-						if (availableSymbols.indexOf(universe[i]) === -1) {
-							let lastValid = lastValidRow[universe[i]];
-							if (lastValid) {
-								dayData.setRow(universe[i], lastValid);
-							}
+						let symbol = universe[i];
+						let symbolData = ctx.analyzedData(symbol);
+						let data = symbolData.row(runner);
+						if (data) {
+							foundAnyData = true;
+							dayData.setRow(symbol, data);
+							lastValidRow[symbol] = data;
 						}
 					}
 
-					//Before Market Opened
-					ctx.setCurrentDate(runner);
-					if (dayData) {
-						ctx.setLatestData(dayData);
-						let handlers = tradingActions.handlers('marketOpen');
-						if (handlers && handlers.length > 0) {
-							for (let i=0; i<handlers.length; i++) {
-								handlers[i](ctx);
+					//Consider the day as a valid day if there are some data, then
+					//process each stage of event if there's any valid data for that day
+					if (foundAnyData) {
+						//Make sure that there's a row for each symbol in the universe, if not, use data from
+						//last valid row
+						let availableSymbols = dayData.index();
+						for (let i=0; i<universe.length; i++) {
+							if (availableSymbols.indexOf(universe[i]) === -1) {
+								let lastValid = lastValidRow[universe[i]];
+								if (lastValid) {
+									dayData.setRow(universe[i], lastValid);
+								}
 							}
 						}
-					}
 
-					//Process EOD commission
-					ctx.endOfDayProcessing();
+						//Before Market Opened
+						ctx.setCurrentDate(runner);
+						if (dayData) {
+							ctx.setLatestData(dayData);
+							let handlers = tradingActions.handlers('marketOpen');
+							if (handlers && handlers.length > 0) {
+								for (let i=0; i<handlers.length; i++) {
+									handlers[i](ctx);
+								}
+							}
+						}
+
+						//Process EOD commission
+						ctx.endOfDayProcessing();
+					}
+					runner = moment.utc(moment(runner).add(1, 'day').format('YYYY-MM-DD')).toDate();
+				} else {
+					clearInterval(task);
+					resolve();
 				}
+			};
 
-				runner = moment.utc(moment(runner).add(1, 'day').format('YYYY-MM-DD')).toDate();
-			}
-			resolve();
+			task = setInterval(iterator, 0);
 		});
 	}
 
