@@ -15,19 +15,30 @@ app.directive('layout', function ($rootScope, $templateRequest, $compile, $windo
 						title: 'Strategy Code'
 					},{
 						type: 'column',
-						width: 40,
-						content:[{
-							type: 'component',
-							componentName: 'template',
-							componentState: { template: '<equity-curve-panel></equity-curve-panel>' },
-							title: 'Equity Curve'
-						},{
-							type: 'component',
-							componentName: 'template',
-							componentState: { template: '<log-panel></log-panel>' },
-							title: 'Log Detail',
-							height: 50
-						}]
+						width: 45,
+						content:[
+							{
+								type: 'component',
+								componentName: 'template',
+								componentState: { template: '<equity-curve-panel></equity-curve-panel>' },
+								title: 'Equity Curve',
+								height: 45
+							},
+							{
+								type: 'component',
+								componentName: 'template',
+								componentState: { template: '<result-table></result-table>' },
+								title: 'Result',
+								height: 30
+							},
+							{
+								type: 'component',
+								componentName: 'template',
+								componentState: { template: '<log-panel></log-panel>' },
+								title: 'Log Detail',
+								height: 25
+							}
+						]
 					}]
 				}]
 			};
@@ -41,7 +52,7 @@ app.directive('layout', function ($rootScope, $templateRequest, $compile, $windo
 			});
 
 			scope.layout.on('stateChanged', function () {
-				$rootScope.$emit('layoutChanged');
+				$rootScope.$emit('');
 			});
 
 			scope.layout.init();
