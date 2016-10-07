@@ -9,7 +9,7 @@ app.directive('chart', function ($rootScope) {
 		link: function (scope, element, attrs) {
 			scope.chart = new Highcharts.StockChart(element[0], {
 				rangeSelector: {
-					selected: 1
+					selected: 4
 				},
 				title: {
 					text: attrs.title

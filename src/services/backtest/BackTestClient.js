@@ -5,6 +5,8 @@ const logger = require('winston');
 const BackTester = require('../../execution/BackTester');
 const vm = require('vm');
 const moment = require('moment');
+const PluginManager = require('../../plugins/PluginManager');
+const portfolio = PluginManager.getPlugin('portfolio');
 
 const STATE_IDLE = 0;
 const STATE_PROCESSING = 1;
@@ -105,27 +107,30 @@ class BackTestClient extends EventEmitter {
 								this.notify('Analyzing ' + e.symbol);
 							});
 
-							backTester.run(strategy, {
-								initialAsset: cmd.initialAsset,
-								targetPositions: cmd.targetPositions,
-								cutLossPercent: cmd.cutLossPercent,
-								start: new Date(cmd.start),
-								end: new Date(cmd.end),
-								tradeCommission: cmd.tradeCommission,
-								vat: cmd.vat,
-								minDailyCommission: cmd.minDailyCommission,
-								slippagePercent: cmd.slippagePercent
-							}).then((result) => {
-								this.notifyComplete(true, result);
-								this._state = STATE_IDLE;
-							}).catch((err) => {
-								this.notifyComplete(false, err);
-								this.error(err.message);
-							});
-							this._state = STATE_PROCESSING;
-							notifier({
-								success: true
-							});
+							portfolio.getCommissionModel(new Date())
+								.then((commModel) => {
+									backTester.run(strategy, {
+										initialAsset: cmd.initialAsset,
+										targetPositions: cmd.targetPositions,
+										cutLossPercent: cmd.cutLossPercent,
+										start: new Date(cmd.startDate),
+										end: new Date(cmd.endDate),
+										tradeCommission: commModel.percent,
+										vat: commModel.vat,
+										minDailyCommission: commModel.minimumPerDay,
+										slippagePercent: cmd.slippagePercent
+									}).then((result) => {
+										this.notifyComplete(true, result);
+										this._state = STATE_IDLE;
+									}).catch((err) => {
+										this.notifyComplete(false, err);
+										this.error(err.message);
+									});
+									this._state = STATE_PROCESSING;
+									notifier({
+										success: true
+									});
+								});
 						}
 						catch (ex) {
 							notifier({

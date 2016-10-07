@@ -1,0 +1,39 @@
+<div>
+    <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Execution Parameters</h3>
+    </div>
+    <div class="modal-body" id="modal-body">
+        <div class="form-group">
+            <label for="startYear">Start Year</label>
+            <select class="form-control" id="startYear" ng-model="vm.startYear">
+                <option ng-repeat="year in vm.yearList" value="{{year}}">{{year}}</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="endYear">End Year</label>
+            <select class="form-control" id="endYear" ng-model="vm.endYear">
+                <option ng-repeat="year in vm.yearList" value="{{year}}">{{year}}</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="initialAsset">Initial Asset</label>
+            <input type="text" class="form-control" id="initialAsset" placeholder="Initial Asset" ng-model="vm.initialAsset">
+        </div>
+        <div class="form-group">
+            <label for="targetPositions">Initial Asset</label>
+            <input type="text" class="form-control" id="targetPositions" placeholder="Target Positions" ng-model="vm.targetPositions">
+        </div>
+        <div class="form-group">
+            <label for="cutLossPercent">Cut-loss Percent</label>
+            <input type="text" class="form-control" id="cutLossPercent" placeholder="Cut-Loss Percent" ng-model="vm.cutLossPercent">
+        </div>
+        <div class="form-group">
+            <label for="slippagePercent">Slippage Percent</label>
+            <input type="text" class="form-control" id="slippagePercent" placeholder="Slippage Percent" ng-model="vm.slippagePercent">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="ok()" ng-disabled="vm.selectedIndex === -1">OK</button>
+        <button class="btn" type="button" ng-click="cancel()">Cancel</button>
+    </div>
+</div>
