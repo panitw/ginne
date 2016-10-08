@@ -17,8 +17,27 @@ class TradeExecutor extends EventEmitter {
 	processScreener (ctx, screener) {
 		return new Promise((resolve, reject) => {
 			let universe = ctx.universe();
+			let screenerCmds = screener.commands();
+			let maxPeriod = 20;
+			for (let i=0; i<screenerCmds.length; i++) {
+				if (screenerCmds[i].cmd === 'ANALYSIS') {
+					let options = screenerCmds[i].options;
+					if (options.input) {
+						for (let inputName in options.input) {
+							if (inputName.toUpperCase().indexOf('PERIOD') > -1) {
+								maxPeriod = Math.max(maxPeriod, options.input[inputName]);
+							}
+						}
+					}
+				}
+			}
+			//Times 2 to get enough data
+			maxPeriod *= 2;
+
+			let adjustedStartDate = moment(ctx.startDate()).add(-1 * maxPeriod, 'days').toDate();
+
 			async.eachSeries(universe, (symbol, callback) => {
-				this._dataProvider.getData(symbol, ctx.startDate(), ctx.endDate())
+				this._dataProvider.getData(symbol, adjustedStartDate, ctx.endDate())
 					.then((data) => {
 						logger.debug('Received data from MongoDB ' + symbol);
 
