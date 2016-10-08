@@ -182,7 +182,7 @@ class Context extends EventEmitter {
 		}
 
 		if (!this._positions[symbol]) {
-			this._positions[symbol] = new Position(0, 0);
+			this._positions[symbol] = new Position(0, 0, 0);
 		}
 
 		//Buy at the open price of the day
@@ -207,7 +207,7 @@ class Context extends EventEmitter {
 				this._asset -= totalCommission;
 				this._currentDateCommission += totalCommission;
 
-				this._buy(symbol, buyPosition, buyPrice);
+				this._buy(symbol, buyPosition, buyPrice, totalCommission);
 			} else
 			if (gapToFill < 0) {
 				let sellPrice = symbolPrice;
@@ -231,22 +231,21 @@ class Context extends EventEmitter {
 		}
 	}
 
-	_addTransaction (type, date, symbol, number, price) {
-		this._transactions.push({
+	_addTransaction (type, date, symbol, number, price, isWinning) {
+		let newTx = {
 			type: type,
 			date: date,
 			symbol: symbol,
 			number: number,
-			price: price
-		});
-		console.log(date, type, symbol, number, price, '[' + this.portfolioSize() + ']');
-		this.emit('transactionAdded', {
-			type: type,
-			date: date,
-			symbol: symbol,
-			number: number,
-			price: price
-		});
+			price: price,
+			currentPortSize: this.portfolioSize()
+		};
+		if (isWinning !== undefined) {
+			newTx.winning = isWinning;
+		}
+		this._transactions.push(newTx);
+		this.emit('transactionAdded', newTx);
+		console.log(date, type, symbol, number, price, isWinning, '[' + newTx.currentPortSize + ']');
 	}
 
 	_addCommissionTransaction (date, cost) {
@@ -263,15 +262,15 @@ class Context extends EventEmitter {
 		});
 	}
 
-	_buy (symbol, number, atPrice) {
+	_buy (symbol, number, atPrice, commission) {
 		if (!this._positions[symbol]) {
-			this._positions[symbol] = new Position(0, 0);
+			this._positions[symbol] = new Position(0, 0, 0);
 		}
 		let position = this._positions[symbol];
 		let tradeSize = number * atPrice;
 
 		//Set position number
-		position.add(number, atPrice);
+		position.add(number, atPrice, commission);
 
 		//Set initial cut-loss target
 		position.setCutLossTarget(atPrice - (atPrice * this._cutLossPercent));
@@ -292,6 +291,8 @@ class Context extends EventEmitter {
 		}
 		let position = this._positions[symbol];
 		let tradeSize = number * atPrice;
+		let currentAverageCost = position.averageCost();
+		let isWinningSell = (atPrice > currentAverageCost);
 
 		//Throw error if there's no position to sell
 		if (position.number() < number) {
@@ -313,7 +314,7 @@ class Context extends EventEmitter {
 		}
 
 		//Log transaction
-		this._addTransaction('S', this._currentDate, symbol, number, atPrice);
+		this._addTransaction('S', this._currentDate, symbol, number, atPrice, isWinningSell);
 	}
 
 }

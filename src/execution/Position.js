@@ -2,18 +2,18 @@
 
 class Position {
 
-    constructor (numberOfPositions, price) {
+    constructor (numberOfPositions, price, commission) {
         this._numberOfPositions = 0;
 	    this._cost = 0;
         this._cutLossTarget = null;
 	    if (numberOfPositions !== undefined && price !== undefined) {
-		    this.add(numberOfPositions, price);
+		    this.add(numberOfPositions, price, commission);
 	    }
     }
 
-    add (number, price) {
+    add (number, price, commission) {
         this._numberOfPositions += number;
-        this._cost += (price * number);
+        this._cost += ((price * number) + commission);
     }
 
     remove (number) {
