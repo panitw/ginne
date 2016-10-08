@@ -28,6 +28,13 @@ app.directive('transactionsTable', function () {
 				return moment(d).format('YYYY-MM-DD');
 			};
 
+			$scope.winningFlag = function (winning) {
+				if (winning !== undefined) {
+					return (winning) ? 'Y' : 'N';
+				} else {
+					return '';
+				}
+			};
 		}
 	};
 });

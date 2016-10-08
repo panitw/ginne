@@ -8,16 +8,18 @@
                 <th>Price</th>
                 <th>Amount</th>
                 <th>Total</th>
+                <th>Winning</th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="tx in transactions">
+            <tr ng-repeat="tx in transactions" ng-class="tx.winning === true ? 'success' : (tx.winning === false) ? 'danger' : ''">
                 <td>{{formatDate(tx.date)}}</td>
-                <td>{{getTypeName(tx.type)}}</td>
+                <td>{{[tx.type]}}</td>
                 <td>{{tx.symbol}}</td>
                 <td>{{tx.price | number:2}}</td>
                 <td>{{tx.number | number:2}}</td>
                 <td>{{((tx.cost === undefined)?tx.price * tx.number:tx.cost) | number:2}}</td>
+                <td>{{winningFlag(tx.winning)}}</td>
             </tr>
         </tbody>
     </table>
