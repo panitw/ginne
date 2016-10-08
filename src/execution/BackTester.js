@@ -41,7 +41,8 @@ class BackTester extends TradeExecutor {
 		            netProfit: ctx.asset() - options.initialAsset,
 		            percentNetProfit: ((ctx.asset() - options.initialAsset) / options.initialAsset) * 100,
 		            equityCurve: ctx.equityCurve().toArray(),
-		            maximumDrawdown: ctx.equityCurve().maximumDrawdown('equity') * 100
+		            maximumDrawdown: ctx.equityCurve().maximumDrawdown('equity') * 100,
+		            transactions: ctx.transactions()
 	            };
 
 	            //Compound Average Growth Return
@@ -54,7 +55,7 @@ class BackTester extends TradeExecutor {
 	            if (ddDuration) {
 		            let startIndex = ctx.equityCurve().indexAtLoc(ddDuration.startIndex);
 		            let endIndex = ctx.equityCurve().indexAtLoc(ddDuration.endIndex);
-		            result.drawdownDuration = moment(endIndex).diff(startIndex, 'days');;
+		            result.drawdownDuration = moment(endIndex).diff(startIndex, 'days');
 	            } else {
 		            result.drawdownDuration = 0;
 	            }

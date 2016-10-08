@@ -18,25 +18,34 @@ app.directive('layout', function ($rootScope, $templateRequest, $compile, $windo
 						width: 45,
 						content:[
 							{
-								type: 'component',
-								componentName: 'template',
-								componentState: { template: '<equity-curve-panel></equity-curve-panel>' },
-								title: 'Equity Curve',
-								height: 45
-							},
-							{
-								type: 'component',
-								componentName: 'template',
-								componentState: { template: '<result-table></result-table>' },
-								title: 'Result',
-								height: 30
+								type: 'stack',
+								content: [
+									{
+										type: 'component',
+										componentName: 'template',
+										componentState: { template: '<equity-curve-panel></equity-curve-panel>' },
+										title: 'Equity Curve',
+									},
+									{
+										type: 'component',
+										componentName: 'template',
+										componentState: { template: '<result-table></result-table>' },
+										title: 'Result',
+									},
+									{
+										type: 'component',
+										componentName: 'template',
+										componentState: { template: '<transactions-table></transactions-table>' },
+										title: 'Transactions',
+									}
+								]
 							},
 							{
 								type: 'component',
 								componentName: 'template',
 								componentState: { template: '<log-panel></log-panel>' },
 								title: 'Log Detail',
-								height: 25
+								height: 50
 							}
 						]
 					}]
