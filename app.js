@@ -6,6 +6,7 @@ const schedule = require('node-schedule');
 const PluginManager = require('./src/plugins/PluginManager');
 const notifier = PluginManager.getPlugin('notification');
 const BackTestDaemon = require('./src/services/backtest/BackTestDaemon');
+const DataProvider = require('./src/data/DataProvider');
 
 const task_updateData = require('./src/tasks/updateData');
 const task_executeStrategy = require('./src/tasks/executeStrategy');
@@ -38,8 +39,16 @@ server.listen(80, function () {
 });
 
 console.log('Starting Back Test daemon');
-let backTestDaemon = new BackTestDaemon();
-io.on('connection', backTestDaemon.handle);
+let dataProvider = new DataProvider();
+dataProvider.init()
+	.then(() => {
+		let backTestDaemon = new BackTestDaemon(dataProvider);
+		io.on('connection', (socket) => {
+			backTestDaemon.handle(socket);
+		});
+		logger.info('Service Ready...')
+	});
+
 
 console.log('Schedule data retrieval task');
 schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
