@@ -68,7 +68,7 @@ class BackTestClient extends EventEmitter {
 				this._socket.emit('message', {
 					type: 'completed',
 					success: success,
-					message: result
+					message: result.message + result.stack
 				});
 			}
 		}
