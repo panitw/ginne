@@ -60,6 +60,7 @@ schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
 		})
 		.catch((ex) => {
 			notifier.notify('Error updating data from SET, '+ex.message);
+			logger.error(ex);
 		});
 
 });
@@ -70,8 +71,10 @@ schedule.scheduleJob({minute: 0, hour: 13}, () => {
 	task_executeStrategy.execute()
 		.then(() => {
 			notifier.notify('Finish executing strategy');
+			logger.info('Finish execution strategy');
 		})
 		.catch((ex) => {
 			notifier.notify('Error executing strategy, '+ex.message);
+			logger.error(ex);
 		});
 });

@@ -1,6 +1,7 @@
 'use strict';
 
 const Context = require('./Context');
+const Position = require('./Position');
 const PluginManager = require('../plugins/PluginManager');
 const universe = PluginManager.getPlugin('universe');
 
