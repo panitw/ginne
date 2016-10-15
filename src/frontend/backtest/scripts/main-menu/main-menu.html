@@ -43,6 +43,8 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         <li ng-class="{'disabled': vm.executing}"><a href="#" ng-click="execute()">Execute</a></li>
+                        <li ng-class="{'disabled': vm.executing}"><a href="#" ng-click="updateData()">Update Data</a></li>
+                        <li class="divider"></li>
                         <li ng-class="{'disabled': !vm.executing}"><a href="#" ng-click="stop()">Stop</a></li>
                     </ul>
                 </li>

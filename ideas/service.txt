@@ -31,3 +31,6 @@
   M Delete strategy (id)
   M Run strategy (universe, start, end, ...)
   M Gist Saving: 57d26df5b69e93272495415c6aede9da8bac321f
+
+  Command to run
+  node --max-old-space-size=4096 app.js

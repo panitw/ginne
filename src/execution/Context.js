@@ -144,14 +144,14 @@ class Context extends EventEmitter {
 			} else {
 				//Loop back in time to find data
 				let analyzedData = this.analyzedData(symbol);
-				let runner = moment(this.currentDate()).add(-1, 'day').toDate();
+				let runner = this.currentDate();
 				while (runner >= this.startDate()) {
 					let row = analyzedData.row(runner);
 					if (row && !isNaN(row.close)) {
 						lastPrice = row.close;
 						break;
 					}
-					runner = moment(runner).add(-1, 'day').toDate();
+					runner = new Date(moment(runner).add(-1, 'day').format('YYYY-MM-DD'));
 				}
 				if (!isNaN(lastPrice)) {
 					sum += (lastPrice * position.number());

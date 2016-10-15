@@ -16,8 +16,9 @@ app.service('executor', function ($rootScope, daemonConnector, codeEditor, execu
 		if (message.type === 'completed') {
 			if (message.success) {
 				logger.info('Execution finished.');
-				console.log(message.result);
-				$rootScope.$emit('resultAvailable', message.result);
+				if (message.result) {
+					$rootScope.$emit('resultAvailable', message.result);
+				}
 			} else {
 				logger.info('Execution error: ' + message.message);
 			}
@@ -29,6 +30,17 @@ app.service('executor', function ($rootScope, daemonConnector, codeEditor, execu
 	this.query = function () {
 		return daemonConnector.publish('message', {
 			type: 'QUERY'
+		}).then(function (result) {
+			if (result.state === 'STATE_PROCESSING') {
+				currentState = STATE_EXECUTING;
+			}
+			return result;
+		});
+	};
+
+	this.updateData = function () {
+		return daemonConnector.publish('message', {
+			type: 'UPDATE_DATA'
 		}).then(function (result) {
 			if (result.state === 'STATE_PROCESSING') {
 				currentState = STATE_EXECUTING;

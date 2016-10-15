@@ -14,6 +14,8 @@ const STATE_PROCESSING = 1;
 const CMD_EXECUTE = 'EXECUTE';
 const CMD_STOP = 'STOP';
 const CMD_QUERY = 'QUERY';
+const CMD_UPDATE_DATA = 'UPDATE_DATA';
+const CMD_EXECUTE_LATEST = 'EXECUTE_LATEST';
 
 class BackTestClient extends EventEmitter {
 
@@ -139,6 +141,23 @@ class BackTestClient extends EventEmitter {
 								stack: ex.stack
 							});
 						}
+					} else
+					if (cmd.type === CMD_UPDATE_DATA) {
+						this._state = STATE_PROCESSING;
+						let task = require('../../tasks/updateData');
+						task.execute()
+							.then(() => {
+								logger.info('Finish update data from SET');
+								this.notifyComplete(true, null);
+								this._state = STATE_IDLE;
+							})
+							.catch((ex) => {
+								this.notifyComplete(false, ex.message);
+								this.error(ex.message);
+							});
+						notifier({
+							success: true
+						});
 					}
 					break;
 				case STATE_PROCESSING:

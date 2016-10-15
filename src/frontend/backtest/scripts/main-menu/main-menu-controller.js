@@ -86,6 +86,10 @@ app.controller('MainMenuController', function ($rootScope, $scope, codeManagemen
 		executor.stop();
 	};
 
+	$scope.updateData = function () {
+		executor.updateData();
+	};
+
 	$scope.renameKeyPressed = function (keyEvent) {
 		switch (keyEvent.which) {
 			case 13: //Enter
