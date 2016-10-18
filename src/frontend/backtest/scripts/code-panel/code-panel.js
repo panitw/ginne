@@ -8,8 +8,9 @@ app.directive('codePanel', function (codeEditor) {
 			var forceSettingValue = false;
 
 			scope.editor = ace.edit(element.find('.code-editor')[0]);
-			scope.editor.setTheme('ace/theme/twilight');
+			scope.editor.setTheme('ace/theme/tomorrow_night_eighties');
 			scope.editor.getSession().setMode('ace/mode/javascript');
+			scope.editor.setFontSize(14);
 
 			scope.editor.getSession().on('change', function() {
 				if (!forceSettingValue) {
