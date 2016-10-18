@@ -1,5 +1,6 @@
 'use strict';
 
+const argv = require('yargs').argv;
 const express = require('express');
 const bodyParser = require('body-parser');
 const schedule = require('node-schedule');
@@ -34,8 +35,13 @@ app.use('/portfolio', positionsRouter);
 app.use('/portfolio', recommendationsRouter);
 app.use('/strategy', strategyRouter);
 
-server.listen(80, function () {
-	console.log('Web server is up and running');
+let port = 8080;
+if (argv.p) {
+	port = parseInt(argv.port);
+}
+
+server.listen(port, function () {
+	console.log('Web server is up and running at port ' + port);
 });
 
 console.log('Starting Back Test daemon');
@@ -46,7 +52,7 @@ dataProvider.init()
 		io.on('connection', (socket) => {
 			backTestDaemon.handle(socket);
 		});
-		logger.info('Service Ready...')
+		logger.info('Service Ready...');
 	});
 
 
