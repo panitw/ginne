@@ -37,7 +37,7 @@ app.use('/strategy', strategyRouter);
 
 let port = 8080;
 if (argv.p) {
-	port = parseInt(argv.port);
+	port = parseInt(argv.p);
 }
 
 server.listen(port, function () {
