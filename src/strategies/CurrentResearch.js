@@ -82,7 +82,8 @@ class Strategy {
 
 				//Cut-loss
 				position = ctx.positions()[symbol];
-				if (row.close <= position.cutLossTarget()) {
+				let cutLossTarget = ctx.value('CUTLOSS_' + symbol);
+				if (row.close <= cutLossTarget) {
 					exitList.push(symbol);
 					continue;
 				}
@@ -101,11 +102,13 @@ class Strategy {
 
 			// Adjust the stop loss price using trailing stop
 			for (symbol in ctx.positions()) {
+				let cutLossTarget = ctx.value('CUTLOSS_' + symbol);
 				row = ctx.latestData().row(symbol);
 				position = ctx.positions()[symbol];
-				let gapPercent = (row.close - position.cutLossTarget()) / row.close;
+
+				let gapPercent = (row.close - cutLossTarget) / row.close;
 				if (gapPercent > cutLossPercent) {
-					position.setCutLossTarget(row.close - (row.close * cutLossPercent));
+					ctx.setValue('CUTLOSS_' + symbol, row.close - (row.close * cutLossPercent));
 				}
 			}
 

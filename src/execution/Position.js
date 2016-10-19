@@ -6,7 +6,6 @@ class Position {
         this._symbol = symbol;
         this._numberOfPositions = 0;
 	    this._cost = 0;
-        this._cutLossTarget = null;
 	    if (numberOfPositions !== undefined && price !== undefined) {
 		    this.add(numberOfPositions, price, commission);
 	    }
@@ -40,14 +39,6 @@ class Position {
         } else {
             return 0;
         }
-    }
-
-    cutLossTarget () {
-        return this._cutLossTarget;
-    }
-
-    setCutLossTarget (target) {
-        this._cutLossTarget = target;
     }
 
     last () {
