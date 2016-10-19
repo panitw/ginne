@@ -19,5 +19,9 @@
 	},
 	"strategy" : {
 		"plugin" : "Github"
+	},
+	"state" : {
+		"plugin" : "MongoDB",
+		"connectionString" : "mongodb://localhost/ginne_portfolio"
 	}
 }

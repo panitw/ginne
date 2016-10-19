@@ -9,6 +9,7 @@ const TodayContext = require('./TodayContext');
 const PluginManager = require('../plugins/PluginManager');
 const portfolio = PluginManager.getPlugin('portfolio');
 const universe = PluginManager.getPlugin('universe');
+const state = PluginManager.getPlugin('state');
 
 class TodayExecutor extends TradeExecutor {
 
@@ -21,6 +22,7 @@ class TodayExecutor extends TradeExecutor {
 	run (strategy, universe, numberOfDaysBack) {
 		let currentPositions = null;
 		let commissionModel = null;
+		let contextState = null;
 		let analyzer = new Analyzer();
 		let tradingActions = new TradingActions();
 		strategy.analyze(analyzer);
@@ -34,6 +36,15 @@ class TodayExecutor extends TradeExecutor {
 				currentPositions = positions;
 			})
 			.then(() => {
+				return state.getState().then((savedState) => {
+					if (savedState) {
+						contextState = savedState;
+					} else {
+						contextState = {};
+					}
+				});
+			})
+			.then(() => {
 				return portfolio.getCommissionModel(this._today);
 			})
 			.then((commission) => {
@@ -42,11 +53,16 @@ class TodayExecutor extends TradeExecutor {
 				this._context = new TodayContext(this._dataProvider, this._today, currentPositions, commissionModel);
 				this._context.setUniverse(universe);
 				this._context.setStartDate(startDate);
+				this._context.setState(contextState);
 				return this.processScreener(this._context, analyzer);
 			})
 			.then(() => {
 				this._context.setStartDate(this._today);
 				return this.processTradingActions(this._context, tradingActions);
+			})
+			.then(() => {
+				let latestState = this._context.state();
+				return state.setState(latestState);
 			})
 			.then(() => {
 				return this._context.transactions();

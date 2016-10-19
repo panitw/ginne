@@ -2,7 +2,8 @@
 
 class Position {
 
-    constructor (numberOfPositions, price, commission) {
+    constructor (symbol, numberOfPositions, price, commission) {
+        this._symbol = symbol;
         this._numberOfPositions = 0;
 	    this._cost = 0;
         this._cutLossTarget = null;
@@ -19,6 +20,10 @@ class Position {
     remove (number) {
         this._cost *= (this._numberOfPositions - number) / this._numberOfPositions;
 	    this._numberOfPositions -= number;
+    }
+
+    symbol () {
+        return this._symbol;
     }
 
     number () {

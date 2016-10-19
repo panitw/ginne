@@ -14,14 +14,14 @@ class TodayContext extends Context {
 			start: today,
 			end: today,
 			targetPositions: 5,
-			cutLossPercent: 0.1,
+			cutLossPercent: 0.05,
 			tradeCommission: commissionModel.percent,
 			minDailyCommission: commissionModel.minimumPerDay,
 			vat: commissionModel.vat
 		});
 		var positions = {};
 		currentPositions.positions.forEach((position) => {
-			positions[position.symbol] = new Position(position.shares, position.price);
+			positions[position.symbol] = new Position(position.symbol, position.shares, position.price);
 		});
 		this._dataProvider = dataProvider;
 		this.setPositions(positions);

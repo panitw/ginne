@@ -26,6 +26,7 @@ class Context extends EventEmitter {
 		this._positions = {};
 		this._currentDateTradeSize = 0;
 		this._currentDateCommission = 0;
+		this._state = {};
 	}
 
 	asset () {
@@ -182,7 +183,7 @@ class Context extends EventEmitter {
 		}
 
 		if (!this._positions[symbol]) {
-			this._positions[symbol] = new Position(0, 0, 0);
+			this._positions[symbol] = new Position(symbol, 0, 0, 0);
 		}
 
 		//Buy at the open price of the day
@@ -231,6 +232,22 @@ class Context extends EventEmitter {
 		}
 	}
 
+	setState (state) {
+		this._state = state;
+	}
+
+	state () {
+		return this._state;
+	}
+
+	setValue (key, value) {
+		this._state[key] = value;
+	}
+
+	value (key) {
+		return this._state[key];
+	}
+
 	_addTransaction (type, date, symbol, number, price, isWinning) {
 		let newTx = {
 			type: type,
@@ -264,7 +281,7 @@ class Context extends EventEmitter {
 
 	_buy (symbol, number, atPrice, commission) {
 		if (!this._positions[symbol]) {
-			this._positions[symbol] = new Position(0, 0, 0);
+			this._positions[symbol] = new Position(symbol, 0, 0, 0);
 		}
 		let position = this._positions[symbol];
 		let tradeSize = number * atPrice;
