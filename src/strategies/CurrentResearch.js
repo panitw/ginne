@@ -105,7 +105,6 @@ class Strategy {
 				let cutLossTarget = ctx.value('CUTLOSS_' + symbol);
 				row = ctx.latestData().row(symbol);
 				position = ctx.positions()[symbol];
-
 				let gapPercent = (row.close - cutLossTarget) / row.close;
 				if (gapPercent > cutLossPercent) {
 					ctx.setValue('CUTLOSS_' + symbol, row.close - (row.close * cutLossPercent));

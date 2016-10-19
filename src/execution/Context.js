@@ -245,7 +245,7 @@ class Context extends EventEmitter {
 	}
 
 	value (key) {
-		return this._state[key];
+	re
 	}
 
 	_addTransaction (type, date, symbol, number, price, isWinning) {
@@ -288,9 +288,6 @@ class Context extends EventEmitter {
 
 		//Set position number
 		position.add(number, atPrice, commission);
-
-		//Set initial cut-loss target
-		position.setCutLossTarget(atPrice - (atPrice * this._cutLossPercent));
 
 		//Adjust asset in hand
 		this._asset -= tradeSize;
