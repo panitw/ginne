@@ -35,7 +35,7 @@ app.use('/portfolio', positionsRouter);
 app.use('/portfolio', recommendationsRouter);
 app.use('/strategy', strategyRouter);
 
-let port = 8080;
+let port = 80;
 if (argv.p) {
 	port = parseInt(argv.p);
 }
