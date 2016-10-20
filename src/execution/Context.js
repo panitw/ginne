@@ -244,6 +244,10 @@ class Context extends EventEmitter {
 		this._state[key] = value;
 	}
 
+	removeValue (key) {
+		delete this._state[key];
+	}
+
 	value (key) {
 		return this._state[key];
 	}
