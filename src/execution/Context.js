@@ -245,7 +245,7 @@ class Context extends EventEmitter {
 	}
 
 	value (key) {
-	re
+		return this._state[key];
 	}
 
 	_addTransaction (type, date, symbol, number, price, isWinning) {
