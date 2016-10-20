@@ -72,7 +72,7 @@ schedule.scheduleJob({minute:0, hour: [6, 12]}, () => {
 });
 
 console.log('Schedule strategy execution task');
-schedule.scheduleJob({minute: 0, hour: 13}, () => {
+schedule.scheduleJob({minute: 0, hour: [7, 13]}, () => {
 	//Execute strategy
 	task_executeStrategy.execute()
 		.then(() => {
