@@ -50,7 +50,7 @@ module.exports = {
 					.then((results) => {
 						if (results) {
 							let recommendationObj = new Recommendation({
-								date: today,
+								date: new Date(),
 								recommendations: []
 							});
 							results.forEach((item) => {
