@@ -3,7 +3,7 @@
 const express = require('express');
 const PluginManager = require('../../plugins/PluginManager');
 const portManager = PluginManager.getPlugin('portfolio');
-const cache = PluginManager.getPlugin('cache');
+const source = PluginManager.getPlugin('source');
 
 let router = express.Router();
 
@@ -12,7 +12,7 @@ router.get('/positions', function(req, res) {
 		.then((results) => {
 			let allPromises = [];
 			for (var i=0; i<results.positions.length; i++) {
-				var promise = cache.getLastData(results.positions[i].symbol)
+				var promise = source.getLastData(results.positions[i].symbol)
 					.then(function (result, lastData) {
 						if (lastData) {
 							result.last = lastData.c;
