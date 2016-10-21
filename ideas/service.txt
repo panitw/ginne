@@ -1,36 +1,16 @@
 - Service that's running all the time
-  H Every day at mid-night, retrieve lastest EOD price of all Thai stocks from 
-    http://marketdata.set.or.th/mkt/sectorquotation.do?language=th&country=TH&market=SET&sector=SET
-  H And store data to DB
   M Detect data issue, e.g. the price dropped more than 10% and report to the bot to nofity users
 
 - Portfolio Management
-  - Record Money In/Out
-  - Record Stock Buy/Sell Transaction
-  - Calculate portfolio performance and generate report to the bot to notify user at the end of the day
+  - Calculate portfolio performance and generate report to to notify user at the end of the day
+  - Show recommendation detail why each recommendation is made (value passing from the strategy when buy/sell tx is initiated)
 
 - Strategy Execution
-  H Select current strategy (id)
-  H At the EOD after receiving data from the market, the execution is triggered
-    - If there's any buy/sell signal, the notification will be sent to the bot to notify user
-  H Receive buy/sell order from the bot and store the data to the backend
-
-- Facebook Bot for communication with users
-  H >> Data Retreive Success
-  M >> Need attention on data?
-  H >> Buy/Sell suggestion
-  H << Buy symbol, amount, price
-  H << Sell symbol, amount, price
-  L >> Trading Performance
+  - Doing near-realtime portfolio monitoring by retrieving latest price from the web and can send notification if there's a warning to sell
 
 - Strategy Testing
-  M Create strategy (name, code) : id
-  M Update strategy (id, code)
-  M Rename strategy (id, newName)
-  M List all strategy
-  M Delete strategy (id)
-  M Run strategy (universe, start, end, ...)
-  M Gist Saving: 57d26df5b69e93272495415c6aede9da8bac321f
+  - Gist Saving: 57d26df5b69e93272495415c6aede9da8bac321f
 
-  Command to run
+Command to run
   node --max-old-space-size=4096 app.js
+ 
