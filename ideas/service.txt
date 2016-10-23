@@ -1,11 +1,21 @@
 - Service that's running all the time
-  M Detect data issue, e.g. the price dropped more than 10% and report to the bot to nofity users
+  H Read current all symbols from SET instead of hard code to be able to cover new symbols
+  H Detect data issue, e.g. the price dropped more than 10% and report to the bot to nofity users
+    - Read par price and compare with the previous par price to see if there's any change in the par.
 
 - Portfolio Management
   - Calculate portfolio performance and generate report to to notify user at the end of the day
+    - Winning %
+    - Net Profit/Loss
   - Show recommendation detail why each recommendation is made (value passing from the strategy when buy/sell tx is initiated)
 
 - Strategy Execution
+  - Improve Strategy Framework
+    - Split these phases
+      - Buy Signal
+      - Sell Signal
+      - Position Scoring
+      - Cut Loss    
   - Doing near-realtime portfolio monitoring by retrieving latest price from the web and can send notification if there's a warning to sell
 
 - Strategy Testing
