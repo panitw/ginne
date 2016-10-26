@@ -6,7 +6,7 @@ app.controller('ExecutionParametersController', function ($scope, $uibModalInsta
 		endDate: new Date(),
 		startYear: 2015,
 		endYear: 2015,
-		cutLossPercent: 10,
+		cutLossPercent: 5,
 		slippagePercent: 2,
 		targetPositions: 5,
 		yearList: []

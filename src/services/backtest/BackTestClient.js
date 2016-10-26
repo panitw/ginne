@@ -111,6 +111,7 @@ class BackTestClient extends EventEmitter {
 
 							portfolio.getCommissionModel(new Date())
 								.then((commModel) => {
+									this.notify('Start Back Testing Session: From ' + cmd.startDate + ' To ' + cmd.endDate);
 									backTester.run(strategy, {
 										initialAsset: cmd.initialAsset,
 										targetPositions: cmd.targetPositions,
