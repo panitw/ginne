@@ -134,7 +134,7 @@ class TradeExecutor extends EventEmitter {
 			let prevRow = null;
 			for (var i=0; i<indices.length; i++) {
 				let row = dataFrame.row(indices[i]);
-				let maskValue = func(row, prevRow);
+				let maskValue = func(row, prevRow, symbol);
 				dataFrame.setValue(toColumn, indices[i], maskValue);
 				prevRow = row;
 			}
