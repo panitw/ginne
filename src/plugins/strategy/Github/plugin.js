@@ -18,7 +18,9 @@ class GithubStrategy {
 
 	_createStrategyObj (code) {
 		let script = new vm.Script(code);
-		let Strategy = script.runInNewContext();
+		let Strategy = script.runInNewContext({
+			console: console
+		});
 		let strategyObj = new Strategy();
 		return strategyObj;
 	}
