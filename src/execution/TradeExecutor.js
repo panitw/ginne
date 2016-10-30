@@ -177,6 +177,11 @@ class TradeExecutor extends EventEmitter {
 					if (foundAnyData) {
 						//Before Market Opened
 						ctx.setCurrentDate(runner);
+
+						//Set current day data as buy price data
+						ctx.setBuyPriceData(dayData);
+
+						//Use prevDayData for making decision
 						if (prevDayData) {
 							ctx.setLatestData(prevDayData);
 							let handlers = tradingActions.handlers('marketOpen');

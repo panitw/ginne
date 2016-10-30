@@ -20,6 +20,7 @@ class Context extends EventEmitter {
 		this._vat = options.vat;
 		this._universe = null;
 		this._latestData = null;
+		this._buyPriceData = null;
 		this._analyzedData = {};
 		this._equityCurve = new fin.DataFrame();
 		this._transactions = [];
@@ -109,6 +110,10 @@ class Context extends EventEmitter {
 		this._latestData = data;
 	}
 
+	setBuyPriceData (data) {
+		this._buyPriceData = data;
+	}
+
 	equityCurve () {
 		return this._equityCurve;
 	}
@@ -187,7 +192,12 @@ class Context extends EventEmitter {
 		}
 
 		//Buy at the open price of the day
-		let symbolPrice = this._latestData.value(useField, symbol);
+		let symbolPrice = 0;
+		if (useField === 'open') {
+			symbolPrice = this._buyPriceData.value(useField, symbol);
+		} else {
+			symbolPrice = this._latestData.value(useField, symbol);
+		}
 
 		if (!isNaN(symbolPrice)) {
 			let position = this._positions[symbol];
