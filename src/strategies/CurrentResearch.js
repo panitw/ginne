@@ -32,9 +32,9 @@ class Strategy {
 					timePeriod: 5
 				}
 			})
-			.mask('enough_volume', function (row) {
+			.mask('filter_in', function (row) {
 				if (row) {
-					if (row.volume > 100000) {
+					if (row.volume > 1000000 && row.close <= 50) {
 						return 'Y';
 					} else {
 						return 'N';
@@ -43,12 +43,12 @@ class Strategy {
 					return '-';
 				}
 			})
-			.mask('trade_signal', function (row, prevRow) {
+			.mask('trade_signal', function (row, prevRow, symbol) {
 				if (row && prevRow) {
 					if (!isNaN(prevRow.max) && (row.close > prevRow.max && row.close >= row.sma)) {
 						return 'B';
 					} else
-					if (!isNaN(prevRow.min) && (row.close < prevRow.min || (prevRow.rsi > 80 && row.rsi <= 80))) {
+					if (!isNaN(prevRow.min) && (row.close < prevRow.min || (prevRow.rsi > 70 && row.rsi <= 70))) {
 						return 'S';
 					} else {
 						return '-';
@@ -57,7 +57,7 @@ class Strategy {
 					return '-';
 				}
 			})
-			.mask('higher_ratio', function (row) {
+			.mask('higher_ratio', function (row, prevRow, symbol) {
 				if (row && row.close !== 0) {
 					return (row.close - row.max) / row.close;
 				} else {
@@ -83,9 +83,11 @@ class Strategy {
 				//Cut-loss
 				position = ctx.positions()[symbol];
 				let cutLossTarget = ctx.value('CUTLOSS_' + symbol);
-				if (row.close <= cutLossTarget) {
-					exitList.push(symbol);
-					continue;
+				if (cutLossTarget) {
+					if (row.close <= cutLossTarget) {
+						exitList.push(symbol);
+						continue;
+					}
 				}
 
 			}
@@ -95,8 +97,9 @@ class Strategy {
 				symbol = exitList[i];
 				if (ctx.canTrade(symbol)) {
 					ctx.setPositionPercent(symbol, 0);
+					ctx.removeValue('CUTLOSS_' + symbol);
 				} else {
-					console.log('Can\'t sell ' + symbol + ' on ' + ctx.currentDate());
+					//console.log('Can\'t sell ' + symbol + ' on ' + ctx.currentDate());
 				}
 			}
 
@@ -117,20 +120,20 @@ class Strategy {
 			if (morePosition > 0) {
 				let latestData = ctx.latestData();
 				let buySignal = latestData.filter(function (row, symbol) {
-					return row.trade_signal === 'B' && row.enough_volume === 'Y' && !ctx.positions()[symbol];
+					return row.trade_signal === 'B' && row.filter_in === 'Y' && !ctx.positions()[symbol];
 				});
 				buySignal.sort('higher_ratio', 'd');
 				let topSymbols = buySignal.index().slice(0, morePosition);
 				for (let i=0; i<topSymbols.length; i++) {
 					if (ctx.canTrade(topSymbols[i])) {
+						let row = buySignal.row(topSymbols[i]);
 						ctx.setPositionPercent(topSymbols[i], percentPositionSize);
+						ctx.setValue('CUTLOSS_' + topSymbols[i], row.close - (row.close * cutLossPercent));
 					} else {
-						console.log('Can\'t buy ' + symbol + ' on ' + ctx.currentDate());
+						//console.log('Can\'t buy ' + topSymbols[i] + ' on ' + ctx.currentDate());
 					}
 				}
 			}
 		});
 	}
 }
-
-module.exports = Strategy;

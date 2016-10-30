@@ -149,6 +149,7 @@ class TradeExecutor extends EventEmitter {
 			let end = moment.utc(ctx.endDate()).toDate();
 			let lastValidRow = {};
 			let task = null;
+			let prevDayData = null;
 
 			let iterator = () => {
 				if (runner.getTime() <= end.getTime()) {
@@ -164,28 +165,20 @@ class TradeExecutor extends EventEmitter {
 							foundAnyData = true;
 							dayData.setRow(symbol, data);
 							lastValidRow[symbol] = data;
+						} else {
+							if (lastValidRow[symbol]) {
+								dayData.setRow(symbol, lastValidRow[symbol]);
+							}
 						}
 					}
 
 					//Consider the day as a valid day if there are some data, then
 					//process each stage of event if there's any valid data for that day
 					if (foundAnyData) {
-						//Make sure that there's a row for each symbol in the universe, if not, use data from
-						//last valid row
-						let availableSymbols = dayData.index();
-						for (let i=0; i<universe.length; i++) {
-							if (availableSymbols.indexOf(universe[i]) === -1) {
-								let lastValid = lastValidRow[universe[i]];
-								if (lastValid) {
-									dayData.setRow(universe[i], lastValid);
-								}
-							}
-						}
-
 						//Before Market Opened
 						ctx.setCurrentDate(runner);
-						if (dayData) {
-							ctx.setLatestData(dayData);
+						if (prevDayData) {
+							ctx.setLatestData(prevDayData);
 							let handlers = tradingActions.handlers('marketOpen');
 							if (handlers && handlers.length > 0) {
 								for (let i=0; i<handlers.length; i++) {
@@ -198,6 +191,7 @@ class TradeExecutor extends EventEmitter {
 						ctx.endOfDayProcessing();
 					}
 					runner = moment.utc(moment(runner).add(1, 'day').format('YYYY-MM-DD')).toDate();
+					prevDayData = dayData;
 				} else {
 					clearInterval(task);
 					resolve();
