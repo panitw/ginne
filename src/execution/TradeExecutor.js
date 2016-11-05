@@ -81,62 +81,73 @@ class TradeExecutor extends EventEmitter {
 			return;
 		}
 
-		let startIdx = 0;
-		let endIdx = dataFrame.count() - 1;
+		if (options.type === 'CUSTOM') {
+			let data = dataFrame.value(options.field);
+			let output = options.func(data);
+			let indices = dataFrame.index();
+			let newSeries = new fin.Series(output, indices);
+			dataFrame.addColumn(newSeries, toColumn);
+			callback();
+		} else {
+			let startIdx = 0;
+			let endIdx = dataFrame.count() - 1;
 
-		//Prepare analysis object
-		let taParam = {
-			name: options.type,
-			startIdx: startIdx,
-			endIdx: endIdx
-		};
-		if (options.input) {
-			for (let inputName in options.input) {
-				let upperFirst = inputName[0].toUpperCase() + inputName.substring(1);
-				taParam['optIn' + upperFirst] = options.input[inputName];
-			}
-		}
-		if (options.field) {
-			taParam.inReal = dataFrame.value(options.field);
-		}
-		taParam.open = dataFrame.value('open');
-		taParam.high = dataFrame.value('high');
-		taParam.low = dataFrame.value('low');
-		taParam.close = dataFrame.value('close');
-		taParam.volume = dataFrame.value('volume');
-
-		talib.execute(taParam, (result) => {
-			if (result.error) {
-				reject(result.error);
-				return;
-			} else
-			if (result && result.result) {
-				for (let resultName in result.result) {
-					let indices = dataFrame.index().slice(result.begIndex, result.begIndex + result.nbElement);
-					let newSeries = new fin.Series(result.result[resultName], indices);
-					let column = null;
-					if (resultName === 'outReal') {
-						column = toColumn;
-					} else {
-						column = toColumn + '_' + resultName.substring(3);
-					}
-					dataFrame.addColumn(newSeries, column);
+			//Prepare analysis object
+			let taParam = {
+				name: options.type,
+				startIdx: startIdx,
+				endIdx: endIdx
+			};
+			if (options.input) {
+				for (let inputName in options.input) {
+					let upperFirst = inputName[0].toUpperCase() + inputName.substring(1);
+					taParam['optIn' + upperFirst] = options.input[inputName];
 				}
 			}
-			callback();
-		});
+			if (options.field) {
+				taParam.inReal = dataFrame.value(options.field);
+			}
+			taParam.open = dataFrame.value('open');
+			taParam.high = dataFrame.value('high');
+			taParam.low = dataFrame.value('low');
+			taParam.close = dataFrame.value('close');
+			taParam.volume = dataFrame.value('volume');
+
+			talib.execute(taParam, (result) => {
+				if (result.error) {
+					callback(result.error);
+					return;
+				} else
+				if (result && result.result) {
+					for (let resultName in result.result) {
+						let indices = dataFrame.index().slice(result.begIndex, result.begIndex + result.nbElement);
+						let newSeries = new fin.Series(result.result[resultName], indices);
+						let column = null;
+						if (resultName === 'outReal') {
+							column = toColumn;
+						} else {
+							column = toColumn + '_' + resultName.substring(3);
+						}
+						dataFrame.addColumn(newSeries, column);
+					}
+				}
+				callback();
+			});
+		}
 	}
 
 	_mask (ctx, symbol, toColumn, func, callback) {
 		let dataFrame = ctx.analyzedData(symbol);
 		let indices = dataFrame.index();
 		if (indices.length > 0) {
-			let prevRow = null;
+			let prevRow = [];
 			for (var i=0; i<indices.length; i++) {
 				let row = dataFrame.row(indices[i]);
 				let maskValue = func(row, prevRow, symbol);
 				dataFrame.setValue(toColumn, indices[i], maskValue);
-				prevRow = row;
+				if (row) {
+					prevRow.unshift(row);
+				}
 			}
 		}
 		callback();
@@ -195,8 +206,9 @@ class TradeExecutor extends EventEmitter {
 						//Process EOD commission
 						ctx.endOfDayProcessing();
 					}
-					runner = moment.utc(moment(runner).add(1, 'day').format('YYYY-MM-DD')).toDate();
 					prevDayData = dayData;
+
+					runner = moment.utc(moment(runner).add(1, 'day').format('YYYY-MM-DD')).toDate();
 				} else {
 					clearInterval(task);
 					resolve();
