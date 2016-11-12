@@ -8,6 +8,7 @@
                 <th>Price</th>
                 <th>Amount</th>
                 <th>Total</th>
+                <th>Reason</th>
                 <th>Winning</th>
             </tr>
         </thead>
@@ -19,6 +20,7 @@
                 <td>{{tx.price | number:2}}</td>
                 <td>{{tx.number | number:2}}</td>
                 <td>{{((tx.cost === undefined)?tx.price * tx.number:tx.cost) | number:2}}</td>
+                <td>{{tx.reason}}</td>
                 <td>{{winningFlag(tx.winning)}}</td>
             </tr>
         </tbody>

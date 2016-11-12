@@ -180,7 +180,10 @@ class Context extends EventEmitter {
 		return !isNaN(symbolPrice);
 	}
 
-	setPositionPercent (symbol, percent, useSlippage, priceField) {
+	setPositionPercent (symbol, percent, useSlippage, priceField, reason) {
+		if (typeof useSlippage == 'string') {
+			reason = useSlippage;
+		}
 		let portSize = this.portfolioSize();
 		let useField = 'open';
 		if (priceField) {
@@ -218,7 +221,7 @@ class Context extends EventEmitter {
 				this._asset -= totalCommission;
 				this._currentDateCommission += totalCommission;
 
-				this._buy(symbol, buyPosition, buyPrice, totalCommission);
+				this._buy(symbol, buyPosition, buyPrice, totalCommission, reason);
 			} else
 			if (gapToFill < 0) {
 				let sellPrice = symbolPrice;
@@ -235,7 +238,7 @@ class Context extends EventEmitter {
 				this._asset -= totalCommission;
 				this._currentDateCommission += totalCommission;
 
-				this._sell(symbol, sellPosition, sellPrice);
+				this._sell(symbol, sellPosition, sellPrice, reason);
 			}
 		} else {
 			throw new Error('No last price to calculate portfolio size for symbol ' + symbol);
@@ -262,21 +265,22 @@ class Context extends EventEmitter {
 		return this._state[key];
 	}
 
-	_addTransaction (type, date, symbol, number, price, isWinning) {
+	_addTransaction (type, date, symbol, number, price, isWinning, reason) {
 		let newTx = {
 			type: type,
 			date: date,
 			symbol: symbol,
 			number: number,
 			price: price,
-			currentPortSize: this.portfolioSize()
+			currentPortSize: this.portfolioSize(),
+			reason: reason
 		};
 		if (isWinning !== undefined) {
 			newTx.winning = isWinning;
 		}
 		this._transactions.push(newTx);
 		this.emit('transactionAdded', newTx);
-		console.log(date, type, symbol, number, price, isWinning, '[' + newTx.currentPortSize + ']');
+		console.log(date, type, symbol, number, price, isWinning, reason, '[' + newTx.currentPortSize + ']');
 	}
 
 	_addCommissionTransaction (date, cost) {
@@ -293,7 +297,7 @@ class Context extends EventEmitter {
 		});
 	}
 
-	_buy (symbol, number, atPrice, commission) {
+	_buy (symbol, number, atPrice, commission, reason) {
 		if (!this._positions[symbol]) {
 			this._positions[symbol] = new Position(symbol, 0, 0, 0);
 		}
@@ -310,10 +314,10 @@ class Context extends EventEmitter {
 		this._currentDateTradeSize += tradeSize;
 
 		//Log transaction
-		this._addTransaction('B', this._currentDate, symbol, number, atPrice);
+		this._addTransaction('B', this._currentDate, symbol, number, atPrice, null, reason);
 	}
 
-	_sell (symbol, number, atPrice) {
+	_sell (symbol, number, atPrice, reason) {
 		if (!this._positions[symbol]) {
 			throw new Error('No position to sell for ' + symbol);
 		}
@@ -342,7 +346,7 @@ class Context extends EventEmitter {
 		}
 
 		//Log transaction
-		this._addTransaction('S', this._currentDate, symbol, number, atPrice, isWinningSell);
+		this._addTransaction('S', this._currentDate, symbol, number, atPrice, isWinningSell, reason);
 	}
 
 }
