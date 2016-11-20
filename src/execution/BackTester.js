@@ -64,15 +64,21 @@ class BackTester extends TradeExecutor {
 	            let allTx = ctx.transactions();
 	            let winCount = 0;
 	            let sellCount = 0;
+	            let totalWin = 0;
+	            let totalLoss = 0;
 	            for (let i=0; i<allTx.length; i++) {
 	            	if (allTx[i].type === 'S') {
 	            		sellCount++;
 	            		if (allTx[i].winning) {
 							winCount++;
+				            totalWin += allTx[i].margin;
+			            } else {
+				            totalLoss += Math.abs(allTx[i].margin);
 			            }
 		            }
 	            }
 	            result.winningPercent = (winCount / sellCount) * 100;
+	            result.winLossRatio = totalWin / totalLoss;
 
 	            return result;
             });

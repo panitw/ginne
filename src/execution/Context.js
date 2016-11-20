@@ -265,7 +265,7 @@ class Context extends EventEmitter {
 		return this._state[key];
 	}
 
-	_addTransaction (type, date, symbol, number, price, isWinning, reason) {
+	_addTransaction (type, date, symbol, number, price, isWinning, margin, reason) {
 		let newTx = {
 			type: type,
 			date: date,
@@ -275,8 +275,11 @@ class Context extends EventEmitter {
 			currentPortSize: this.portfolioSize(),
 			reason: reason
 		};
-		if (isWinning !== undefined) {
+		if (isWinning !== null && isWinning !== undefined) {
 			newTx.winning = isWinning;
+		}
+		if (margin !== null && margin !== undefined) {
+			newTx.margin = margin;
 		}
 		this._transactions.push(newTx);
 		this.emit('transactionAdded', newTx);
@@ -314,7 +317,7 @@ class Context extends EventEmitter {
 		this._currentDateTradeSize += tradeSize;
 
 		//Log transaction
-		this._addTransaction('B', this._currentDate, symbol, number, atPrice, null, reason);
+		this._addTransaction('B', this._currentDate, symbol, number, atPrice, null, null, reason);
 	}
 
 	_sell (symbol, number, atPrice, reason) {
@@ -325,6 +328,7 @@ class Context extends EventEmitter {
 		let tradeSize = number * atPrice;
 		let currentAverageCost = position.averageCost();
 		let isWinningSell = (atPrice > currentAverageCost);
+		let margin = atPrice - currentAverageCost;
 
 		//Throw error if there's no position to sell
 		if (position.number() < number) {
@@ -346,7 +350,7 @@ class Context extends EventEmitter {
 		}
 
 		//Log transaction
-		this._addTransaction('S', this._currentDate, symbol, number, atPrice, isWinningSell, reason);
+		this._addTransaction('S', this._currentDate, symbol, number, atPrice, isWinningSell, margin, reason);
 	}
 
 }
