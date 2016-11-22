@@ -15,7 +15,7 @@ app.directive('resultTable', function ($rootScope) {
 				scope.netProfitPercent = result.percentNetProfit;
 				scope.CGAR = result.CAGRPercent;
 				scope.winningPercent = result.winningPercent;
-				scope.winLossRatio = result.winLossRatio;
+				scope.profitLossRatio = result.profitLossRatio;
 			});
 		}
 	};

@@ -78,7 +78,7 @@ class BackTester extends TradeExecutor {
 		            }
 	            }
 	            result.winningPercent = (winCount / sellCount) * 100;
-	            result.winLossRatio = totalWin / totalLoss;
+	            result.profitLossRatio = (totalWin/winCount) / (totalLoss/(sellCount - winCount));
 
 	            return result;
             });

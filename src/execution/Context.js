@@ -253,16 +253,29 @@ class Context extends EventEmitter {
 		return this._state;
 	}
 
-	setValue (key, value) {
-		this._state[key] = value;
+	setValue (symbol, key, value) {
+		if (!this._state[symbol]) {
+			this._state[symbol] = {};
+		}
+		this._state[symbol][key] = value;
 	}
 
-	removeValue (key) {
-		delete this._state[key];
+	removeValue (symbol, key) {
+		if (this._state[symbol]) {
+			delete this._state[symbol][key];
+		}
 	}
 
-	value (key) {
-		return this._state[key];
+	removeAllValues (symbol) {
+		delete this._state[symbol];
+	}
+
+	value (symbol, key) {
+		if (this._state[symbol]) {
+			return this._state[symbol][key];
+		} else {
+			return null;
+		}
 	}
 
 	_addTransaction (type, date, symbol, number, price, isWinning, margin, reason) {
