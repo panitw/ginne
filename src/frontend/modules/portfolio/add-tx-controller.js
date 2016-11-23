@@ -7,8 +7,12 @@ module.controller('PortfolioAddTxController', function($scope, txService) {
 		symbol: $scope.tx ? $scope.tx.symbol: '',
 		amount: $scope.tx ? $scope.tx.amount: '',
 		price: $scope.tx ? $scope.tx.price: '',
+		cutLoss: '',
+		profitTarget: '',
 		showSymbol: true,
-		showPrice: true
+		showPrice: true,
+		showCutLoss: true,
+		showProfitTarget: true
 	};
 
 	$scope.delete = function () {
@@ -48,6 +52,8 @@ module.controller('PortfolioAddTxController', function($scope, txService) {
 		$scope.tx.symbol = $scope.vm.symbol.toUpperCase();
 		$scope.tx.amount = parseFloat($scope.vm.amount);
 		$scope.tx.price = parseFloat($scope.vm.price);
+		$scope.tx.cutLoss = ($scope.vm.cutLoss !== '') ? parseFloat($scope.vm.cutLoss) : undefined;
+		$scope.tx.profitTarget = ($scope.vm.profitTarget !== '') ? parseFloat($scope.vm.profitTarget) : undefined;
 		if ($scope.mode === 'edit') {
 			txService.updateTransaction($scope.tx)
 				.then(function (result) {
@@ -83,9 +89,13 @@ module.controller('PortfolioAddTxController', function($scope, txService) {
 		if (newValue === 'buy' || newValue === 'sell') {
 			$scope.vm.showSymbol = true;
 			$scope.vm.showPrice = true;
+			$scope.vm.showCutLoss = true;
+			$scope.vm.showProfitTarget = true;
 		} else {
 			$scope.vm.showSymbol = false;
 			$scope.vm.showPrice = false;
+			$scope.vm.showCutLoss = false;
+			$scope.vm.showProfitTarget = false;
 		}
 	});
 

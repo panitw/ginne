@@ -42,7 +42,13 @@
     <p ng-show="vm.showPrice">
       <input type="number" placeholder="Price" class="text-input" ng-model="vm.price">
     </p>
-	  <p>
+    <p ng-show="vm.showCutLoss">
+        <input type="number" placeholder="Cut-Loss" class="text-input" ng-model="vm.cutLoss">
+    </p>
+    <p ng-show="vm.showProfitTarget">
+        <input type="number" placeholder="Profit Target" class="text-input" ng-model="vm.profitTarget">
+    </p>
+    <p>
       <ons-button modifier="large--cta" ng-click="save()">Save</ons-button>
     </p>
 	<p>

@@ -71,9 +71,9 @@ class BackTester extends TradeExecutor {
 	            		sellCount++;
 	            		if (allTx[i].winning) {
 							winCount++;
-				            totalWin += allTx[i].margin;
+				            totalWin += (allTx[i].margin * allTx[i].number);
 			            } else {
-				            totalLoss += Math.abs(allTx[i].margin);
+				            totalLoss += Math.abs(allTx[i].margin * allTx[i].number);
 			            }
 		            }
 	            }
