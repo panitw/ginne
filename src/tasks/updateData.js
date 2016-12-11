@@ -30,6 +30,18 @@ module.exports = {
 				}
 			})
 			.then(() => {
+				return reader.readIndices();
+			})
+			.then((indices) => {
+				for (let i=0; i<indices.length; i++) {
+					let item = indices[i];
+					data[item.symbol] = {
+						d: moment.utc(item.date).startOf('day').toDate(),
+						c: item.close
+					}
+				}
+			})
+			.then(() => {
 				let allPromises = [];
 				for (let symbol in data) {
 					let dataDate = moment(data[symbol].d).startOf('day').toDate();
