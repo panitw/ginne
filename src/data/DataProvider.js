@@ -114,11 +114,19 @@ class DataProvider {
 		var volume = [];
 		data.forEach((item) => {
 			index.push(new Date(item.d));
-			open.push(item.o);
-			high.push(item.h);
-			low.push(item.l);
-			close.push(item.c);
-			volume.push(item.v);
+			if (typeof item.o === 'string') {
+				open.push(parseFloat(item.o));
+				high.push(parseFloat(item.h));
+				low.push(parseFloat(item.l));
+				close.push(parseFloat(item.c));
+				volume.push(parseInt(item.v));
+			} else {
+				open.push(item.o);
+				high.push(item.h);
+				low.push(item.l);
+				close.push(item.c);
+				volume.push(item.v);
+			}
 		});
 		var dataFrame = new fin.DataFrame({
 			open: new fin.Series(open, index),
