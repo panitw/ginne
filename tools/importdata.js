@@ -45,7 +45,7 @@ setReader.read()
 	.then(() => {
 		console.log('Connecting to MongoDB');
 		return new Promise((resolve, reject) => {
-			MongoClient.connect('mongodb://localhost/ginne', (err, db) => {
+			MongoClient.connect('mongodb://notemac/ginne', (err, db) => {
 				if (err) {
 					reject(err);
 				} else {

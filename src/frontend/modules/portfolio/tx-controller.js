@@ -43,6 +43,15 @@ module.controller('PortfolioTxController', function($scope, txService) {
 		});		
 	};
 
+	$scope.calcCost = function (tx) {
+		if (tx.type === 'buy') {
+			return (tx.price * tx.amount) + (tx.commission.commission + tx.commission.vat);			
+		} else
+		if (tx.type === 'sell') {
+			return (tx.price * tx.amount) - (tx.commission.commission + tx.commission.vat);
+		}
+	};
+
 	$scope.closeDialog = function () {
 		if ($scope.currentDialog) {
 			$scope.currentDialog.destroy();

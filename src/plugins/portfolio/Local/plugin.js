@@ -115,19 +115,22 @@ class LocalPortfolioManager {
 					var pos = positions[tx.symbol];
 					if (tx.type === 'buy') {
 						pos.shares += tx.amount;
-						pos.cost += tx.totalCost();
-						equity -= tx.totalCost();
-					}
+						pos.cost += (tx.totalCost() + tx.totalCommission());
+						equity -= (tx.totalCost() + tx.totalCommission());
+					} else
 					if (tx.type === 'sell') {
 						pos.cost *= (pos.shares - tx.amount) / pos.shares;
 						pos.shares -= tx.amount;
-						equity += (tx.amount * tx.price) - tx.totalCommission();
-					}
+						equity += ((tx.amount * tx.price) - tx.totalCommission());
+					} else
 					if (tx.type === 'withdraw') {
 						equity -= tx.amount;
-					}
+					} else
 					if (tx.type === 'deposit') {
 						equity += tx.amount;
+					} else
+					if (tx.type === 'commission') {
+						equity -= tx.totalCommission();
 					}
 				}
 				let output = [];

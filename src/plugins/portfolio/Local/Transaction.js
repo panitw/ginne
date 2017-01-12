@@ -32,7 +32,7 @@ transactionSchema.statics.getTransactionsBetween = function (fromDate, toDate, s
 
 transactionSchema.methods.totalCost = function () {
 	if (this.type === 'buy' || this.type === 'sell') {
-		return (this.amount * this.price) + (this.commission.commission + this.commission.vat);
+		return (this.amount * this.price);
 	} else {
 		return this.amount;
 	}

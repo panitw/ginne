@@ -39,8 +39,8 @@
 					<ons-col>
 						<div class="label">commission:</div>
 						<div class="numbers">{{tx.commission.commission + tx.commission.vat | number:2}}</div>
-						<div class="label">cost:</div>
-						<div class="numbers">{{(tx.price * tx.amount) + (tx.commission.commission + tx.commission.vat) | number:2}}</div>
+						<div class="label">amount:</div>
+						<div class="numbers"><span ng-if="tx.type === 'buy'">-</span>{{calcCost(tx) | number:2}}</div>
 					</ons-col>
 				</ons-row>
 			</ons-list-item>
