@@ -13,8 +13,8 @@ class TodayContext extends Context {
 			initialAsset: currentPositions.equity,
 			start: today,
 			end: today,
-			targetPositions: 5,
-			cutLossPercent: 0.05,
+			targetPositions: 20,
+			cutLossPercent: 0.2,
 			tradeCommission: commissionModel.percent,
 			minDailyCommission: commissionModel.minimumPerDay,
 			vat: commissionModel.vat
