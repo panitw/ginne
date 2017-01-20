@@ -25,6 +25,7 @@ const transactionRouter = require('./src/services/portfolio/transaction');
 const positionsRouter = require('./src/services/portfolio/positions');
 const recommendationsRouter = require('./src/services/portfolio/recommendation');
 const strategyRouter = require('./src/services/strategy/strategy');
+const dataRouter = require('./src/services/data/data');
 
 console.log('Ginne 1.0 starting up');
 
@@ -34,6 +35,7 @@ app.use('/portfolio', transactionRouter);
 app.use('/portfolio', positionsRouter);
 app.use('/portfolio', recommendationsRouter);
 app.use('/strategy', strategyRouter);
+app.use('/data', dataRouter);
 
 let port = 80;
 if (argv.p) {
