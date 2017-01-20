@@ -15,7 +15,7 @@ router.get('/last', function(req, res) {
 				let item = setData[i];				
 				var row = [
 					item.symbol,
-					moment.utc(item.date).format('YYYYMMDD'),
+					moment.utc(item.date).format('DD-MM-YYYY'),
 					item.open,
 					item.high,
 					item.low,
