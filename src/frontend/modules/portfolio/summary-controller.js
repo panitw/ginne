@@ -8,7 +8,7 @@ module.controller('PortfolioSummaryController', function($scope, txService) {
 				var pos = allPositions[i];
 				pos.averagePrice = pos.cost / pos.shares;
 				pos.gain = pos.last - pos.averagePrice;
-				pos.gainPct = (pos.gain / pos.last) * 100;
+				pos.gainPct = (pos.gain / pos.averagePrice) * 100;
 				pos.gainSign = (pos.gain > 0) ? '+' : '';
 				equity += (pos.shares * pos.last);
 			}
